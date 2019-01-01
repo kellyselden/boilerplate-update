@@ -4,12 +4,13 @@ const utils = require('./utils');
 const semver = require('semver');
 
 module.exports = function getApplicableCodemods({
+  url,
   projectType,
   startVersion
 }) {
   let nodeVersion = utils.getNodeVersion();
 
-  return utils.getCodemods().then(codemods => {
+  return utils.getCodemods(url).then(codemods => {
     return Object.keys(codemods).filter(codemod => {
       codemod = codemods[codemod];
       let isVersionInRange = semver.gte(startVersion, codemod.version);
