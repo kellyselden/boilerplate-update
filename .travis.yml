@@ -16,6 +16,10 @@ before_install:
 - npm install -g npm@6
 jobs:
   include:
+  - os: windows
+    node_js: '6'
+  - os: windows
+    node_js: node
   - os: osx
     node_js: node
   - stage: Deploy
