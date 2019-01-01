@@ -8,18 +8,20 @@ const runCodemod = require('../../src/run-codemod');
 describe('Unit - runCodemod', function() {
   let sandbox;
   let npx;
+  let runScript;
 
   beforeEach(function() {
     sandbox = sinon.createSandbox();
 
     npx = sandbox.stub(utils, 'npx').resolves();
+    runScript = sandbox.stub(utils, 'runScript').resolves();
   });
 
   afterEach(function() {
     sandbox.restore();
   });
 
-  it('works', function() {
+  it('runs a command', function() {
     return runCodemod({
       commands: [
         'test command'
@@ -28,6 +30,7 @@ describe('Unit - runCodemod', function() {
       expect(npx.args).to.deep.equal([
         ['test command']
       ]);
+      expect(runScript.called).to.be.false;
     });
   });
 
@@ -67,6 +70,15 @@ describe('Unit - runCodemod', function() {
       ]
     }).then(() => {
       expect(npx2.calledOnce).to.be.ok;
+    });
+  });
+
+  it('runs a script', function() {
+    return runCodemod({
+      script: 'test script'
+    }).then(() => {
+      expect(runScript.args).to.deep.equal([['test script']]);
+      expect(npx.called).to.be.false;
     });
   });
 });

@@ -12,3 +12,4 @@ module.exports.runCodemod = require('./run-codemod');
 // module.exports.resolve = denodeify(require('resolve'));
 // module.exports.require = require;
 // module.exports.which = denodeify(require('which'));
+module.exports.runScript = require('./run-script');
