@@ -4,7 +4,7 @@ const { expect } = require('chai');
 const co = require('co');
 const getCodemods = require('../../src/get-codemods');
 
-const url = 'https://cdn.jsdelivr.net/gh/kellyselden/boilerplate-update@codemod-manifest/test/fixtures/codemod-manifest.json';
+const url = 'https://cdn.jsdelivr.net/gh/kellyselden/boilerplate-update/test/fixtures/codemod-manifest.json';
 
 describe('Integration - getCodemods', function() {
   this.timeout(5 * 1000);
