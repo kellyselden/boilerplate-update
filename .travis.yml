@@ -28,6 +28,7 @@ script:
 - npm test
 jobs:
   include:
+  - os: windows
   - os: osx
   - stage: Deploy
     cache: ignore
