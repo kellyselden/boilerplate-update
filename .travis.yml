@@ -1,7 +1,7 @@
 language: node_js
 node_js:
-- '6'
 - node
+- '6'
 branches:
   only:
   - master
@@ -17,7 +17,6 @@ before_install:
 jobs:
   include:
   - os: osx
-    node_js: node
   - stage: Deploy
     cache: ignore
     before_install: ignore
