@@ -1,0 +1,42 @@
+{
+  "name": "boilerplate-update",
+  "version": "0.0.0",
+  "description": "Update boilerplate code between versions",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "cross-env DEBUG=boilerplate-update,git-diff-apply,git-fixtures mocha \"test/!(fixtures)/**/*-test.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kellyselden/boilerplate-update.git"
+  },
+  "keywords": [
+    "cli"
+  ],
+  "author": "Kelly Selden",
+  "license": "MIT",
+  "engines": {
+    "node": ">=6"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "execa": "^1.0.0",
+    "npx": "^10.2.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.11.1",
+    "eslint-config-sane": "^0.6.0",
+    "eslint-plugin-mocha": "^5.2.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-prefer-let": "kellyselden/eslint-plugin-prefer-let#const-require",
+    "fs-extra": "^7.0.1",
+    "git-fixtures": "^0.12.2",
+    "mocha": "^5.2.0",
+    "sinon": "^7.2.2"
+  }
+}
