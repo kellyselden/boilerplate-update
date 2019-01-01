@@ -1,11 +1,21 @@
 'use strict';
 
-const cp = require('child_process');
+const { exec } = require('child_process');
 const debug = require('debug')('boilerplate-update');
 
 module.exports = function run(command, options) {
-  debug(command);
-  let result = cp.execSync(command, options).toString();
-  debug(result);
-  return result;
+  return new Promise((resolve, reject) => {
+    debug(command);
+    exec(command, options, (err, stdout, stderr) => {
+      debug(command);
+      if (err) {
+        return reject(err);
+      }
+      if (stderr) {
+        return reject(stderr);
+      }
+      debug(stdout);
+      resolve(stdout);
+    });
+  });
 };
