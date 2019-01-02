@@ -109,13 +109,14 @@ function tryPrepareCommandUsingLocal(options) {
 }
 
 function tryPrepareCommandUsingGlobal(options) {
-  return utils.which(options.packageName).then(packagePath => {
+  let command = options.commandName || options.packageName;
+  return utils.which(command).then(packagePath => {
     return tryPrepareCommandUsingCache({
-      basedir: path.dirname(packagePath),
+      basedir: path.resolve(path.dirname(packagePath), '../lib'),
       options
     });
   }).catch(err => {
-    if (err.message === `not found: ${options.packageName}`) {
+    if (err.message === `not found: ${command}`) {
       // not installed globally
       return;
     }
