@@ -14,9 +14,10 @@ function mutatePackageJson(cwd, callback) {
   let filePath = path.join(cwd, 'package.json');
   return readFile(filePath).then(file => {
     let pkg = JSON.parse(file);
-    callback(pkg);
-    file = JSON.stringify(pkg, null, 2);
-    return writeFile(filePath, file);
+    return callback(pkg).then(() => {
+      file = JSON.stringify(pkg, null, 2);
+      return writeFile(filePath, file);
+    });
   });
 }
 

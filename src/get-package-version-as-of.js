@@ -4,19 +4,17 @@ const semver = require('semver');
 const utils = require('./utils');
 
 function getVersions(packageName) {
-  let output = utils.run(`npm info ${packageName} time --json`);
-  let time = JSON.parse(output);
-  return time;
+  return utils.run(`npm info ${packageName} time --json`).then(JSON.parse);
 }
 
 module.exports = function getPackageVersionAsOf(packageName, asOf) {
-  let versions = getVersions(packageName);
-  let versionsInRange = Object.keys(versions).filter(version => {
-    if (['created', 'modified'].includes(version)) {
-      return false;
-    }
-    return new Date(versions[version]) < asOf;
+  return getVersions(packageName).then(versions => {
+    let versionsInRange = Object.keys(versions).filter(version => {
+      if (['created', 'modified'].includes(version)) {
+        return;
+      }
+      return new Date(versions[version]) < asOf;
+    });
+    return semver.maxSatisfying(versionsInRange, '');
   });
-  let version = semver.maxSatisfying(versionsInRange, '');
-  return version;
 };
