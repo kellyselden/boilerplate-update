@@ -6,13 +6,10 @@ const debug = require('debug')('boilerplate-update');
 module.exports = function run(command, options) {
   return new Promise((resolve, reject) => {
     debug(command);
-    exec(command, options, (err, stdout, stderr) => {
+    exec(command, options, (err, stdout) => {
       debug(command);
       if (err) {
         return reject(err);
-      }
-      if (stderr) {
-        return reject(stderr);
       }
       debug(stdout);
       resolve(stdout);
