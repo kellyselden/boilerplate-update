@@ -6,9 +6,7 @@ const sinon = require('sinon');
 const co = require('co');
 const utils = require('../../src/utils');
 
-describe('Integration - getTagVersion', function() {
-  this.timeout(10 * 1000);
-
+describe('Unit - getTagVersion', function() {
   let sandbox;
   let runStub;
 
