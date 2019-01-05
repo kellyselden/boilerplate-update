@@ -7,16 +7,13 @@ const denodeify = require('denodeify');
 const tmpDir = denodeify(require('tmp').dir);
 const rimraf = denodeify(require('rimraf'));
 const cpr = path.resolve(path.dirname(require.resolve('cpr')), '../bin/cpr');
-const readFile = denodeify(fs.readFile);
-const writeFile = denodeify(fs.writeFile);
+const replaceFile = require('./replace-file');
 
 function mutatePackageJson(cwd, callback) {
-  let filePath = path.join(cwd, 'package.json');
-  return readFile(filePath).then(file => {
+  return replaceFile(path.join(cwd, 'package.json'), file => {
     let pkg = JSON.parse(file);
     return callback(pkg).then(() => {
-      file = JSON.stringify(pkg, null, 2);
-      return writeFile(filePath, file);
+      return JSON.stringify(pkg, null, 2);
     });
   });
 }
