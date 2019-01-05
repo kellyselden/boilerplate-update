@@ -1,6 +1,6 @@
 'use strict';
 
-const utils = require('./utils');
+const npm = require('./npm');
 const semver = require('semver');
 
 module.exports = function getTagVersion({
@@ -12,7 +12,7 @@ module.exports = function getTagVersion({
   return Promise.resolve().then(() => {
     if (distTags.indexOf(range) > -1) {
       let distTag = range;
-      return utils.run(`npm info ${packageName}@${distTag} version --json`).then(JSON.parse);
+      return npm.json(`view ${packageName}@${distTag} version`);
     }
 
     let isAbsolute = !!semver.clean(range);
