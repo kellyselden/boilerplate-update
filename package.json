@@ -1,6 +1,6 @@
 {
   "name": "boilerplate-update",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Update boilerplate code between versions",
   "main": "src/index.js",
   "scripts": {
