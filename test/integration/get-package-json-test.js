@@ -6,7 +6,7 @@ const co = require('co');
 const getPackageJson = require('../../src/get-package-json');
 
 chai.use(chaiAsPromised);
-const expect = chai.expect;
+const { expect } = chai;
 
 describe('Integration - getPackageJson', function() {
   it('throws if no package.json', co.wrap(function*() {
