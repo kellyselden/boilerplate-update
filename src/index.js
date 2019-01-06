@@ -7,11 +7,11 @@ const replaceFile = require('./replace-file');
 const promptAndRunCodemods = require('./prompt-and-run-codemods');
 const getStartAndEndCommands = require('./get-start-and-end-commands');
 const getStats = require('./get-stats');
+const compareVersions = require('./compare-versions');
 
 module.exports = function boilerplateUpdate({
   remoteUrl,
-  startTag,
-  endTag,
+  compareOnly,
   resolveConflicts,
   reset,
   statsOnly,
@@ -23,6 +23,17 @@ module.exports = function boilerplateUpdate({
   createCustomDiff,
   customDiffOptions
 }) {
+  let startTag = `v${startVersion}`;
+  let endTag = `v${endVersion}`;
+
+  if (compareOnly) {
+    return compareVersions({
+      remoteUrl,
+      startTag,
+      endTag
+    });
+  }
+
   if (statsOnly) {
     return getStats({
       projectType,
