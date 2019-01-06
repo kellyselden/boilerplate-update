@@ -6,6 +6,7 @@ const run = require('./run');
 const replaceFile = require('./replace-file');
 const promptAndRunCodemods = require('./prompt-and-run-codemods');
 const getStartAndEndCommands = require('./get-start-and-end-commands');
+const getStats = require('./get-stats');
 
 module.exports = function boilerplateUpdate({
   remoteUrl,
@@ -13,13 +14,25 @@ module.exports = function boilerplateUpdate({
   endTag,
   resolveConflicts,
   reset,
+  statsOnly,
   runCodemods,
   codemodsUrl,
   projectType,
   startVersion,
+  endVersion,
   createCustomDiff,
   customDiffOptions
 }) {
+  if (statsOnly) {
+    return getStats({
+      projectType,
+      startVersion,
+      endVersion,
+      remoteUrl,
+      codemodsUrl
+    });
+  }
+
   if (runCodemods) {
     return promptAndRunCodemods({
       url: codemodsUrl,
