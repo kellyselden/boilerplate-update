@@ -1,14 +1,11 @@
 'use strict';
 
 const fs = require('fs');
-const path = require('path');
 const denodeify = require('denodeify');
 const readFile = denodeify(fs.readFile);
 
-module.exports = function getProjectType(projectPath) {
-  let packagePath = path.join(projectPath, 'package.json');
-
-  return readFile(packagePath, 'utf8').catch(() => {
+module.exports = function getProjectType() {
+  return readFile('package.json', 'utf8').catch(() => {
     throw 'No package.json was found in this directory';
   }).then(packageJson => {
     try {
