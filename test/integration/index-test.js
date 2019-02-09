@@ -91,6 +91,8 @@ describe('Integration - index', function() {
           fixturesPath: 'test/fixtures/end'
         }
       }
+    }).then(({ promise }) => {
+      return promise;
     });
 
     return processExit({

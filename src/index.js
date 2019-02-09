@@ -22,7 +22,8 @@ module.exports = co.wrap(function* boilerplateUpdate({
   startVersion,
   endVersion,
   createCustomDiff,
-  customDiffOptions
+  customDiffOptions,
+  wasRunAsExecutable
 }) {
   let startTag = `v${startVersion}`;
   let endTag = `v${endVersion}`;
@@ -34,27 +35,29 @@ module.exports = co.wrap(function* boilerplateUpdate({
       endTag
     });
 
-    return;
+    return { promise: Promise.resolve() };
   }
 
   if (statsOnly) {
-    return yield getStats({
-      projectType,
-      startVersion,
-      endVersion,
-      remoteUrl,
-      codemodsUrl
-    });
+    return {
+      promise: getStats({
+        projectType,
+        startVersion,
+        endVersion,
+        remoteUrl,
+        codemodsUrl
+      })
+    };
   }
 
   if (runCodemods) {
-    yield promptAndRunCodemods({
-      url: codemodsUrl,
-      projectType,
-      startVersion
-    });
-
-    return;
+    return {
+      promise: promptAndRunCodemods({
+        url: codemodsUrl,
+        projectType,
+        startVersion
+      })
+    };
   }
 
   let startCommand;
@@ -74,7 +77,11 @@ module.exports = co.wrap(function* boilerplateUpdate({
     ignoredFiles = [];
   }
 
-  let results = yield gitDiffApply({
+  let {
+    from,
+    to,
+    resolveConflictsProcess
+  } = yield gitDiffApply({
     remoteUrl,
     startTag,
     endTag,
@@ -83,19 +90,33 @@ module.exports = co.wrap(function* boilerplateUpdate({
     reset,
     createCustomDiff,
     startCommand,
-    endCommand
+    endCommand,
+    wasRunAsExecutable
   });
 
   if (reset) {
-    return;
+    return { promise: Promise.resolve() };
   }
 
-  let fromPackageJson = results.from['package.json'];
-  let toPackageJson = results.to['package.json'];
+  let promise = co(function*() {
+    if (resolveConflictsProcess) {
+      yield new Promise(resolve => {
+        resolveConflictsProcess.on('exit', resolve);
+      });
+    }
 
-  yield replaceFile('package.json', myPackageJson => {
-    return mergePackageJson(myPackageJson, fromPackageJson, toPackageJson);
+    let fromPackageJson = from['package.json'];
+    let toPackageJson = to['package.json'];
+
+    yield replaceFile('package.json', myPackageJson => {
+      return mergePackageJson(myPackageJson, fromPackageJson, toPackageJson);
+    });
+
+    yield run('git add package.json');
   });
 
-  yield run('git add package.json');
+  return {
+    promise,
+    resolveConflictsProcess
+  };
 });
