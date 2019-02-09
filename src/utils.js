@@ -13,3 +13,4 @@ module.exports.runCodemod = require('./run-codemod');
 module.exports.require = require;
 module.exports.which = denodeify(require('which'));
 module.exports.runScript = require('./run-script');
+module.exports.promptCodemods = require('./prompt-codemods');

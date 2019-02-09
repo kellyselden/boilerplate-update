@@ -1,6 +1,6 @@
 'use strict';
 
-const promptCodemods = require('./prompt-codemods');
+const getAndPromptCodemods = require('./get-and-prompt-codemods');
 const runCodemods = require('./run-codemods');
 
 module.exports = function promptAndRunCodemods({
@@ -8,7 +8,7 @@ module.exports = function promptAndRunCodemods({
   projectType,
   startVersion
 }) {
-  return promptCodemods({
+  return getAndPromptCodemods({
     url,
     projectType,
     startVersion
