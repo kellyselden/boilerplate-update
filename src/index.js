@@ -8,8 +8,9 @@ const promptAndRunCodemods = require('./prompt-and-run-codemods');
 const getStartAndEndCommands = require('./get-start-and-end-commands');
 const getStats = require('./get-stats');
 const compareVersions = require('./compare-versions');
+const co = require('co');
 
-module.exports = function boilerplateUpdate({
+module.exports = co.wrap(function* boilerplateUpdate({
   remoteUrl,
   compareOnly,
   resolveConflicts,
@@ -27,15 +28,17 @@ module.exports = function boilerplateUpdate({
   let endTag = `v${endVersion}`;
 
   if (compareOnly) {
-    return compareVersions({
+    compareVersions({
       remoteUrl,
       startTag,
       endTag
     });
+
+    return;
   }
 
   if (statsOnly) {
-    return getStats({
+    return yield getStats({
       projectType,
       startVersion,
       endVersion,
@@ -45,54 +48,54 @@ module.exports = function boilerplateUpdate({
   }
 
   if (runCodemods) {
-    return promptAndRunCodemods({
+    yield promptAndRunCodemods({
       url: codemodsUrl,
       projectType,
       startVersion
     });
+
+    return;
   }
 
   let startCommand;
   let endCommand;
 
-  return Promise.resolve().then(() => {
-    if (createCustomDiff) {
-      return getStartAndEndCommands(customDiffOptions).then(commands => {
-        startCommand = commands.startCommand;
-        endCommand = commands.endCommand;
-      });
-    }
-  }).then(() => {
-    let ignoredFiles;
-    if (!reset) {
-      ignoredFiles = ['package.json'];
-    } else {
-      ignoredFiles = [];
-    }
+  if (createCustomDiff) {
+    let commands = yield getStartAndEndCommands(customDiffOptions);
 
-    return gitDiffApply({
-      remoteUrl,
-      startTag,
-      endTag,
-      resolveConflicts,
-      ignoredFiles,
-      reset,
-      createCustomDiff,
-      startCommand,
-      endCommand
-    }).then(results => {
-      if (reset) {
-        return;
-      }
+    startCommand = commands.startCommand;
+    endCommand = commands.endCommand;
+  }
 
-      let fromPackageJson = results.from['package.json'];
-      let toPackageJson = results.to['package.json'];
+  let ignoredFiles;
+  if (!reset) {
+    ignoredFiles = ['package.json'];
+  } else {
+    ignoredFiles = [];
+  }
 
-      return replaceFile('package.json', myPackageJson => {
-        return mergePackageJson(myPackageJson, fromPackageJson, toPackageJson);
-      }).then(() => {
-        return run('git add package.json');
-      });
-    });
+  let results = yield gitDiffApply({
+    remoteUrl,
+    startTag,
+    endTag,
+    resolveConflicts,
+    ignoredFiles,
+    reset,
+    createCustomDiff,
+    startCommand,
+    endCommand
   });
-};
+
+  if (reset) {
+    return;
+  }
+
+  let fromPackageJson = results.from['package.json'];
+  let toPackageJson = results.to['package.json'];
+
+  yield replaceFile('package.json', myPackageJson => {
+    return mergePackageJson(myPackageJson, fromPackageJson, toPackageJson);
+  });
+
+  yield run('git add package.json');
+});

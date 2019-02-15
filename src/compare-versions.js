@@ -16,6 +16,4 @@ module.exports = function compareVersions({
     // this means it no longer returns a promise
     wait: false
   });
-
-  return Promise.resolve();
 };
