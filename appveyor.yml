@@ -16,7 +16,18 @@ install:
   - ps: Install-Product node $env:nodejs_version
   - npm config set spin false
   - npm install -g npm@6
-  - npm install
+  - ps: >-
+      if ($env:nodejs_version -eq "6") {
+        [Environment]::SetEnvironmentVariable("NODE_LTS", "true", "User")
+      }
+  - RefreshEnv
+  - where npx
+  # don't accidentally use the global npx
+  - ps: rm "C:\Program Files (x86)\nodejs\npx*"
+  - ps: rm C:\Users\appveyor\AppData\Roaming\npm\npx*
+  # test that we can't find it
+  - ps: if (gcm npx) { exit }
+  - npm ci
 
 # Post-install test scripts.
 test_script:

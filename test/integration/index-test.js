@@ -4,6 +4,7 @@ const path = require('path');
 const { expect } = require('chai');
 const sinon = require('sinon');
 const {
+  processIo,
   processExit,
   fixtureCompare: _fixtureCompare
 } = require('git-fixtures');
@@ -42,13 +43,13 @@ describe('Integration - index', function() {
   function merge({
     fixturesPath,
     dirty,
-    from = '2.11.1',
-    to = '3.2.0-beta.1',
+    from = '0.0.1',
+    to = '0.0.2',
     reset,
     compareOnly,
     statsOnly,
     runCodemods,
-    // listCodemods,
+    listCodemods,
     createCustomDiff
   }) {
     tmpPath = buildTmp({
@@ -67,21 +68,22 @@ describe('Integration - index', function() {
       };
     }
 
-    let promise = boilerplateUpdate({
+    return boilerplateUpdate({
       remoteUrl: 'https://github.com/kellyselden/boilerplate-update-output-repo-test',
+      resolveConflicts: true,
       compareOnly,
       reset,
       statsOnly,
       runCodemods,
-      codemodsUrl: 'https://cdn.jsdelivr.net/gh/kellyselden/boilerplate-update-codemod-manifest-test/manifest.json',
-      projectType: 'app',
+      listCodemods,
+      codemodsUrl: 'https://raw.githubusercontent.com/kellyselden/boilerplate-update-codemod-manifest-test/master/manifest.json',
+      projectType: 'test-project',
       startVersion: from,
       endVersion: to,
       createCustomDiff,
       customDiffOptions: {
-        projectName: 'my-custom-app',
-        packageName: 'ember-cli',
-        commandName: 'ember',
+        projectName: 'conflict',
+        packageName: 'test-project',
         createProjectFromCache: createProject,
         createProjectFromRemote: createProject,
         startOptions: {
@@ -91,15 +93,36 @@ describe('Integration - index', function() {
           fixturesPath: 'test/fixtures/end'
         }
       }
-    }).then(({ promise }) => {
-      return promise;
-    });
+    }).then(({
+      promise: boilerplateUpdatePromise,
+      resolveConflictsProcess
+    }) => {
+      if (!resolveConflictsProcess) {
+        return processExit({
+          promise: boilerplateUpdatePromise,
+          cwd: tmpPath,
+          commitMessage,
+          expect
+        });
+      }
 
-    return processExit({
-      promise,
-      cwd: tmpPath,
-      commitMessage,
-      expect
+      let ioPromise = processIo({
+        ps: resolveConflictsProcess,
+        cwd: tmpPath,
+        commitMessage,
+        expect
+      });
+
+      return boilerplateUpdatePromise.then(() => {
+        return ioPromise;
+      });
+    }).catch(err => {
+      return processExit({
+        promise: Promise.reject(err),
+        cwd: tmpPath,
+        commitMessage,
+        expect
+      });
     });
   }
 
@@ -118,7 +141,7 @@ describe('Integration - index', function() {
 
   it('handles dirty', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/my-app',
+      fixturesPath: 'test/fixtures/local/conflict',
       dirty: true
     }).then(({
       status,
@@ -170,16 +193,23 @@ describe('Integration - index', function() {
 
   it('resets app', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/my-app',
+      fixturesPath: 'test/fixtures/local/conflict',
       reset: true
     }).then(({
       status
     }) => {
       fixtureCompare({
-        mergeFixtures: 'test/fixtures/end/my-app'
+        mergeFixtures: 'test/fixtures/end/conflict'
       });
 
-      expect(status).to.match(/^ D app\/controllers\/application\.js$/m);
+      expect(status).to.match(/^ M present-added-changed\.txt$/m);
+      expect(status).to.match(/^ M present-changed\.txt$/m);
+      expect(status).to.match(/^ D removed-changed\.txt$/m);
+      expect(status).to.match(/^ D removed-unchanged\.txt$/m);
+      expect(status).to.match(/^\?{2} added-changed\.txt$/m);
+      expect(status).to.match(/^\?{2} added-unchanged\.txt$/m);
+      expect(status).to.match(/^\?{2} missing-changed\.txt$/m);
+      expect(status).to.match(/^\?{2} missing-unchanged\.txt$/m);
 
       assertNoStaged(status);
     });
@@ -189,7 +219,7 @@ describe('Integration - index', function() {
     let opn = sandbox.stub(utils, 'opn');
 
     return merge({
-      fixturesPath: 'test/fixtures/local/my-app',
+      fixturesPath: 'test/fixtures/local/conflict',
       compareOnly: true
     }).then(({
       result,
@@ -200,31 +230,31 @@ describe('Integration - index', function() {
       expect(result, 'don\'t accidentally print anything to the console').to.be.undefined;
 
       expect(opn.calledOnce).to.be.ok;
-      expect(opn.args[0][0]).to.equal('https://github.com/kellyselden/boilerplate-update-output-repo-test/compare/v2.11.1...v3.2.0-beta.1');
+      expect(opn.args[0][0]).to.equal('https://github.com/kellyselden/boilerplate-update-output-repo-test/compare/v0.0.1...v0.0.2');
     });
   });
 
   it.skip('resolves semver ranges', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/my-app',
-      from: '1.13',
-      to: '^2',
+      fixturesPath: 'test/fixtures/local/conflict',
+      from: '< 0.0.2',
+      to: '0.0.*',
       statsOnly: true
     }).then(({
       result
     }) => {
-      expect(result).to.equal(`project type: app
-from version: 1.13.15
-to version: 2.18.2
-output repo: https://github.com/ember-cli/ember-new-output
-applicable codemods: `);
+      expect(result).to.equal(`project type: test-project
+from version: 0.0.1
+to version: 0.0.2
+output repo: https://github.com/kellyselden/boilerplate-update-output-repo-test
+applicable codemods: commands-test-codemod`);
     });
   });
 
   it('shows stats only', function() {
     return merge({
-      fixturesPath: 'test/fixtures/merge/my-app',
-      from: '3.2.0-beta.1',
+      fixturesPath: 'test/fixtures/merge/conflict',
+      from: '0.0.2',
       statsOnly: true
     }).then(({
       result,
@@ -232,17 +262,17 @@ applicable codemods: `);
     }) => {
       assertNoStaged(status);
 
-      expect(result).to.equal(`project type: app
-from version: 3.2.0-beta.1
-to version: 3.2.0-beta.1
+      expect(result).to.equal(`project type: test-project
+from version: 0.0.2
+to version: 0.0.2
 output repo: https://github.com/kellyselden/boilerplate-update-output-repo-test
-applicable codemods: ember-modules-codemod, ember-qunit-codemod, ember-test-helpers-codemod, es5-getter-ember-codemod, qunit-dom-codemod`);
+applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', script-test-codemod'}`);
     });
   });
 
   it.skip('lists codemods', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/my-app',
+      fixturesPath: 'test/fixtures/local/conflict',
       listCodemods: true
     }).then(({
       result,
@@ -250,19 +280,19 @@ applicable codemods: ember-modules-codemod, ember-qunit-codemod, ember-test-help
     }) => {
       assertNoStaged(status);
 
-      expect(JSON.parse(result)).to.have.own.property('ember-modules-codemod');
+      expect(JSON.parse(result)).to.have.own.property('commands-test-codemod');
     });
   });
 
   it('can create a personal diff instead of using an output repo', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/my-custom-app',
+      fixturesPath: 'test/fixtures/local/conflict',
       createCustomDiff: true
     }).then(({
       status
     }) => {
       fixtureCompare({
-        mergeFixtures: 'test/fixtures/merge/my-custom-app'
+        mergeFixtures: 'test/fixtures/merge/conflict'
       });
 
       assertNoUnstaged(status);

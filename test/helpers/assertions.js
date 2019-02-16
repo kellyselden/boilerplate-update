@@ -3,17 +3,12 @@
 const { expect } = require('chai');
 
 module.exports.assertNormalUpdate = function(status) {
-  // changed locally, no change upstream
-  expect(status).to.not.match(/^ .*\.ember-cli$/m);
-
-  // exists locally, also added upstream with changes
-  expect(status).to.match(/^M {2}.*\.eslintrc\.js$/m);
-
-  // changed locally, removed upstream
-  expect(status).to.match(/^D {2}.*bower\.json$/m);
-
-  // changed locally, also changed upstream
-  expect(status).to.match(/^M {2}.*README\.md$/m);
+  expect(status).to.match(/^A {2}.*added-changed\.txt$/m);
+  expect(status).to.match(/^A {2}.*added-unchanged\.txt$/m);
+  expect(status).to.match(/^M {2}.*present-added-changed\.txt$/m);
+  expect(status).to.match(/^M {2}.*present-changed\.txt$/m);
+  expect(status).to.match(/^D {2}.*removed-changed\.txt$/m);
+  expect(status).to.match(/^D {2}.*removed-unchanged\.txt$/m);
 };
 
 module.exports.assertNoUnstaged = function(status) {
@@ -27,9 +22,9 @@ module.exports.assertNoStaged = function(status) {
 };
 
 module.exports.assertCodemodRan = function(status) {
-  // codemod changed locally, no change upstream
-  expect(status).to.match(/^M {2}.*app\/controllers\/application\.js$/m);
-
-  // codemod changed locally, also changed upstream
-  expect(status).to.match(/^M {2}.*app\/router\.js$/m);
+  expect(status).to.match(/^A {2}.*added-changed-copy\.txt$/m);
+  expect(status).to.match(/^A {2}.*added-unchanged-copy\.txt$/m);
+  if (!process.env.NODE_LTS) {
+    expect(status).to.match(/^A {2}.*present-changed-copy\.txt$/m);
+  }
 };
