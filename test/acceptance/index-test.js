@@ -1,6 +1,5 @@
 'use strict';
 
-const fs = require('fs-extra');
 const path = require('path');
 const { expect } = require('chai');
 const sinon = require('sinon');
@@ -45,7 +44,7 @@ describe('Acceptance - index', function() {
     fixturesPath,
     runCodemods,
     subDir = '',
-    startVersion = '2.11.1'
+    startVersion = '0.0.1'
   }) {
     tmpPath = buildTmp({
       fixturesPath,
@@ -59,10 +58,10 @@ describe('Acceptance - index', function() {
       remoteUrl: 'https://github.com/kellyselden/boilerplate-update-output-repo-test',
       resolveConflicts: true,
       runCodemods,
-      codemodsUrl: 'https://cdn.jsdelivr.net/gh/kellyselden/boilerplate-update-codemod-manifest-test/manifest.json',
-      projectType: 'app',
+      codemodsUrl: 'https://raw.githubusercontent.com/kellyselden/boilerplate-update-codemod-manifest-test/master/manifest.json',
+      projectType: 'test-project',
       startVersion,
-      endVersion: '3.2.0-beta.1'
+      endVersion: '0.0.2'
     }).then(({
       promise: boilerplateUpdatePromise,
       resolveConflictsProcess
@@ -104,12 +103,12 @@ describe('Acceptance - index', function() {
 
   it('updates app', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/my-app'
+      fixturesPath: 'test/fixtures/local/conflict'
     }).then(({
       status
     }) => {
       fixtureCompare({
-        mergeFixtures: 'test/fixtures/merge/my-app'
+        mergeFixtures: 'test/fixtures/merge/conflict'
       });
 
       assertNormalUpdate(status);
@@ -118,24 +117,22 @@ describe('Acceptance - index', function() {
   });
 
   it('runs codemods', function() {
-    this.timeout(5 * 60 * 1000);
+    function selectAllCodemods(codemods) {
+      return Promise.resolve(Object.keys(codemods).map(k => codemods[k]));
+    }
 
-    sandbox.stub(utils, 'promptCodemods')
-      .callsFake(codemods => Promise.resolve(Object.keys(codemods).map(k => codemods[k])));
+    sandbox.stub(utils, 'promptCodemods').callsFake(selectAllCodemods);
 
     return merge({
-      fixturesPath: 'test/fixtures/merge/my-app',
+      fixturesPath: 'test/fixtures/merge/conflict',
       runCodemods: true,
-      startVersion: '3.2.0-beta.1'
+      startVersion: '0.0.2'
     }).then(({
       status
     }) => {
-      // file is indeterminent between OS's, so ignore
-      fs.removeSync(path.join(tmpPath, 'MODULE_REPORT.md'));
-
-      let mergeFixtures = 'test/fixtures/codemod/latest-node/my-app';
+      let mergeFixtures = 'test/fixtures/codemod/latest-node/conflict';
       if (process.env.NODE_LTS) {
-        mergeFixtures = 'test/fixtures/codemod/min-node/my-app';
+        mergeFixtures = 'test/fixtures/codemod/min-node/conflict';
       }
 
       fixtureCompare({
@@ -149,13 +146,13 @@ describe('Acceptance - index', function() {
 
   it('scopes to sub dir if run from there', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/my-app',
+      fixturesPath: 'test/fixtures/local/conflict',
       subDir: 'foo/bar'
     }).then(({
       status
     }) => {
       fixtureCompare({
-        mergeFixtures: 'test/fixtures/merge/my-app'
+        mergeFixtures: 'test/fixtures/merge/conflict'
       });
 
       assertNormalUpdate(status);
