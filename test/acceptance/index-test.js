@@ -103,12 +103,12 @@ describe('Acceptance - index', function() {
 
   it('updates app', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/conflict'
+      fixturesPath: 'test/fixtures/local/test-project'
     }).then(({
       status
     }) => {
       fixtureCompare({
-        mergeFixtures: 'test/fixtures/merge/conflict'
+        mergeFixtures: 'test/fixtures/merge/test-project'
       });
 
       assertNormalUpdate(status);
@@ -124,15 +124,15 @@ describe('Acceptance - index', function() {
     sandbox.stub(utils, 'promptCodemods').callsFake(selectAllCodemods);
 
     return merge({
-      fixturesPath: 'test/fixtures/merge/conflict',
+      fixturesPath: 'test/fixtures/merge/test-project',
       runCodemods: true,
       startVersion: '0.0.2'
     }).then(({
       status
     }) => {
-      let mergeFixtures = 'test/fixtures/codemod/latest-node/conflict';
+      let mergeFixtures = 'test/fixtures/codemod/latest-node/test-project';
       if (process.env.NODE_LTS) {
-        mergeFixtures = 'test/fixtures/codemod/min-node/conflict';
+        mergeFixtures = 'test/fixtures/codemod/min-node/test-project';
       }
 
       fixtureCompare({
@@ -146,13 +146,13 @@ describe('Acceptance - index', function() {
 
   it('scopes to sub dir if run from there', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/conflict',
+      fixturesPath: 'test/fixtures/local/test-project',
       subDir: 'foo/bar'
     }).then(({
       status
     }) => {
       fixtureCompare({
-        mergeFixtures: 'test/fixtures/merge/conflict'
+        mergeFixtures: 'test/fixtures/merge/test-project'
       });
 
       assertNormalUpdate(status);

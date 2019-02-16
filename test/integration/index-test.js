@@ -82,7 +82,7 @@ describe('Integration - index', function() {
       endVersion: to,
       createCustomDiff,
       customDiffOptions: {
-        projectName: 'conflict',
+        projectName: 'test-project',
         packageName: 'test-project',
         createProjectFromCache: createProject,
         createProjectFromRemote: createProject,
@@ -141,7 +141,7 @@ describe('Integration - index', function() {
 
   it('handles dirty', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/conflict',
+      fixturesPath: 'test/fixtures/local/test-project',
       dirty: true
     }).then(({
       status,
@@ -193,13 +193,13 @@ describe('Integration - index', function() {
 
   it('resets app', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/conflict',
+      fixturesPath: 'test/fixtures/local/test-project',
       reset: true
     }).then(({
       status
     }) => {
       fixtureCompare({
-        mergeFixtures: 'test/fixtures/end/conflict'
+        mergeFixtures: 'test/fixtures/end/test-project'
       });
 
       expect(status).to.match(/^ M present-added-changed\.txt$/m);
@@ -219,7 +219,7 @@ describe('Integration - index', function() {
     let opn = sandbox.stub(utils, 'opn');
 
     return merge({
-      fixturesPath: 'test/fixtures/local/conflict',
+      fixturesPath: 'test/fixtures/local/test-project',
       compareOnly: true
     }).then(({
       result,
@@ -236,7 +236,7 @@ describe('Integration - index', function() {
 
   it.skip('resolves semver ranges', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/conflict',
+      fixturesPath: 'test/fixtures/local/test-project',
       from: '< 0.0.2',
       to: '0.0.*',
       statsOnly: true
@@ -253,7 +253,7 @@ applicable codemods: commands-test-codemod`);
 
   it('shows stats only', function() {
     return merge({
-      fixturesPath: 'test/fixtures/merge/conflict',
+      fixturesPath: 'test/fixtures/merge/test-project',
       from: '0.0.2',
       statsOnly: true
     }).then(({
@@ -272,7 +272,7 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
 
   it.skip('lists codemods', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/conflict',
+      fixturesPath: 'test/fixtures/local/test-project',
       listCodemods: true
     }).then(({
       result,
@@ -286,13 +286,13 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
 
   it('can create a personal diff instead of using an output repo', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/conflict',
+      fixturesPath: 'test/fixtures/local/test-project',
       createCustomDiff: true
     }).then(({
       status
     }) => {
       fixtureCompare({
-        mergeFixtures: 'test/fixtures/merge/conflict'
+        mergeFixtures: 'test/fixtures/merge/test-project'
       });
 
       assertNoUnstaged(status);
