@@ -80,6 +80,11 @@ describe('Acceptance - index', function() {
       runCodemods,
       // listCodemods,
       codemodsUrl: 'https://raw.githubusercontent.com/kellyselden/boilerplate-update-codemod-manifest-test/master/manifest.json',
+      packageJson: {
+        dependencies: {
+          lodash: '^4.0.0'
+        }
+      },
       projectOptions: ['test-project', 'unused'],
       startVersion,
       endVersion: '0.0.2',
@@ -272,7 +277,6 @@ applicable codemods: commands-test-codemod`);
   it('shows stats only', function() {
     return merge({
       fixturesPath: 'test/fixtures/merge/test-project',
-      startVersion: '0.0.2',
       statsOnly: true
     }).then(({
       result,
@@ -281,7 +285,7 @@ applicable codemods: commands-test-codemod`);
       assertNoStaged(status);
 
       expect(result).to.equal(`project options: test-project, unused
-from version: 0.0.2
+from version: 0.0.1
 to version: 0.0.2
 output repo: https://github.com/kellyselden/boilerplate-update-output-repo-test
 applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', script-test-codemod'}`);
@@ -311,8 +315,7 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
 
     return merge({
       fixturesPath: 'test/fixtures/merge/test-project',
-      runCodemods: true,
-      startVersion: '0.0.2'
+      runCodemods: true
     }).then(({
       status
     }) => {

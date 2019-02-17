@@ -6,12 +6,12 @@ const getApplicableCodemods = require('./get-applicable-codemods');
 module.exports = function getAndPromptCodemods({
   url,
   projectOptions,
-  startVersion
+  packageJson
 }) {
   return getApplicableCodemods({
     url,
     projectOptions,
-    startVersion
+    packageJson
   }).then(codemods => {
     return utils.promptCodemods(codemods);
   });

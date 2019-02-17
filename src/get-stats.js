@@ -8,12 +8,13 @@ module.exports = function getStats({
   startVersion,
   endVersion,
   remoteUrl,
-  codemodsUrl
+  codemodsUrl,
+  packageJson
 }) {
   return getApplicableCodemods({
     url: codemodsUrl,
     projectOptions,
-    startVersion
+    packageJson
   }).then(codemods => {
     return formatStats({
       projectOptions,
