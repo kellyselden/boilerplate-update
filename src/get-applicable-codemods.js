@@ -6,7 +6,7 @@ const co = require('co');
 
 module.exports = co.wrap(function* getApplicableCodemods({
   url,
-  projectType,
+  projectOptions,
   startVersion
 }) {
   let nodeVersion = utils.getNodeVersion();
@@ -16,9 +16,9 @@ module.exports = co.wrap(function* getApplicableCodemods({
   return Object.keys(codemods).filter(codemod => {
     codemod = codemods[codemod];
     let isVersionInRange = semver.gte(startVersion, codemod.version);
-    let isCorrectProjectType = codemod.projectTypes.indexOf(projectType) !== -1;
+    let hasCorrectProjectOption = projectOptions.some(option => codemod.projectOptions.includes(option));
     let isNodeVersionInRange = semver.gte(nodeVersion, codemod.nodeVersion);
-    return isVersionInRange && isCorrectProjectType && isNodeVersionInRange;
+    return isVersionInRange && hasCorrectProjectOption && isNodeVersionInRange;
   }).reduce((applicableCodemods, codemod) => {
     applicableCodemods[codemod] = codemods[codemod];
     return applicableCodemods;

@@ -26,7 +26,7 @@ describe('Unit - getApplicableCodemods', function() {
     getCodemods.resolves({
       testCodemod: {
         version: '0.0.1',
-        projectTypes: ['testProjectType'],
+        projectOptions: ['testProjectOption'],
         nodeVersion: '4.0.0'
       }
     });
@@ -35,14 +35,14 @@ describe('Unit - getApplicableCodemods', function() {
 
     let codemods = yield getApplicableCodemods({
       url: 'testUrl',
-      projectType: 'testProjectType',
+      projectOptions: ['testProjectOption'],
       startVersion: '0.0.1'
     });
 
     expect(codemods).to.deep.equal({
       testCodemod: {
         version: '0.0.1',
-        projectTypes: ['testProjectType'],
+        projectOptions: ['testProjectOption'],
         nodeVersion: '4.0.0'
       }
     });
@@ -50,11 +50,11 @@ describe('Unit - getApplicableCodemods', function() {
     expect(getCodemods.args).to.deep.equal([['testUrl']]);
   }));
 
-  it('excludes wrong type', co.wrap(function*() {
+  it('excludes wrong option', co.wrap(function*() {
     getCodemods.resolves({
       testCodemod: {
         version: '0.0.1',
-        projectTypes: ['testProjectType2'],
+        projectOptions: ['testProjectOption2'],
         nodeVersion: '4.0.0'
       }
     });
@@ -62,7 +62,7 @@ describe('Unit - getApplicableCodemods', function() {
     getNodeVersion.returns('4.0.0');
 
     let codemods = yield getApplicableCodemods({
-      projectType: 'testProjectType1',
+      projectOptions: ['testProjectOption1'],
       startVersion: '0.0.1'
     });
 
@@ -73,7 +73,7 @@ describe('Unit - getApplicableCodemods', function() {
     getCodemods.resolves({
       testCodemod: {
         version: '0.0.2',
-        projectTypes: ['testProjectType'],
+        projectOptions: ['testProjectOption'],
         nodeVersion: '4.0.0'
       }
     });
@@ -81,7 +81,7 @@ describe('Unit - getApplicableCodemods', function() {
     getNodeVersion.returns('4.0.0');
 
     let codemods = yield getApplicableCodemods({
-      projectType: 'testProjectType',
+      projectOptions: ['testProjectOption'],
       startVersion: '0.0.1'
     });
 
@@ -92,7 +92,7 @@ describe('Unit - getApplicableCodemods', function() {
     getCodemods.resolves({
       testCodemod: {
         version: '0.0.1',
-        projectTypes: ['testProjectType'],
+        projectOptions: ['testProjectOption'],
         nodeVersion: '6.0.0'
       }
     });
@@ -100,7 +100,7 @@ describe('Unit - getApplicableCodemods', function() {
     getNodeVersion.returns('4.0.0');
 
     let codemods = yield getApplicableCodemods({
-      projectType: 'testProjectType',
+      projectOptions: ['testProjectOption'],
       startVersion: '0.0.1'
     });
 

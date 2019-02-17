@@ -18,7 +18,7 @@ module.exports = co.wrap(function* boilerplateUpdate({
   statsOnly,
   runCodemods,
   codemodsUrl,
-  projectType,
+  projectOptions,
   startVersion,
   endVersion,
   createCustomDiff,
@@ -41,7 +41,7 @@ module.exports = co.wrap(function* boilerplateUpdate({
   if (statsOnly) {
     return {
       promise: getStats({
-        projectType,
+        projectOptions,
         startVersion,
         endVersion,
         remoteUrl,
@@ -54,7 +54,7 @@ module.exports = co.wrap(function* boilerplateUpdate({
     return {
       promise: promptAndRunCodemods({
         url: codemodsUrl,
-        projectType,
+        projectOptions,
         startVersion
       })
     };

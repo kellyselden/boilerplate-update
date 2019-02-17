@@ -5,12 +5,12 @@ const runCodemods = require('./run-codemods');
 
 module.exports = function promptAndRunCodemods({
   url,
-  projectType,
+  projectOptions,
   startVersion
 }) {
   return getAndPromptCodemods({
     url,
-    projectType,
+    projectOptions,
     startVersion
   }).then(codemods => {
     return runCodemods(codemods);

@@ -80,7 +80,7 @@ describe('Acceptance - index', function() {
       runCodemods,
       // listCodemods,
       codemodsUrl: 'https://raw.githubusercontent.com/kellyselden/boilerplate-update-codemod-manifest-test/master/manifest.json',
-      projectType: 'test-project',
+      projectOptions: ['test-project', 'unused'],
       startVersion,
       endVersion: '0.0.2',
       createCustomDiff,
@@ -261,7 +261,7 @@ describe('Acceptance - index', function() {
     }).then(({
       result
     }) => {
-      expect(result).to.equal(`project type: test-project
+      expect(result).to.equal(`project options: test-project
 from version: 0.0.1
 to version: 0.0.2
 output repo: https://github.com/kellyselden/boilerplate-update-output-repo-test
@@ -280,7 +280,7 @@ applicable codemods: commands-test-codemod`);
     }) => {
       assertNoStaged(status);
 
-      expect(result).to.equal(`project type: test-project
+      expect(result).to.equal(`project options: test-project, unused
 from version: 0.0.2
 to version: 0.0.2
 output repo: https://github.com/kellyselden/boilerplate-update-output-repo-test
