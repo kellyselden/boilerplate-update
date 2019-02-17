@@ -18,6 +18,7 @@ module.exports = co.wrap(function* boilerplateUpdate({
   statsOnly,
   runCodemods,
   codemodsUrl,
+  packageJson,
   projectOptions,
   startVersion,
   endVersion,
@@ -45,7 +46,8 @@ module.exports = co.wrap(function* boilerplateUpdate({
         startVersion,
         endVersion,
         remoteUrl,
-        codemodsUrl
+        codemodsUrl,
+        packageJson
       })
     };
   }
@@ -55,7 +57,7 @@ module.exports = co.wrap(function* boilerplateUpdate({
       promise: promptAndRunCodemods({
         url: codemodsUrl,
         projectOptions,
-        startVersion
+        packageJson
       })
     };
   }

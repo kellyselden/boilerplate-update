@@ -6,12 +6,12 @@ const runCodemods = require('./run-codemods');
 module.exports = function promptAndRunCodemods({
   url,
   projectOptions,
-  startVersion
+  packageJson
 }) {
   return getAndPromptCodemods({
     url,
     projectOptions,
-    startVersion
+    packageJson
   }).then(codemods => {
     return runCodemods(codemods);
   });
