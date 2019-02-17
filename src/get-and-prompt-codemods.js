@@ -5,12 +5,12 @@ const getApplicableCodemods = require('./get-applicable-codemods');
 
 module.exports = function getAndPromptCodemods({
   url,
-  projectType,
+  projectOptions,
   startVersion
 }) {
   return getApplicableCodemods({
     url,
-    projectType,
+    projectOptions,
     startVersion
   }).then(codemods => {
     return utils.promptCodemods(codemods);

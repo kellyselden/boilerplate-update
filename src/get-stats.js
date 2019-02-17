@@ -4,7 +4,7 @@ const getApplicableCodemods = require('./get-applicable-codemods');
 const formatStats = require('./format-stats');
 
 module.exports = function getStats({
-  projectType,
+  projectOptions,
   startVersion,
   endVersion,
   remoteUrl,
@@ -12,11 +12,11 @@ module.exports = function getStats({
 }) {
   return getApplicableCodemods({
     url: codemodsUrl,
-    projectType,
+    projectOptions,
     startVersion
   }).then(codemods => {
     return formatStats({
-      projectType,
+      projectOptions,
       startVersion,
       endVersion,
       remoteUrl,

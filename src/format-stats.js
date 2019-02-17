@@ -1,14 +1,14 @@
 'use strict';
 
 module.exports = function formatStats({
-  projectType,
+  projectOptions,
   startVersion,
   endVersion,
   remoteUrl,
   codemods
 }) {
   return [
-    `project type: ${projectType}`,
+    `project options: ${projectOptions.join(', ')}`,
     `from version: ${startVersion}`,
     `to version: ${endVersion}`,
     remoteUrl ? `output repo: ${remoteUrl}` : null,
