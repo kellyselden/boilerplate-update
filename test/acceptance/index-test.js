@@ -255,7 +255,7 @@ describe('Acceptance - index', function() {
   it.skip('resolves semver ranges', function() {
     return merge({
       fixturesPath: 'test/fixtures/local/test-project',
-      startVersion: '< 0.0.2',
+      from: '< 0.0.2',
       to: '0.0.*',
       statsOnly: true
     }).then(({
