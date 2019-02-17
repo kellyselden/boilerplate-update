@@ -4,7 +4,8 @@ module.exports = {
     ecmaVersion: 2017
   },
   plugins: [
-    'node'
+    'node',
+    'json-files'
   ],
   extends: [
     'sane',
@@ -15,6 +16,9 @@ module.exports = {
     node: true
   },
   rules: {
+    'json-files/no-branch-in-dependencies': ['error', { ignore: ['eslint-plugin-prefer-let'] }],
+    'json-files/require-engines': 'error',
+    'json-files/require-license': 'error'
   },
   overrides: [
     {
