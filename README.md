@@ -7,6 +7,13 @@
 
 Update boilerplate code between versions
 
+### Developing
+
+The bulk of the code lives in:
+
+* [git-diff-apply](https://github.com/kellyselden/git-diff-apply)
+* [merge-package.json](https://github.com/kellyselden/merge-package.json)
+
 ### Testing
 
 These repos are used in the test suite:
