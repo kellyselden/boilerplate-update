@@ -50,7 +50,7 @@ describe('Acceptance - index', function() {
     compareOnly,
     statsOnly,
     runCodemods,
-    // listCodemods,
+    listCodemods,
     createCustomDiff,
     commitMessage
   }) {
@@ -72,19 +72,14 @@ describe('Acceptance - index', function() {
     }
 
     return boilerplateUpdate({
-      remoteUrl: 'https://github.com/kellyselden/boilerplate-update-output-repo-test',
+      remoteUrl: () => 'https://github.com/kellyselden/boilerplate-update-output-repo-test',
       resolveConflicts: true,
       compareOnly,
       reset,
       statsOnly,
       runCodemods,
-      // listCodemods,
+      listCodemods,
       codemodsUrl: 'https://raw.githubusercontent.com/kellyselden/boilerplate-update-codemod-manifest-test/master/manifest.json',
-      packageJson: {
-        dependencies: {
-          lodash: '^4.0.0'
-        }
-      },
       projectOptions: ['test-project', 'unused'],
       startVersion,
       endVersion: '0.0.2',
@@ -301,7 +296,7 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
     });
   });
 
-  it.skip('lists codemods', function() {
+  it('lists codemods', function() {
     return merge({
       fixturesPath: 'test/fixtures/local',
       commitMessage: 'test-project',
