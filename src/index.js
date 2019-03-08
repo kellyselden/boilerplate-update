@@ -8,26 +8,65 @@ const promptAndRunCodemods = require('./prompt-and-run-codemods');
 const getStartAndEndCommands = require('./get-start-and-end-commands');
 const getStats = require('./get-stats');
 const compareVersions = require('./compare-versions');
+const getPackageJson = require('./get-package-json');
+const _listCodemods = require('./list-codemods');
 const co = require('co');
 
-module.exports = co.wrap(function* boilerplateUpdate({
-  remoteUrl,
-  compareOnly,
-  resolveConflicts,
-  reset,
-  statsOnly,
-  runCodemods,
-  codemodsUrl,
-  packageJson,
-  projectOptions,
-  startVersion,
-  endVersion,
-  createCustomDiff,
-  customDiffOptions,
-  wasRunAsExecutable
-}) {
+let callbackOptions = {};
+
+function resolveProperty(property) {
+  if (typeof property === 'function') {
+    property = property(callbackOptions);
+  }
+  return Promise.resolve(property);
+}
+
+module.exports = co.wrap(function* boilerplateUpdate(options) {
+  let {
+    projectOptions,
+    listCodemods,
+    codemodsUrl,
+    mergeOptions = {}
+  } = options;
+
+  let packageJson = yield getPackageJson();
+
+  callbackOptions.packageJson = packageJson;
+
+  projectOptions = yield resolveProperty(projectOptions);
+
+  callbackOptions.projectOptions = projectOptions;
+
+  codemodsUrl = yield resolveProperty(codemodsUrl);
+
+  if (listCodemods) {
+    return { promise: _listCodemods(codemodsUrl) };
+  }
+
+  let {
+    remoteUrl,
+    compareOnly,
+    resolveConflicts,
+    reset,
+    statsOnly,
+    runCodemods,
+    startVersion,
+    endVersion,
+    createCustomDiff,
+    customDiffOptions,
+    wasRunAsExecutable
+  } = Object.assign({}, options, yield resolveProperty(mergeOptions));
+
+  startVersion = yield resolveProperty(startVersion);
+  endVersion = yield resolveProperty(endVersion);
+
+  callbackOptions.startVersion = startVersion;
+  callbackOptions.endVersion = endVersion;
+
   let startTag = `v${startVersion}`;
   let endTag = `v${endVersion}`;
+
+  remoteUrl = yield resolveProperty(remoteUrl);
 
   if (compareOnly) {
     compareVersions({
@@ -66,7 +105,7 @@ module.exports = co.wrap(function* boilerplateUpdate({
   let endCommand;
 
   if (createCustomDiff) {
-    let commands = yield getStartAndEndCommands(customDiffOptions);
+    let commands = yield getStartAndEndCommands(yield resolveProperty(customDiffOptions));
 
     startCommand = commands.startCommand;
     endCommand = commands.endCommand;
