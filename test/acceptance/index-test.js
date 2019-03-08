@@ -3,7 +3,9 @@
 const path = require('path');
 const { expect } = require('chai');
 const sinon = require('sinon');
+const co = require('co');
 const {
+  buildTmp,
   processIo,
   processExit,
   fixtureCompare: _fixtureCompare
@@ -11,15 +13,12 @@ const {
 const { isGitClean } = require('git-diff-apply');
 const boilerplateUpdate = require('../../src');
 const utils = require('../../src/utils');
-const buildTmp = require('../helpers/build-tmp');
 const {
   assertNormalUpdate,
   assertNoUnstaged,
   assertNoStaged,
   assertCodemodRan
 } = require('../helpers/assertions');
-
-const commitMessage = 'add files';
 
 describe('Acceptance - index', function() {
   this.timeout(30 * 1000);
@@ -42,7 +41,7 @@ describe('Acceptance - index', function() {
     process.chdir(cwd);
   });
 
-  function merge({
+  let merge = co.wrap(function* merge({
     fixturesPath,
     dirty,
     subDir,
@@ -52,9 +51,10 @@ describe('Acceptance - index', function() {
     statsOnly,
     runCodemods,
     // listCodemods,
-    createCustomDiff
+    createCustomDiff,
+    commitMessage
   }) {
-    tmpPath = buildTmp({
+    tmpPath = yield buildTmp({
       fixturesPath,
       commitMessage,
       dirty,
@@ -132,7 +132,7 @@ describe('Acceptance - index', function() {
         expect
       });
     });
-  }
+  });
 
   function fixtureCompare({
     mergeFixtures
@@ -149,7 +149,8 @@ describe('Acceptance - index', function() {
 
   it('updates app', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/test-project'
+      fixturesPath: 'test/fixtures/local',
+      commitMessage: 'test-project'
     }).then(({
       status
     }) => {
@@ -164,7 +165,8 @@ describe('Acceptance - index', function() {
 
   it('handles dirty', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/test-project',
+      fixturesPath: 'test/fixtures/local',
+      commitMessage: 'test-project',
       dirty: true
     }).then(({
       status,
@@ -180,7 +182,8 @@ describe('Acceptance - index', function() {
 
   it.skip('handles non-ember-cli app', function() {
     return merge({
-      fixturesPath: 'test/fixtures/package-json/non-ember-cli'
+      fixturesPath: 'test/fixtures/package-json/non-ember-cli',
+      commitMessage: 'test-project'
     }).then(({
       stderr
     }) => {
@@ -192,7 +195,8 @@ describe('Acceptance - index', function() {
 
   it.skip('handles non-npm dir', function() {
     return merge({
-      fixturesPath: 'test/fixtures/package-json/missing'
+      fixturesPath: 'test/fixtures/package-json/missing',
+      commitMessage: 'test-project'
     }).then(({
       stderr
     }) => {
@@ -204,7 +208,8 @@ describe('Acceptance - index', function() {
 
   it.skip('handles malformed package.json', function() {
     return merge({
-      fixturesPath: 'test/fixtures/package-json/malformed'
+      fixturesPath: 'test/fixtures/package-json/malformed',
+      commitMessage: 'test-project'
     }).then(({
       stderr
     }) => {
@@ -216,7 +221,8 @@ describe('Acceptance - index', function() {
 
   it('resets app', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/test-project',
+      fixturesPath: 'test/fixtures/local',
+      commitMessage: 'test-project',
       reset: true
     }).then(({
       status
@@ -242,7 +248,8 @@ describe('Acceptance - index', function() {
     let opn = sandbox.stub(utils, 'opn');
 
     return merge({
-      fixturesPath: 'test/fixtures/local/test-project',
+      fixturesPath: 'test/fixtures/local',
+      commitMessage: 'test-project',
       compareOnly: true
     }).then(({
       result,
@@ -259,7 +266,8 @@ describe('Acceptance - index', function() {
 
   it.skip('resolves semver ranges', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/test-project',
+      fixturesPath: 'test/fixtures/local',
+      commitMessage: 'test-project',
       from: '< 0.0.2',
       to: '0.0.*',
       statsOnly: true
@@ -276,7 +284,8 @@ applicable codemods: commands-test-codemod`);
 
   it('shows stats only', function() {
     return merge({
-      fixturesPath: 'test/fixtures/merge/test-project',
+      fixturesPath: 'test/fixtures/merge',
+      commitMessage: 'test-project',
       statsOnly: true
     }).then(({
       result,
@@ -294,7 +303,8 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
 
   it.skip('lists codemods', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/test-project',
+      fixturesPath: 'test/fixtures/local',
+      commitMessage: 'test-project',
       listCodemods: true
     }).then(({
       result,
@@ -314,7 +324,8 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
     sandbox.stub(utils, 'promptCodemods').callsFake(selectAllCodemods);
 
     return merge({
-      fixturesPath: 'test/fixtures/merge/test-project',
+      fixturesPath: 'test/fixtures/merge',
+      commitMessage: 'test-project',
       runCodemods: true
     }).then(({
       status
@@ -335,7 +346,8 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
 
   it('scopes to sub dir if run from there', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/test-project',
+      fixturesPath: 'test/fixtures/local',
+      commitMessage: 'test-project',
       subDir: 'foo/bar'
     }).then(({
       status
@@ -351,7 +363,8 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
 
   it('can create a personal diff instead of using an output repo', function() {
     return merge({
-      fixturesPath: 'test/fixtures/local/test-project',
+      fixturesPath: 'test/fixtures/local',
+      commitMessage: 'test-project',
       createCustomDiff: true
     }).then(({
       status
