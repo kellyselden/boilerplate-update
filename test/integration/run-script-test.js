@@ -1,10 +1,11 @@
 'use strict';
 
+const { describe, it } = require('../helpers/mocha');
 const { expect } = require('chai');
 const co = require('co');
 const runScript = require('../../src/run-script');
 
-describe('Integration - runScript', function() {
+describe(runScript, function() {
   it('runs script', co.wrap(function*() {
     let script = '3 + 4';
 

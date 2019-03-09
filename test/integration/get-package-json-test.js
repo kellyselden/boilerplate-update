@@ -1,5 +1,6 @@
 'use strict';
 
+const { describe, it } = require('../helpers/mocha');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const co = require('co');
@@ -8,7 +9,7 @@ const getPackageJson = require('../../src/get-package-json');
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-describe('Integration - getPackageJson', function() {
+describe(getPackageJson, function() {
   let cwd;
 
   beforeEach(function() {
