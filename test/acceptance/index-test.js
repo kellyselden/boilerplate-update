@@ -45,6 +45,7 @@ describe('Acceptance - index', function() {
     fixturesPath,
     dirty,
     subDir,
+    projectOptions = ['test-project', 'unused'],
     startVersion = '0.0.1',
     reset,
     compareOnly,
@@ -80,7 +81,7 @@ describe('Acceptance - index', function() {
       runCodemods,
       listCodemods,
       codemodsUrl: 'https://raw.githubusercontent.com/kellyselden/boilerplate-update-codemod-manifest-test/master/manifest.json',
-      projectOptions: ['test-project', 'unused'],
+      projectOptions,
       startVersion,
       endVersion: '0.0.2',
       createCustomDiff,
@@ -175,20 +176,23 @@ describe('Acceptance - index', function() {
     });
   });
 
-  it.skip('handles non-ember-cli app', function() {
+  it('handles can\'t determine project', function() {
     return merge({
-      fixturesPath: 'test/fixtures/package-json/non-ember-cli',
-      commitMessage: 'test-project'
+      fixturesPath: 'test/fixtures/local',
+      commitMessage: 'test-project',
+      projectOptions() {
+        throw 'can\'t determine project';
+      }
     }).then(({
       stderr
     }) => {
       expect(isGitClean({ cwd: tmpPath })).to.be.ok;
 
-      expect(stderr).to.contain('Ember CLI project type could not be determined');
+      expect(stderr).to.contain('can\'t determine project');
     });
   });
 
-  it.skip('handles non-npm dir', function() {
+  it('handles non-npm dir', function() {
     return merge({
       fixturesPath: 'test/fixtures/package-json/missing',
       commitMessage: 'test-project'
@@ -201,7 +205,7 @@ describe('Acceptance - index', function() {
     });
   });
 
-  it.skip('handles malformed package.json', function() {
+  it('handles malformed package.json', function() {
     return merge({
       fixturesPath: 'test/fixtures/package-json/malformed',
       commitMessage: 'test-project'
@@ -256,24 +260,6 @@ describe('Acceptance - index', function() {
 
       expect(opn.calledOnce).to.be.ok;
       expect(opn.args[0][0]).to.equal('https://github.com/kellyselden/boilerplate-update-output-repo-test/compare/v0.0.1...v0.0.2');
-    });
-  });
-
-  it.skip('resolves semver ranges', function() {
-    return merge({
-      fixturesPath: 'test/fixtures/local',
-      commitMessage: 'test-project',
-      from: '< 0.0.2',
-      to: '0.0.*',
-      statsOnly: true
-    }).then(({
-      result
-    }) => {
-      expect(result).to.equal(`project options: test-project
-from version: 0.0.1
-to version: 0.0.2
-output repo: https://github.com/kellyselden/boilerplate-update-output-repo-test
-applicable codemods: commands-test-codemod`);
     });
   });
 
