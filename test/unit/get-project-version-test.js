@@ -1,9 +1,10 @@
 'use strict';
 
+const { describe, it } = require('../helpers/mocha');
 const { expect } = require('chai');
 const getProjectVersion = require('../../src/get-project-version');
 
-describe('Unit - getProjectVersion', function() {
+describe(getProjectVersion, function() {
   it('works', function() {
     expect(getProjectVersion(
       '2.11.1',

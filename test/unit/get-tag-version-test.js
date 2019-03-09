@@ -1,12 +1,13 @@
 'use strict';
 
+const { describe, it } = require('../helpers/mocha');
 const { expect } = require('chai');
 const getTagVersion = require('../../src/get-tag-version');
 const sinon = require('sinon');
 const co = require('co');
 const npm = require('../../src/npm');
 
-describe('Unit - getTagVersion', function() {
+describe(getTagVersion, function() {
   let sandbox;
   let npmJsonStub;
 

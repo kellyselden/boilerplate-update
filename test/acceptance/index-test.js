@@ -1,7 +1,8 @@
 'use strict';
 
-const path = require('path');
+const { describe, it } = require('../helpers/mocha');
 const { expect } = require('chai');
+const path = require('path');
 const sinon = require('sinon');
 const co = require('co');
 const {
@@ -20,7 +21,7 @@ const {
   assertCodemodRan
 } = require('../helpers/assertions');
 
-describe('Acceptance - index', function() {
+describe(function() {
   this.timeout(30 * 1000);
 
   let cwd;
