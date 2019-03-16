@@ -25,7 +25,7 @@
     "debug": "^4.1.1",
     "denodeify": "^1.2.1",
     "execa": "^1.0.0",
-    "git-diff-apply": "^0.14.1",
+    "git-diff-apply": "^0.14.2",
     "inquirer": "^6.2.2",
     "merge-package.json": "^2.0.2",
     "npx": "^10.2.0",
