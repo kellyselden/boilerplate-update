@@ -1,13 +1,9 @@
 'use strict';
 
 const { describe, it } = require('../helpers/mocha');
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
+const { expect } = require('../helpers/chai');
 const co = require('co');
 const getPackageJson = require('../../src/get-package-json');
-
-chai.use(chaiAsPromised);
-const { expect } = chai;
 
 describe(getPackageJson, function() {
   let cwd;
