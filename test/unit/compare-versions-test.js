@@ -1,7 +1,7 @@
 'use strict';
 
 const { describe, it } = require('../helpers/mocha');
-const { expect } = require('chai');
+const { expect } = require('../helpers/chai');
 const sinon = require('sinon');
 const compareVersions = require('../../src/compare-versions');
 const utils = require('../../src/utils');
