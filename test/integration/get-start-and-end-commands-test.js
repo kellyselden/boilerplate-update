@@ -328,8 +328,8 @@ describe(_getStartAndEndCommands, function() {
 
     yield Promise.all([
       fs.mkdir(path.join(tmpPath, '.git')),
-      fs.writeFile(path.join(tmpPath, 'package-lock.json'), ''),
-      fs.writeFile(path.join(tmpPath, 'yarn.lock'), '')
+      fs.ensureFile(path.join(tmpPath, 'package-lock.json')),
+      fs.ensureFile(path.join(tmpPath, 'yarn.lock'))
     ]);
 
     yield getStartAndEndCommands();
