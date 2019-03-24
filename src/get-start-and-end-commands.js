@@ -1,8 +1,8 @@
 'use strict';
 
-const fs = require('fs');
 const path = require('path');
 const utils = require('./utils');
+const co = require('co');
 const denodeify = require('denodeify');
 const tmpDir = denodeify(require('tmp').dir);
 const rimraf = denodeify(require('rimraf'));
@@ -10,84 +10,84 @@ const cpr = path.resolve(path.dirname(require.resolve('cpr')), '../bin/cpr');
 const replaceFile = require('./replace-file');
 
 function mutatePackageJson(cwd, callback) {
-  return replaceFile(path.join(cwd, 'package.json'), file => {
+  return replaceFile(path.join(cwd, 'package.json'), co.wrap(function*(file) {
     let pkg = JSON.parse(file);
-    return callback(pkg).then(() => {
-      return JSON.stringify(pkg, null, 2);
-    });
-  });
+    yield callback(pkg);
+    return JSON.stringify(pkg, null, 2);
+  }));
 }
 
-module.exports = function getStartAndEndCommands(options) {
+module.exports = co.wrap(function* getStartAndEndCommands(options) {
   function prepareCommand(key) {
     let _options = Object.assign({}, options, options[key]);
     delete _options[key];
     return module.exports.prepareCommand(_options);
   }
 
-  return Promise.all([
+  let [
+    startCommand,
+    endCommand
+  ] = yield Promise.all([
     prepareCommand('startOptions'),
     prepareCommand('endOptions')
-  ]).then(([
-    startCommand,
-    endCommand
-  ]) => ({
-    startCommand,
-    endCommand
-  }));
-};
+  ]);
 
-function _prepareCommand({
+  return {
+    startCommand,
+    endCommand
+  };
+});
+
+const _prepareCommand = co.wrap(function* _prepareCommand({
   createProject,
   options
 }) {
-  return tmpDir().then(cwd => {
-    return createProject(cwd);
-  }).then(appPath => {
-    return Promise.resolve().then(() => {
-      if (options.mutatePackageJson) {
-        return mutatePackageJson(appPath, options.mutatePackageJson(options));
-      }
-    }).then(() => {
-      return Promise.all([
-        rimraf(path.join(appPath, '.git')),
-        rimraf(path.join(appPath, 'node_modules')),
-        rimraf(path.join(appPath, 'package-lock.json')),
-        rimraf(path.join(appPath, 'yarn.lock'))
-      ]);
-    }).then(() => {
-      return `node ${cpr} ${appPath} .`;
-    });
-  });
-}
+  let cwd = yield tmpDir();
 
-function tryPrepareCommandUsingCache({
+  let appPath = yield createProject(cwd);
+
+  if (options.mutatePackageJson) {
+    yield mutatePackageJson(appPath, options.mutatePackageJson(options));
+  }
+
+  yield Promise.all([
+    rimraf(path.join(appPath, '.git')),
+    rimraf(path.join(appPath, 'node_modules')),
+    rimraf(path.join(appPath, 'package-lock.json')),
+    rimraf(path.join(appPath, 'yarn.lock'))
+  ]);
+
+  return `node ${cpr} ${appPath} .`;
+});
+
+const tryPrepareCommandUsingCache = co.wrap(function* tryPrepareCommandUsingCache({
   basedir,
   options
 }) {
-  return Promise.resolve().then(() => {
-    // can't use resolve here because there is no "main" in package.json
-    let packageRoot = path.join(basedir, 'node_modules', options.packageName);
-    try {
-      fs.statSync(packageRoot);
-    } catch (err) {
+  // can't use resolve here because there is no "main" in package.json
+  let packageRoot = path.join(basedir, 'node_modules', options.packageName);
+  try {
+    yield utils.stat(packageRoot);
+  } catch (err) {
+    if (err.code === 'ENOENT') {
       // no node_modules
       return;
     }
-    let packageVersion = utils.require(path.join(packageRoot, 'package.json')).version;
-    if (packageVersion !== options.packageVersion) {
-      // installed version is out-of-date
-      return;
-    }
-    return _prepareCommand({
-      createProject: options.createProjectFromCache({
-        packageRoot,
-        options
-      }),
+    throw err;
+  }
+  let packageVersion = utils.require(path.join(packageRoot, 'package.json')).version;
+  if (packageVersion !== options.packageVersion) {
+    // installed version is out-of-date
+    return;
+  }
+  return yield _prepareCommand({
+    createProject: options.createProjectFromCache({
+      packageRoot,
       options
-    });
+    }),
+    options
   });
-}
+});
 
 module.exports.prepareCommandUsingRemote = function prepareCommandUsingRemote(options) {
   return _prepareCommand({
@@ -105,32 +105,34 @@ function tryPrepareCommandUsingLocal(options) {
   });
 }
 
-function tryPrepareCommandUsingGlobal(options) {
+const tryPrepareCommandUsingGlobal = co.wrap(function* tryPrepareCommandUsingGlobal(options) {
   let command = options.commandName || options.packageName;
-  return utils.which(command).then(packagePath => {
-    return tryPrepareCommandUsingCache({
-      basedir: path.resolve(path.dirname(packagePath), '../lib'),
-      options
-    });
-  }).catch(err => {
+
+  let packagePath;
+  try {
+    packagePath = yield utils.which(command);
+  } catch (err) {
     if (err.message === `not found: ${command}`) {
       // not installed globally
       return;
     }
     throw err;
-  });
-}
+  }
 
-module.exports.prepareCommand = function prepareCommand(options) {
-  return tryPrepareCommandUsingLocal(options).then(command => {
-    if (command) {
-      return command;
-    }
-    return tryPrepareCommandUsingGlobal(options);
-  }).then(command => {
-    if (command) {
-      return command;
-    }
-    return module.exports.prepareCommandUsingRemote(options);
+  return tryPrepareCommandUsingCache({
+    basedir: path.resolve(path.dirname(packagePath), '../lib'),
+    options
   });
-};
+});
+
+module.exports.prepareCommand = co.wrap(function* prepareCommand(options) {
+  let command = yield tryPrepareCommandUsingLocal(options);
+  if (command) {
+    return command;
+  }
+  command = yield tryPrepareCommandUsingGlobal(options);
+  if (command) {
+    return command;
+  }
+  return yield module.exports.prepareCommandUsingRemote(options);
+});

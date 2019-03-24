@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const denodeify = require('denodeify');
 
 module.exports.run = require('./run');
@@ -12,6 +13,7 @@ module.exports.opn = require('opn');
 module.exports.runCodemod = require('./run-codemod');
 // module.exports.resolve = denodeify(require('resolve'));
 module.exports.require = require;
+module.exports.stat = denodeify(fs.stat);
 module.exports.which = denodeify(require('which'));
 module.exports.runScript = require('./run-script');
 module.exports.promptCodemods = require('./prompt-codemods');
