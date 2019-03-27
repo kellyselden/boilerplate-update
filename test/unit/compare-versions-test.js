@@ -8,12 +8,12 @@ const utils = require('../../src/utils');
 
 describe(compareVersions, function() {
   let sandbox;
-  let opn;
+  let open;
 
   beforeEach(function() {
     sandbox = sinon.createSandbox();
 
-    opn = sandbox.stub(utils, 'opn');
+    open = sandbox.stub(utils, 'open');
   });
 
   afterEach(function() {
@@ -27,7 +27,7 @@ describe(compareVersions, function() {
       endTag: 'v3.0.2'
     });
 
-    expect(opn.calledOnce).to.be.ok;
-    expect(opn.args[0][0]).to.equal('test-url/compare/v2.18.2...v3.0.2');
+    expect(open.calledOnce).to.be.ok;
+    expect(open.args[0][0]).to.equal('test-url/compare/v2.18.2...v3.0.2');
   });
 });

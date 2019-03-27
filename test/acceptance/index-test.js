@@ -247,7 +247,7 @@ describe(function() {
   });
 
   it('opens compare url', function() {
-    let opn = sandbox.stub(utils, 'opn');
+    let open = sandbox.stub(utils, 'open');
 
     return merge({
       fixturesPath: 'test/fixtures/local',
@@ -261,8 +261,8 @@ describe(function() {
 
       expect(result, 'don\'t accidentally print anything to the console').to.be.undefined;
 
-      expect(opn.calledOnce).to.be.ok;
-      expect(opn.args[0][0]).to.equal('https://github.com/kellyselden/boilerplate-update-output-repo-test/compare/v0.0.1...v0.0.2');
+      expect(open.calledOnce).to.be.ok;
+      expect(open.args[0][0]).to.equal('https://github.com/kellyselden/boilerplate-update-output-repo-test/compare/v0.0.1...v0.0.2');
     });
   });
 
