@@ -12,7 +12,7 @@ module.exports = function compareVersions({
   // even though this returns a promise, we don't want to use
   // it because it blocks the process
   // we want to open the browser and exit
-  utils.opn(compareUrl, {
+  utils.open(compareUrl, {
     // this means it no longer returns a promise
     wait: false
   });
