@@ -54,6 +54,7 @@ module.exports = co.wrap(function* boilerplateUpdate(options) {
     endVersion,
     createCustomDiff,
     customDiffOptions,
+    ignoredFiles = [],
     wasRunAsExecutable
   } = Object.assign({}, options, yield resolveProperty(mergeOptions));
 
@@ -111,11 +112,8 @@ module.exports = co.wrap(function* boilerplateUpdate(options) {
     endCommand = commands.endCommand;
   }
 
-  let ignoredFiles;
   if (!reset) {
-    ignoredFiles = ['package.json'];
-  } else {
-    ignoredFiles = [];
+    ignoredFiles.push('package.json');
   }
 
   let {

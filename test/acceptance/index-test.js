@@ -54,6 +54,7 @@ describe(function() {
     runCodemods,
     listCodemods,
     createCustomDiff,
+    ignoredFiles,
     commitMessage
   }) {
     tmpPath = yield buildTmp({
@@ -97,7 +98,8 @@ describe(function() {
         endOptions: {
           fixturesPath: 'test/fixtures/end'
         }
-      }
+      },
+      ignoredFiles
     }).then(({
       promise: boilerplateUpdatePromise,
       resolveConflictsProcess
@@ -354,6 +356,20 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
       fixtureCompare({
         mergeFixtures: 'test/fixtures/merge/test-project'
       });
+
+      assertNoUnstaged(status);
+    });
+  });
+
+  it('can ignore extra files', function() {
+    return merge({
+      fixturesPath: 'test/fixtures/local',
+      commitMessage: 'test-project',
+      ignoredFiles: ['present-changed.txt']
+    }).then(({
+      status
+    }) => {
+      expect(status).to.not.contain('present-changed.txt');
 
       assertNoUnstaged(status);
     });
