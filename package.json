@@ -17,7 +17,7 @@
   "author": "Kelly Selden",
   "license": "MIT",
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "dependencies": {
     "co": "^4.6.0",
