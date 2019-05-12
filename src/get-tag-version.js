@@ -3,24 +3,22 @@
 const npm = require('./npm');
 const semver = require('semver');
 
-module.exports = function getTagVersion({
+module.exports = async function getTagVersion({
   range,
   versions,
   distTags = [],
   packageName
 }) {
-  return Promise.resolve().then(() => {
-    if (distTags.indexOf(range) > -1) {
-      let distTag = range;
-      return npm.json(`view ${packageName}@${distTag} version`);
-    }
+  if (distTags.indexOf(range) > -1) {
+    let distTag = range;
+    return await npm.json(`view ${packageName}@${distTag} version`);
+  }
 
-    let isAbsolute = !!semver.clean(range);
-    if (!isAbsolute) {
-      return semver.maxSatisfying(versions, range);
-    }
+  let isAbsolute = !!semver.clean(range);
+  if (!isAbsolute) {
+    return semver.maxSatisfying(versions, range);
+  }
 
-    let version = range;
-    return version;
-  });
+  let version = range;
+  return version;
 };

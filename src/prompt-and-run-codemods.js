@@ -3,16 +3,16 @@
 const getAndPromptCodemods = require('./get-and-prompt-codemods');
 const runCodemods = require('./run-codemods');
 
-module.exports = function promptAndRunCodemods({
+module.exports = async function promptAndRunCodemods({
   url,
   projectOptions,
   packageJson
 }) {
-  return getAndPromptCodemods({
+  let codemods = await getAndPromptCodemods({
     url,
     projectOptions,
     packageJson
-  }).then(codemods => {
-    return runCodemods(codemods);
   });
+
+  await runCodemods(codemods);
 };

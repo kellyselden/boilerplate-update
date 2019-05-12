@@ -5,8 +5,8 @@ const { promisify } = require('util');
 const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 
-module.exports = function replaceFile(path, callback) {
-  return readFile(path, 'utf8').then(callback).then(contents => {
-    return writeFile(path, contents);
-  });
+module.exports = async function replaceFile(path, callback) {
+  let contents = await readFile(path, 'utf8');
+  contents = await callback(contents);
+  await writeFile(path, contents);
 };

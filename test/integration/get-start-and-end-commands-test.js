@@ -3,7 +3,6 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('chai');
 const path = require('path');
-const co = require('co');
 const sinon = require('sinon');
 const fs = require('fs-extra');
 const Project = require('fixturify-project');
@@ -47,13 +46,13 @@ describe(_getStartAndEndCommands, function() {
     process.chdir(cwd);
   });
 
-  let createProject = co.wrap(function*({
+  let createProject = async function({
     tmpPath,
     projectName = 'test-project',
     addDependency = true
   } = {}) {
     if (!tmpPath) {
-      tmpPath = yield tmpDir();
+      tmpPath = await tmpDir();
     }
 
     let project = new Project(projectName, '1.2.3');
@@ -65,33 +64,33 @@ describe(_getStartAndEndCommands, function() {
     project.writeSync(tmpPath);
 
     return path.join(tmpPath, projectName);
-  });
+  };
 
-  let setUpLocalScenario = co.wrap(function*() {
-    tmpPath = yield createProject();
+  let setUpLocalScenario = async function() {
+    tmpPath = await createProject();
 
     process.chdir(tmpPath);
-  });
+  };
 
-  let setUpGlobalScenario = co.wrap(function*() {
-    tmpPath = yield createProject({
+  let setUpGlobalScenario = async function() {
+    tmpPath = await createProject({
       addDependency: false
     });
 
-    let globalPath = yield createProject({
+    let globalPath = await createProject({
       projectName: 'lib'
     });
 
     whichStub = sandbox.stub(utils, 'which').resolves(path.resolve(globalPath, '../fake/fake'));
 
     return globalPath;
-  });
+  };
 
-  let setUpRemoteScenario = co.wrap(function*() {
-    tmpPath = yield createProject({
+  let setUpRemoteScenario = async function() {
+    tmpPath = await createProject({
       addDependency: false
     });
-  });
+  };
 
   function getStartAndEndCommands(options) {
     // ensure order for assertions
@@ -100,15 +99,15 @@ describe(_getStartAndEndCommands, function() {
       resolve = _resolve;
     });
 
-    let callback2 = co.wrap(function*(cwd) {
-      let tmpPath = yield createProject({
+    let callback2 = async function(cwd) {
+      let tmpPath = await createProject({
         tmpPath: cwd
       });
 
       resolve();
 
-      return Promise.resolve(tmpPath);
-    });
+      return tmpPath;
+    };
 
     function callback1(stub2) {
       return function({
@@ -116,8 +115,8 @@ describe(_getStartAndEndCommands, function() {
           key
         }
       }) {
-        return co.wrap(function*() {
-          let tmpPath = yield stub2(...arguments);
+        return async function() {
+          let tmpPath = await stub2(...arguments);
 
           if (key === 'start') {
             startPath = tmpPath;
@@ -126,7 +125,7 @@ describe(_getStartAndEndCommands, function() {
           }
 
           return tmpPath;
-        });
+        };
       };
     }
 
@@ -135,14 +134,14 @@ describe(_getStartAndEndCommands, function() {
     remoteStub2 = sandbox.stub().callsFake(callback2);
     remoteStub1 = sandbox.stub().callsFake(callback1(remoteStub2));
 
-    sandbox.stub(_getStartAndEndCommands, 'prepareCommand').callsFake(co.wrap(function*({
+    sandbox.stub(_getStartAndEndCommands, 'prepareCommand').callsFake(async function({
       key
     }) {
       if (key === 'end') {
-        yield promise;
+        await promise;
       }
-      return yield prepareCommand(...arguments);
-    }));
+      return await prepareCommand(...arguments);
+    });
 
     return _getStartAndEndCommands(Object.assign({
       projectName: 'test-project',
@@ -160,12 +159,12 @@ describe(_getStartAndEndCommands, function() {
     }, options));
   }
 
-  it('finds local package', co.wrap(function*() {
-    yield setUpLocalScenario();
+  it('finds local package', async function() {
+    await setUpLocalScenario();
 
     let statSpy = sandbox.spy(utils, 'stat');
 
-    let commands = yield getStartAndEndCommands();
+    let commands = await getStartAndEndCommands();
 
     expect(commands).to.deep.equal({
       startCommand: `node ${cpr} ${startPath} .`,
@@ -189,12 +188,12 @@ describe(_getStartAndEndCommands, function() {
       [path.join(process.cwd(), 'node_modules/test-package')],
       [path.join(process.cwd(), 'node_modules/test-package')]
     ]);
-  }));
+  });
 
-  it('misses local package if version mismatch', co.wrap(function*() {
-    yield setUpLocalScenario();
+  it('misses local package if version mismatch', async function() {
+    await setUpLocalScenario();
 
-    yield getStartAndEndCommands({
+    await getStartAndEndCommands({
       packageVersion: '4.5.7'
     });
 
@@ -202,24 +201,24 @@ describe(_getStartAndEndCommands, function() {
     expect(cacheStub2.callCount).to.equal(0);
     expect(remoteStub1.callCount).to.equal(2);
     expect(remoteStub2.callCount).to.equal(2);
-  }));
+  });
 
-  it('throws if local `stat` throws unexpectedly', co.wrap(function*() {
-    yield setUpLocalScenario();
+  it('throws if local `stat` throws unexpectedly', async function() {
+    await setUpLocalScenario();
 
     sandbox.stub(utils, 'stat')
       .withArgs(path.join(process.cwd(), 'node_modules/test-package'))
       .rejects(new Error('test stat error'));
 
-    yield expect(getStartAndEndCommands()).to.be.rejectedWith('test stat error');
-  }));
+    await expect(getStartAndEndCommands()).to.be.rejectedWith('test stat error');
+  });
 
-  it('finds global package', co.wrap(function*() {
-    let globalPath = yield setUpGlobalScenario();
+  it('finds global package', async function() {
+    let globalPath = await setUpGlobalScenario();
 
     let statSpy = sandbox.spy(utils, 'stat');
 
-    let commands = yield getStartAndEndCommands();
+    let commands = await getStartAndEndCommands();
 
     expect(commands).to.deep.equal({
       startCommand: `node ${cpr} ${startPath} .`,
@@ -249,12 +248,12 @@ describe(_getStartAndEndCommands, function() {
       ['test-package'],
       ['test-package']
     ]);
-  }));
+  });
 
-  it('misses global package if version mismatch', co.wrap(function*() {
-    yield setUpGlobalScenario();
+  it('misses global package if version mismatch', async function() {
+    await setUpGlobalScenario();
 
-    yield getStartAndEndCommands({
+    await getStartAndEndCommands({
       packageVersion: '4.5.7'
     });
 
@@ -262,10 +261,10 @@ describe(_getStartAndEndCommands, function() {
     expect(cacheStub2.callCount).to.equal(0);
     expect(remoteStub1.callCount).to.equal(2);
     expect(remoteStub2.callCount).to.equal(2);
-  }));
+  });
 
-  it('throws if global `stat` throws unexpectedly', co.wrap(function*() {
-    let globalPath = yield setUpGlobalScenario();
+  it('throws if global `stat` throws unexpectedly', async function() {
+    let globalPath = await setUpGlobalScenario();
 
     let { stat } = utils;
 
@@ -274,23 +273,23 @@ describe(_getStartAndEndCommands, function() {
       .withArgs(path.join(globalPath, 'node_modules/test-package'))
       .rejects(new Error('test stat error'));
 
-    yield expect(getStartAndEndCommands()).to.be.rejectedWith('test stat error');
-  }));
+    await expect(getStartAndEndCommands()).to.be.rejectedWith('test stat error');
+  });
 
-  it('throws if `which` throws unexpectedly', co.wrap(function*() {
-    yield setUpGlobalScenario();
+  it('throws if `which` throws unexpectedly', async function() {
+    await setUpGlobalScenario();
 
     whichStub.rejects(new Error('test which error'));
 
-    yield expect(getStartAndEndCommands({
+    await expect(getStartAndEndCommands({
       packageVersion: '4.5.7'
     })).to.be.rejectedWith('test which error');
-  }));
+  });
 
-  it('calls remote package', co.wrap(function*() {
-    yield setUpRemoteScenario();
+  it('calls remote package', async function() {
+    await setUpRemoteScenario();
 
-    let commands = yield getStartAndEndCommands();
+    let commands = await getStartAndEndCommands();
 
     expect(commands).to.deep.equal({
       startCommand: `node ${cpr} ${startPath} .`,
@@ -307,32 +306,31 @@ describe(_getStartAndEndCommands, function() {
 
     expect(remoteStub2.args[0][0]).to.equal(path.resolve(startPath, '..')).and.to.be.a.directory();
     expect(remoteStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
-  }));
+  });
 
-  it('mutates package.json', co.wrap(function*() {
-    tmpPath = yield createProject();
+  it('mutates package.json', async function() {
+    tmpPath = await createProject();
 
-    mutateStub2.callsFake(json => {
+    mutateStub2.callsFake(async json => {
       json.fakeProperty = true;
-      return Promise.resolve();
     });
 
-    yield getStartAndEndCommands();
+    await getStartAndEndCommands();
 
     expect(path.join(startPath, 'package.json')).to.be.a.file().with.contents.that.match(/"fakeProperty": true/);
     expect(path.join(endPath, 'package.json')).to.be.a.file().with.contents.that.match(/"fakeProperty": true/);
-  }));
+  });
 
-  it('removes files before checking in', co.wrap(function*() {
-    yield setUpLocalScenario();
+  it('removes files before checking in', async function() {
+    await setUpLocalScenario();
 
-    yield Promise.all([
+    await Promise.all([
       fs.mkdir(path.join(tmpPath, '.git')),
       fs.ensureFile(path.join(tmpPath, 'package-lock.json')),
       fs.ensureFile(path.join(tmpPath, 'yarn.lock'))
     ]);
 
-    yield getStartAndEndCommands();
+    await getStartAndEndCommands();
 
     expect(path.join(startPath, '.git')).to.not.be.a.path();
     expect(path.join(startPath, 'node_modules')).to.not.be.a.path();
@@ -342,5 +340,5 @@ describe(_getStartAndEndCommands, function() {
     expect(path.join(endPath, 'node_modules')).to.not.be.a.path();
     expect(path.join(endPath, 'package-lock.json')).to.not.be.a.path();
     expect(path.join(endPath, 'yarn.lock')).to.not.be.a.path();
-  }));
+  });
 });

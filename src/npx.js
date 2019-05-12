@@ -4,9 +4,9 @@ const path = require('path');
 const execa = require('execa');
 const debug = require('debug')('boilerplate-update');
 
-module.exports = function npx(command, options = {}) {
+module.exports = async function npx(command, options = {}) {
   debug(`npx ${command}`);
-  return execa('npx', command.split(' '), Object.assign({}, {
+  await execa('npx', command.split(' '), Object.assign({}, {
     localDir: path.join(__dirname, '..'),
     stdio: 'inherit'
   }, options));

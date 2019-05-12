@@ -2,8 +2,8 @@
 
 const getCodemods = require('./get-codemods');
 
-module.exports = function listCodemods(url) {
-  return getCodemods(url).then(codemods => {
-    return JSON.stringify(codemods, null, 2);
-  });
+module.exports = async function listCodemods(url) {
+  let codemods = await getCodemods(url);
+
+  return JSON.stringify(codemods, null, 2);
 };

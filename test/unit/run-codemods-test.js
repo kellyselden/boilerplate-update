@@ -3,7 +3,6 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const sinon = require('sinon');
-const co = require('co');
 const utils = require('../../src/utils');
 const runCodemods = require('../../src/run-codemods');
 
@@ -23,8 +22,8 @@ describe(runCodemods, function() {
     sandbox.restore();
   });
 
-  it('works', co.wrap(function*() {
-    yield runCodemods({
+  it('works', async function() {
+    await runCodemods({
       testCodemod: {
         commands: [
           'test command'
@@ -39,9 +38,9 @@ describe(runCodemods, function() {
     }]]);
 
     expect(run.calledOnce, 'stages files').to.be.ok;
-  }));
+  });
 
-  it('runs multiple commands sequentially', co.wrap(function*() {
+  it('runs multiple commands sequentially', async function() {
     let testCodemod1 = {
       commands: [
         'test command 1'
@@ -53,14 +52,14 @@ describe(runCodemods, function() {
       ]
     };
 
-    let runCodemod1 = runCodemod.withArgs(testCodemod1).callsFake(co.wrap(() => {
+    let runCodemod1 = runCodemod.withArgs(testCodemod1).callsFake(async() => {
       expect(runCodemod2.args).to.deep.equal([]);
-    }));
-    let runCodemod2 = runCodemod.withArgs(testCodemod2).callsFake(co.wrap(() => {
+    });
+    let runCodemod2 = runCodemod.withArgs(testCodemod2).callsFake(async() => {
       expect(runCodemod1.args).to.deep.equal([[testCodemod1]]);
-    }));
+    });
 
-    yield runCodemods({
+    await runCodemods({
       testCodemod1,
       testCodemod2
     });
@@ -69,5 +68,5 @@ describe(runCodemods, function() {
       [testCodemod1],
       [testCodemod2]
     ]);
-  }));
+  });
 });

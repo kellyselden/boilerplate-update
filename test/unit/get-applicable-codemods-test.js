@@ -3,7 +3,6 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const sinon = require('sinon');
-const co = require('co');
 const utils = require('../../src/utils');
 const getApplicableCodemods = require('../../src/get-applicable-codemods');
 
@@ -25,7 +24,7 @@ describe(getApplicableCodemods, function() {
     sandbox.restore();
   });
 
-  it('works', co.wrap(function*() {
+  it('works', async function() {
     getCodemods.resolves({
       testCodemod: {
         versions: {
@@ -38,7 +37,7 @@ describe(getApplicableCodemods, function() {
 
     getNodeVersion.returns('4.0.0');
 
-    let codemods = yield getApplicableCodemods({
+    let codemods = await getApplicableCodemods({
       url: 'testUrl',
       projectOptions: ['testProjectOption'],
       packageJson: {
@@ -61,9 +60,9 @@ describe(getApplicableCodemods, function() {
     expect(getCodemods.args).to.deep.equal([['testUrl']]);
 
     expect(getVersions.args).to.deep.equal([['test-dependency']]);
-  }));
+  });
 
-  it('excludes wrong option', co.wrap(function*() {
+  it('excludes wrong option', async function() {
     getCodemods.resolves({
       testCodemod: {
         versions: {
@@ -76,7 +75,7 @@ describe(getApplicableCodemods, function() {
 
     getNodeVersion.returns('4.0.0');
 
-    let codemods = yield getApplicableCodemods({
+    let codemods = await getApplicableCodemods({
       projectOptions: ['testProjectOption1'],
       packageJson: {
         dependencies: {
@@ -86,9 +85,9 @@ describe(getApplicableCodemods, function() {
     });
 
     expect(codemods).to.deep.equal({});
-  }));
+  });
 
-  it('excludes wrong version', co.wrap(function*() {
+  it('excludes wrong version', async function() {
     getCodemods.resolves({
       testCodemod: {
         versions: {
@@ -101,7 +100,7 @@ describe(getApplicableCodemods, function() {
 
     getNodeVersion.returns('4.0.0');
 
-    let codemods = yield getApplicableCodemods({
+    let codemods = await getApplicableCodemods({
       projectOptions: ['testProjectOption'],
       packageJson: {
         dependencies: {
@@ -111,9 +110,9 @@ describe(getApplicableCodemods, function() {
     });
 
     expect(codemods).to.deep.equal({});
-  }));
+  });
 
-  it('excludes wrong node version', co.wrap(function*() {
+  it('excludes wrong node version', async function() {
     getCodemods.resolves({
       testCodemod: {
         versions: {
@@ -126,7 +125,7 @@ describe(getApplicableCodemods, function() {
 
     getNodeVersion.returns('4.0.0');
 
-    let codemods = yield getApplicableCodemods({
+    let codemods = await getApplicableCodemods({
       projectOptions: ['testProjectOption'],
       packageJson: {
         dependencies: {
@@ -136,5 +135,5 @@ describe(getApplicableCodemods, function() {
     });
 
     expect(codemods).to.deep.equal({});
-  }));
+  });
 });

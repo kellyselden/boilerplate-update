@@ -3,16 +3,16 @@
 const utils = require('./utils');
 const getApplicableCodemods = require('./get-applicable-codemods');
 
-module.exports = function getAndPromptCodemods({
+module.exports = async function getAndPromptCodemods({
   url,
   projectOptions,
   packageJson
 }) {
-  return getApplicableCodemods({
+  let codemods = await getApplicableCodemods({
     url,
     projectOptions,
     packageJson
-  }).then(codemods => {
-    return utils.promptCodemods(codemods);
   });
+
+  return await utils.promptCodemods(codemods);
 };
