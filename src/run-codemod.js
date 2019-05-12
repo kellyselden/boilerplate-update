@@ -2,13 +2,14 @@
 
 const utils = require('./utils');
 
-module.exports = function runCodemod(codemod) {
+module.exports = async function runCodemod(codemod) {
   if (codemod.script) {
-    return utils.runScript(codemod.script);
+    await utils.runScript(codemod.script);
+    return;
   }
-  return codemod.commands.reduce((promise, command) => {
-    return promise.then(() => {
-      return utils.npx(command).catch(() => {});
-    });
-  }, Promise.resolve());
+  for (let command of codemod.commands) {
+    try {
+      await utils.npx(command);
+    } catch (err) {}
+  }
 };

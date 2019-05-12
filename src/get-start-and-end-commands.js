@@ -2,32 +2,31 @@
 
 const path = require('path');
 const utils = require('./utils');
-const co = require('co');
 const { promisify } = require('util');
 const tmpDir = promisify(require('tmp').dir);
 const rimraf = promisify(require('rimraf'));
 const cpr = path.resolve(path.dirname(require.resolve('cpr')), '../bin/cpr');
 const replaceFile = require('./replace-file');
 
-function mutatePackageJson(cwd, callback) {
-  return replaceFile(path.join(cwd, 'package.json'), co.wrap(function*(file) {
+async function mutatePackageJson(cwd, callback) {
+  return await replaceFile(path.join(cwd, 'package.json'), async function(file) {
     let pkg = JSON.parse(file);
-    yield callback(pkg);
+    await callback(pkg);
     return JSON.stringify(pkg, null, 2);
-  }));
+  });
 }
 
-module.exports = co.wrap(function* getStartAndEndCommands(options) {
-  function prepareCommand(key) {
+module.exports = async function getStartAndEndCommands(options) {
+  async function prepareCommand(key) {
     let _options = Object.assign({}, options, options[key]);
     delete _options[key];
-    return module.exports.prepareCommand(_options);
+    return await module.exports.prepareCommand(_options);
   }
 
   let [
     startCommand,
     endCommand
-  ] = yield Promise.all([
+  ] = await Promise.all([
     prepareCommand('startOptions'),
     prepareCommand('endOptions')
   ]);
@@ -36,21 +35,21 @@ module.exports = co.wrap(function* getStartAndEndCommands(options) {
     startCommand,
     endCommand
   };
-});
+};
 
-const _prepareCommand = co.wrap(function* _prepareCommand({
+const _prepareCommand = async function _prepareCommand({
   createProject,
   options
 }) {
-  let cwd = yield tmpDir();
+  let cwd = await tmpDir();
 
-  let appPath = yield createProject(cwd);
+  let appPath = await createProject(cwd);
 
   if (options.mutatePackageJson) {
-    yield mutatePackageJson(appPath, options.mutatePackageJson(options));
+    await mutatePackageJson(appPath, options.mutatePackageJson(options));
   }
 
-  yield Promise.all([
+  await Promise.all([
     rimraf(path.join(appPath, '.git')),
     rimraf(path.join(appPath, 'node_modules')),
     rimraf(path.join(appPath, 'package-lock.json')),
@@ -58,16 +57,16 @@ const _prepareCommand = co.wrap(function* _prepareCommand({
   ]);
 
   return `node ${cpr} ${appPath} .`;
-});
+};
 
-const tryPrepareCommandUsingCache = co.wrap(function* tryPrepareCommandUsingCache({
+const tryPrepareCommandUsingCache = async function tryPrepareCommandUsingCache({
   basedir,
   options
 }) {
   // can't use resolve here because there is no "main" in package.json
   let packageRoot = path.join(basedir, 'node_modules', options.packageName);
   try {
-    yield utils.stat(packageRoot);
+    await utils.stat(packageRoot);
   } catch (err) {
     if (err.code === 'ENOENT') {
       // no node_modules
@@ -80,17 +79,17 @@ const tryPrepareCommandUsingCache = co.wrap(function* tryPrepareCommandUsingCach
     // installed version is out-of-date
     return;
   }
-  return yield _prepareCommand({
+  return await _prepareCommand({
     createProject: options.createProjectFromCache({
       packageRoot,
       options
     }),
     options
   });
-});
+};
 
-module.exports.prepareCommandUsingRemote = function prepareCommandUsingRemote(options) {
-  return _prepareCommand({
+module.exports.prepareCommandUsingRemote = async function prepareCommandUsingRemote(options) {
+  return await _prepareCommand({
     createProject: options.createProjectFromRemote({
       options
     }),
@@ -98,19 +97,19 @@ module.exports.prepareCommandUsingRemote = function prepareCommandUsingRemote(op
   });
 };
 
-function tryPrepareCommandUsingLocal(options) {
-  return tryPrepareCommandUsingCache({
+async function tryPrepareCommandUsingLocal(options) {
+  return await tryPrepareCommandUsingCache({
     basedir: process.cwd(),
     options
   });
 }
 
-const tryPrepareCommandUsingGlobal = co.wrap(function* tryPrepareCommandUsingGlobal(options) {
+const tryPrepareCommandUsingGlobal = async function tryPrepareCommandUsingGlobal(options) {
   let command = options.commandName || options.packageName;
 
   let packagePath;
   try {
-    packagePath = yield utils.which(command);
+    packagePath = await utils.which(command);
   } catch (err) {
     if (err.message === `not found: ${command}`) {
       // not installed globally
@@ -119,20 +118,20 @@ const tryPrepareCommandUsingGlobal = co.wrap(function* tryPrepareCommandUsingGlo
     throw err;
   }
 
-  return tryPrepareCommandUsingCache({
+  return await tryPrepareCommandUsingCache({
     basedir: path.resolve(path.dirname(packagePath), '../lib'),
     options
   });
-});
+};
 
-module.exports.prepareCommand = co.wrap(function* prepareCommand(options) {
-  let command = yield tryPrepareCommandUsingLocal(options);
+module.exports.prepareCommand = async function prepareCommand(options) {
+  let command = await tryPrepareCommandUsingLocal(options);
   if (command) {
     return command;
   }
-  command = yield tryPrepareCommandUsingGlobal(options);
+  command = await tryPrepareCommandUsingGlobal(options);
   if (command) {
     return command;
   }
-  return yield module.exports.prepareCommandUsingRemote(options);
-});
+  return await module.exports.prepareCommandUsingRemote(options);
+};

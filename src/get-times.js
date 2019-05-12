@@ -2,10 +2,9 @@
 
 const npm = require('./npm');
 
-module.exports = function getTimes(packageName) {
-  return npm.json(`view ${packageName} time`).then(time => {
-    delete time['created'];
-    delete time['modified'];
-    return time;
-  });
+module.exports = async function getTimes(packageName) {
+  let time = await npm.json(`view ${packageName} time`);
+  delete time['created'];
+  delete time['modified'];
+  return time;
 };

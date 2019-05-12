@@ -10,18 +10,17 @@ const getStats = require('./get-stats');
 const compareVersions = require('./compare-versions');
 const getPackageJson = require('./get-package-json');
 const _listCodemods = require('./list-codemods');
-const co = require('co');
 
 let callbackOptions = {};
 
-function resolveProperty(property) {
+async function resolveProperty(property) {
   if (typeof property === 'function') {
     property = property(callbackOptions);
   }
-  return Promise.resolve(property);
+  return await property;
 }
 
-module.exports = co.wrap(function* boilerplateUpdate(options) {
+module.exports = async function boilerplateUpdate(options) {
   let {
     projectOptions,
     listCodemods,
@@ -29,15 +28,15 @@ module.exports = co.wrap(function* boilerplateUpdate(options) {
     mergeOptions = {}
   } = options;
 
-  let packageJson = yield getPackageJson();
+  let packageJson = await getPackageJson();
 
   callbackOptions.packageJson = packageJson;
 
-  projectOptions = yield resolveProperty(projectOptions);
+  projectOptions = await resolveProperty(projectOptions);
 
   callbackOptions.projectOptions = projectOptions;
 
-  codemodsUrl = yield resolveProperty(codemodsUrl);
+  codemodsUrl = await resolveProperty(codemodsUrl);
 
   if (listCodemods) {
     return { promise: _listCodemods(codemodsUrl) };
@@ -56,10 +55,10 @@ module.exports = co.wrap(function* boilerplateUpdate(options) {
     customDiffOptions,
     ignoredFiles = [],
     wasRunAsExecutable
-  } = Object.assign({}, options, yield resolveProperty(mergeOptions));
+  } = Object.assign({}, options, await resolveProperty(mergeOptions));
 
-  startVersion = yield resolveProperty(startVersion);
-  endVersion = yield resolveProperty(endVersion);
+  startVersion = await resolveProperty(startVersion);
+  endVersion = await resolveProperty(endVersion);
 
   callbackOptions.startVersion = startVersion;
   callbackOptions.endVersion = endVersion;
@@ -67,7 +66,7 @@ module.exports = co.wrap(function* boilerplateUpdate(options) {
   let startTag = `v${startVersion}`;
   let endTag = `v${endVersion}`;
 
-  remoteUrl = yield resolveProperty(remoteUrl);
+  remoteUrl = await resolveProperty(remoteUrl);
 
   if (compareOnly) {
     compareVersions({
@@ -106,7 +105,7 @@ module.exports = co.wrap(function* boilerplateUpdate(options) {
   let endCommand;
 
   if (createCustomDiff) {
-    let commands = yield getStartAndEndCommands(yield resolveProperty(customDiffOptions));
+    let commands = await getStartAndEndCommands(await resolveProperty(customDiffOptions));
 
     startCommand = commands.startCommand;
     endCommand = commands.endCommand;
@@ -120,7 +119,7 @@ module.exports = co.wrap(function* boilerplateUpdate(options) {
     from,
     to,
     resolveConflictsProcess
-  } = yield gitDiffApply({
+  } = await gitDiffApply({
     remoteUrl,
     startTag,
     endTag,
@@ -137,9 +136,9 @@ module.exports = co.wrap(function* boilerplateUpdate(options) {
     return { promise: Promise.resolve() };
   }
 
-  let promise = co(function*() {
+  let promise = (async function() {
     if (resolveConflictsProcess) {
-      yield new Promise(resolve => {
+      await new Promise(resolve => {
         resolveConflictsProcess.on('exit', resolve);
       });
     }
@@ -147,15 +146,15 @@ module.exports = co.wrap(function* boilerplateUpdate(options) {
     let fromPackageJson = from['package.json'];
     let toPackageJson = to['package.json'];
 
-    yield replaceFile('package.json', myPackageJson => {
-      return mergePackageJson(myPackageJson, fromPackageJson, toPackageJson);
+    await replaceFile('package.json', async myPackageJson => {
+      return await mergePackageJson(myPackageJson, fromPackageJson, toPackageJson);
     });
 
-    yield run('git add package.json');
-  });
+    await run('git add package.json');
+  })();
 
   return {
     promise,
     resolveConflictsProcess
   };
-});
+};

@@ -2,11 +2,10 @@
 
 const utils = require('./utils');
 const semver = require('semver');
-const co = require('co');
 const resolveVersionRange = require('./resolve-version-range');
 const pReduce = require('p-reduce');
 
-module.exports = co.wrap(function* getApplicableCodemods({
+module.exports = async function getApplicableCodemods({
   url,
   projectOptions,
   packageJson
@@ -15,19 +14,19 @@ module.exports = co.wrap(function* getApplicableCodemods({
 
   let versionRanges = Object.assign({}, packageJson.dependencies, packageJson.devDependencies);
 
-  let codemods = yield utils.getCodemods(url);
+  let codemods = await utils.getCodemods(url);
 
-  let resolvedVersions = yield pReduce(Object.keys(codemods), (resolvedVersions, codemod) => {
-    return pReduce(Object.keys(codemods[codemod].versions), co.wrap(function*(resolvedVersions, packageName) {
+  let resolvedVersions = await pReduce(Object.keys(codemods), async(resolvedVersions, codemod) => {
+    return await pReduce(Object.keys(codemods[codemod].versions), async(resolvedVersions, packageName) => {
       let packageRange = versionRanges[packageName];
       if (packageRange && !resolvedVersions[packageName]) {
-        resolvedVersions[packageName] = yield resolveVersionRange(packageName, packageRange);
+        resolvedVersions[packageName] = await resolveVersionRange(packageName, packageRange);
       }
       return resolvedVersions;
-    }), resolvedVersions);
+    }, resolvedVersions);
   }, {});
 
-  return Object.keys(codemods).filter((codemod) => {
+  return Object.keys(codemods).filter(codemod => {
     codemod = codemods[codemod];
     let keys = Object.keys(codemod.versions);
     let areVersionsInRange = keys.every(key => semver.gte(resolvedVersions[key], codemod.versions[key]));
@@ -38,4 +37,4 @@ module.exports = co.wrap(function* getApplicableCodemods({
     applicableCodemods[codemod] = codemods[codemod];
     return applicableCodemods;
   }, {});
-});
+};

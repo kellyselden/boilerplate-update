@@ -3,8 +3,8 @@
 const semver = require('semver');
 const utils = require('./utils');
 
-module.exports = function resolveVersionRange(packageName, packageRange) {
-  return utils.getVersions(packageName).then(packageVersions => {
-    return semver.minSatisfying(packageVersions, packageRange);
-  });
+module.exports = async function resolveVersionRange(packageName, packageRange) {
+  let packageVersions = await utils.getVersions(packageName);
+
+  return semver.minSatisfying(packageVersions, packageRange);
 };

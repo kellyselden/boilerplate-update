@@ -2,10 +2,10 @@
 
 const run = require('./run');
 
-module.exports = function npm(command) {
-  return run(`npm ${command}`);
+module.exports = async function npm(command) {
+  return await run(`npm ${command}`);
 };
 
-module.exports.json = function npmJson(command) {
-  return module.exports(`${command} --json`).then(JSON.parse);
+module.exports.json = async function npmJson(command) {
+  return JSON.parse(await module.exports(`${command} --json`));
 };

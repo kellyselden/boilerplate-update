@@ -3,7 +3,6 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const sinon = require('sinon');
-const co = require('co');
 const utils = require('../../src/utils');
 const runCodemod = require('../../src/run-codemod');
 
@@ -23,8 +22,8 @@ describe(runCodemod, function() {
     sandbox.restore();
   });
 
-  it('runs a command', co.wrap(function*() {
-    yield runCodemod({
+  it('runs a command', async function() {
+    await runCodemod({
       commands: [
         'test command'
       ]
@@ -34,17 +33,17 @@ describe(runCodemod, function() {
       ['test command']
     ]);
     expect(runScript.called).to.be.false;
-  }));
+  });
 
-  it('runs multiple commands sequentially', co.wrap(function*() {
-    let npx1 = npx.withArgs('test command 1').callsFake(co.wrap(() => {
+  it('runs multiple commands sequentially', async function() {
+    let npx1 = npx.withArgs('test command 1').callsFake(async() => {
       expect(npx2.args).to.deep.equal([]);
-    }));
-    let npx2 = npx.withArgs('test command 2').callsFake(co.wrap(() => {
+    });
+    let npx2 = npx.withArgs('test command 2').callsFake(async() => {
       expect(npx1.args).to.deep.equal([['test command 1']]);
-    }));
+    });
 
-    yield runCodemod({
+    await runCodemod({
       commands: [
         'test command 1',
         'test command 2'
@@ -55,13 +54,13 @@ describe(runCodemod, function() {
       ['test command 1'],
       ['test command 2']
     ]);
-  }));
+  });
 
-  it('continues if one codemod errors', co.wrap(function*() {
+  it('continues if one codemod errors', async function() {
     npx.withArgs('test command 1').rejects();
     let npx2 = npx.withArgs('test command 2').resolves();
 
-    yield runCodemod({
+    await runCodemod({
       commands: [
         'test command 1',
         'test command 2'
@@ -69,14 +68,14 @@ describe(runCodemod, function() {
     });
 
     expect(npx2.calledOnce).to.be.ok;
-  }));
+  });
 
-  it('runs a script', co.wrap(function*() {
-    yield runCodemod({
+  it('runs a script', async function() {
+    await runCodemod({
       script: 'test script'
     });
 
     expect(runScript.args).to.deep.equal([['test script']]);
     expect(npx.called).to.be.false;
-  }));
+  });
 });

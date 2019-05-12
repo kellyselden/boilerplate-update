@@ -4,7 +4,6 @@ const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const path = require('path');
 const sinon = require('sinon');
-const co = require('co');
 const {
   buildTmp,
   processIo,
@@ -42,7 +41,7 @@ describe(function() {
     process.chdir(cwd);
   });
 
-  let merge = co.wrap(function* merge({
+  async function merge({
     fixturesPath,
     dirty,
     subDir,
@@ -57,7 +56,7 @@ describe(function() {
     ignoredFiles,
     commitMessage
   }) {
-    tmpPath = yield buildTmp({
+    tmpPath = await buildTmp({
       fixturesPath,
       commitMessage,
       dirty,
@@ -69,43 +68,45 @@ describe(function() {
     function createProject({
       options
     }) {
-      return function createProject() {
-        return Promise.resolve(path.resolve(__dirname, '../..', options.fixturesPath, options.projectName));
+      return async function createProject() {
+        return path.resolve(__dirname, '../..', options.fixturesPath, options.projectName);
       };
     }
 
-    return boilerplateUpdate({
-      remoteUrl: () => 'https://github.com/kellyselden/boilerplate-update-output-repo-test',
-      resolveConflicts: true,
-      compareOnly,
-      reset,
-      statsOnly,
-      runCodemods,
-      listCodemods,
-      codemodsUrl: 'https://raw.githubusercontent.com/kellyselden/boilerplate-update-codemod-manifest-test/master/manifest.json',
-      projectOptions,
-      startVersion,
-      endVersion: '0.0.2',
-      createCustomDiff,
-      customDiffOptions: {
-        projectName: 'test-project',
-        packageName: 'test-project',
-        createProjectFromCache: createProject,
-        createProjectFromRemote: createProject,
-        startOptions: {
-          fixturesPath: 'test/fixtures/start'
+    try {
+      let {
+        promise: boilerplateUpdatePromise,
+        resolveConflictsProcess
+      } = await boilerplateUpdate({
+        remoteUrl: () => 'https://github.com/kellyselden/boilerplate-update-output-repo-test',
+        resolveConflicts: true,
+        compareOnly,
+        reset,
+        statsOnly,
+        runCodemods,
+        listCodemods,
+        codemodsUrl: 'https://raw.githubusercontent.com/kellyselden/boilerplate-update-codemod-manifest-test/master/manifest.json',
+        projectOptions,
+        startVersion,
+        endVersion: '0.0.2',
+        createCustomDiff,
+        customDiffOptions: {
+          projectName: 'test-project',
+          packageName: 'test-project',
+          createProjectFromCache: createProject,
+          createProjectFromRemote: createProject,
+          startOptions: {
+            fixturesPath: 'test/fixtures/start'
+          },
+          endOptions: {
+            fixturesPath: 'test/fixtures/end'
+          }
         },
-        endOptions: {
-          fixturesPath: 'test/fixtures/end'
-        }
-      },
-      ignoredFiles
-    }).then(({
-      promise: boilerplateUpdatePromise,
-      resolveConflictsProcess
-    }) => {
+        ignoredFiles
+      });
+
       if (!resolveConflictsProcess) {
-        return processExit({
+        return await processExit({
           promise: boilerplateUpdatePromise,
           cwd: tmpPath,
           commitMessage,
@@ -120,18 +121,18 @@ describe(function() {
         expect
       });
 
-      return boilerplateUpdatePromise.then(() => {
-        return ioPromise;
-      });
-    }).catch(err => {
-      return processExit({
+      await boilerplateUpdatePromise;
+
+      return await ioPromise;
+    } catch (err) {
+      return await processExit({
         promise: Promise.reject(err),
         cwd: tmpPath,
         commitMessage,
         expect
       });
-    });
-  });
+    }
+  }
 
   function fixtureCompare({
     mergeFixtures
@@ -146,232 +147,232 @@ describe(function() {
     });
   }
 
-  it('updates app', function() {
-    return merge({
+  it('updates app', async function() {
+    let {
+      status
+    } = await merge({
       fixturesPath: 'test/fixtures/local',
       commitMessage: 'test-project'
-    }).then(({
-      status
-    }) => {
-      fixtureCompare({
-        mergeFixtures: 'test/fixtures/merge/test-project'
-      });
-
-      assertNormalUpdate(status);
-      assertNoUnstaged(status);
     });
+
+    fixtureCompare({
+      mergeFixtures: 'test/fixtures/merge/test-project'
+    });
+
+    assertNormalUpdate(status);
+    assertNoUnstaged(status);
   });
 
-  it('handles dirty', function() {
-    return merge({
+  it('handles dirty', async function() {
+    let {
+      status,
+      stderr
+    } = await merge({
       fixturesPath: 'test/fixtures/local',
       commitMessage: 'test-project',
       dirty: true
-    }).then(({
-      status,
-      stderr
-    }) => {
-      expect(status).to.equal(`?? a-random-new-file
+    });
+
+    expect(status).to.equal(`?? a-random-new-file
 `);
 
-      expect(stderr).to.contain('You must start with a clean working directory');
-      expect(stderr).to.not.contain('UnhandledPromiseRejectionWarning');
-    });
+    expect(stderr).to.contain('You must start with a clean working directory');
+    expect(stderr).to.not.contain('UnhandledPromiseRejectionWarning');
   });
 
-  it('handles can\'t determine project', function() {
-    return merge({
+  it('handles can\'t determine project', async function() {
+    let {
+      stderr
+    } = await merge({
       fixturesPath: 'test/fixtures/local',
       commitMessage: 'test-project',
       projectOptions() {
         throw 'can\'t determine project';
       }
-    }).then(({
-      stderr
-    }) => {
-      expect(isGitClean({ cwd: tmpPath })).to.be.ok;
-
-      expect(stderr).to.contain('can\'t determine project');
     });
+
+    expect(isGitClean({ cwd: tmpPath })).to.be.ok;
+
+    expect(stderr).to.contain('can\'t determine project');
   });
 
-  it('handles non-npm dir', function() {
-    return merge({
+  it('handles non-npm dir', async function() {
+    let {
+      stderr
+    } = await merge({
       fixturesPath: 'test/fixtures/package-json/missing',
       commitMessage: 'test-project'
-    }).then(({
-      stderr
-    }) => {
-      expect(isGitClean({ cwd: tmpPath })).to.be.ok;
-
-      expect(stderr).to.contain('No package.json was found in this directory');
     });
+
+    expect(isGitClean({ cwd: tmpPath })).to.be.ok;
+
+    expect(stderr).to.contain('No package.json was found in this directory');
   });
 
-  it('handles malformed package.json', function() {
-    return merge({
+  it('handles malformed package.json', async function() {
+    let {
+      stderr
+    } = await merge({
       fixturesPath: 'test/fixtures/package-json/malformed',
       commitMessage: 'test-project'
-    }).then(({
-      stderr
-    }) => {
-      expect(isGitClean({ cwd: tmpPath })).to.be.ok;
-
-      expect(stderr).to.contain('The package.json is malformed');
     });
+
+    expect(isGitClean({ cwd: tmpPath })).to.be.ok;
+
+    expect(stderr).to.contain('The package.json is malformed');
   });
 
-  it('resets app', function() {
-    return merge({
+  it('resets app', async function() {
+    let {
+      status
+    } = await merge({
       fixturesPath: 'test/fixtures/local',
       commitMessage: 'test-project',
       reset: true
-    }).then(({
-      status
-    }) => {
-      fixtureCompare({
-        mergeFixtures: 'test/fixtures/end/test-project'
-      });
-
-      expect(status).to.match(/^ M present-added-changed\.txt$/m);
-      expect(status).to.match(/^ M present-changed\.txt$/m);
-      expect(status).to.match(/^ D removed-changed\.txt$/m);
-      expect(status).to.match(/^ D removed-unchanged\.txt$/m);
-      expect(status).to.match(/^\?{2} added-changed\.txt$/m);
-      expect(status).to.match(/^\?{2} added-unchanged\.txt$/m);
-      expect(status).to.match(/^\?{2} missing-changed\.txt$/m);
-      expect(status).to.match(/^\?{2} missing-unchanged\.txt$/m);
-
-      assertNoStaged(status);
     });
+
+    fixtureCompare({
+      mergeFixtures: 'test/fixtures/end/test-project'
+    });
+
+    expect(status).to.match(/^ M present-added-changed\.txt$/m);
+    expect(status).to.match(/^ M present-changed\.txt$/m);
+    expect(status).to.match(/^ D removed-changed\.txt$/m);
+    expect(status).to.match(/^ D removed-unchanged\.txt$/m);
+    expect(status).to.match(/^\?{2} added-changed\.txt$/m);
+    expect(status).to.match(/^\?{2} added-unchanged\.txt$/m);
+    expect(status).to.match(/^\?{2} missing-changed\.txt$/m);
+    expect(status).to.match(/^\?{2} missing-unchanged\.txt$/m);
+
+    assertNoStaged(status);
   });
 
-  it('opens compare url', function() {
+  it('opens compare url', async function() {
     let open = sandbox.stub(utils, 'open');
 
-    return merge({
+    let {
+      result,
+      status
+    } = await merge({
       fixturesPath: 'test/fixtures/local',
       commitMessage: 'test-project',
       compareOnly: true
-    }).then(({
-      result,
-      status
-    }) => {
-      assertNoUnstaged(status);
-
-      expect(result, 'don\'t accidentally print anything to the console').to.be.undefined;
-
-      expect(open.calledOnce).to.be.ok;
-      expect(open.args[0][0]).to.equal('https://github.com/kellyselden/boilerplate-update-output-repo-test/compare/v0.0.1...v0.0.2');
     });
+
+    assertNoUnstaged(status);
+
+    expect(result, 'don\'t accidentally print anything to the console').to.be.undefined;
+
+    expect(open.calledOnce).to.be.ok;
+    expect(open.args[0][0]).to.equal('https://github.com/kellyselden/boilerplate-update-output-repo-test/compare/v0.0.1...v0.0.2');
   });
 
-  it('shows stats only', function() {
-    return merge({
+  it('shows stats only', async function() {
+    let {
+      result,
+      status
+    } = await merge({
       fixturesPath: 'test/fixtures/merge',
       commitMessage: 'test-project',
       statsOnly: true
-    }).then(({
-      result,
-      status
-    }) => {
-      assertNoStaged(status);
+    });
 
-      expect(result).to.equal(`project options: test-project, unused
+    assertNoStaged(status);
+
+    expect(result).to.equal(`project options: test-project, unused
 from version: 0.0.1
 to version: 0.0.2
 output repo: https://github.com/kellyselden/boilerplate-update-output-repo-test
 applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', script-test-codemod'}`);
-    });
   });
 
-  it('lists codemods', function() {
-    return merge({
+  it('lists codemods', async function() {
+    let {
+      result,
+      status
+    } = await merge({
       fixturesPath: 'test/fixtures/local',
       commitMessage: 'test-project',
       listCodemods: true
-    }).then(({
-      result,
-      status
-    }) => {
-      assertNoStaged(status);
-
-      expect(JSON.parse(result)).to.have.own.property('commands-test-codemod');
     });
+
+    assertNoStaged(status);
+
+    expect(JSON.parse(result)).to.have.own.property('commands-test-codemod');
   });
 
-  it('runs codemods', function() {
-    function selectAllCodemods(codemods) {
-      return Promise.resolve(Object.keys(codemods).map(k => codemods[k]));
+  it('runs codemods', async function() {
+    async function selectAllCodemods(codemods) {
+      return Object.keys(codemods).map(k => codemods[k]);
     }
 
     sandbox.stub(utils, 'promptCodemods').callsFake(selectAllCodemods);
 
-    return merge({
+    let {
+      status
+    } = await merge({
       fixturesPath: 'test/fixtures/merge',
       commitMessage: 'test-project',
       runCodemods: true
-    }).then(({
-      status
-    }) => {
-      let mergeFixtures = 'test/fixtures/codemod/latest-node/test-project';
-      if (process.env.NODE_LTS) {
-        mergeFixtures = 'test/fixtures/codemod/min-node/test-project';
-      }
-
-      fixtureCompare({
-        mergeFixtures
-      });
-
-      assertNoUnstaged(status);
-      assertCodemodRan(status);
     });
+
+    let mergeFixtures = 'test/fixtures/codemod/latest-node/test-project';
+    if (process.env.NODE_LTS) {
+      mergeFixtures = 'test/fixtures/codemod/min-node/test-project';
+    }
+
+    fixtureCompare({
+      mergeFixtures
+    });
+
+    assertNoUnstaged(status);
+    assertCodemodRan(status);
   });
 
-  it('scopes to sub dir if run from there', function() {
-    return merge({
+  it('scopes to sub dir if run from there', async function() {
+    let {
+      status
+    } = await merge({
       fixturesPath: 'test/fixtures/local',
       commitMessage: 'test-project',
       subDir: 'foo/bar'
-    }).then(({
-      status
-    }) => {
-      fixtureCompare({
-        mergeFixtures: 'test/fixtures/merge/test-project'
-      });
-
-      assertNormalUpdate(status);
-      assertNoUnstaged(status);
     });
+
+    fixtureCompare({
+      mergeFixtures: 'test/fixtures/merge/test-project'
+    });
+
+    assertNormalUpdate(status);
+    assertNoUnstaged(status);
   });
 
-  it('can create a personal diff instead of using an output repo', function() {
-    return merge({
+  it('can create a personal diff instead of using an output repo', async function() {
+    let {
+      status
+    } = await merge({
       fixturesPath: 'test/fixtures/local',
       commitMessage: 'test-project',
       createCustomDiff: true
-    }).then(({
-      status
-    }) => {
-      fixtureCompare({
-        mergeFixtures: 'test/fixtures/merge/test-project'
-      });
-
-      assertNoUnstaged(status);
     });
+
+    fixtureCompare({
+      mergeFixtures: 'test/fixtures/merge/test-project'
+    });
+
+    assertNoUnstaged(status);
   });
 
-  it('can ignore extra files', function() {
-    return merge({
+  it('can ignore extra files', async function() {
+    let {
+      status
+    } = await merge({
       fixturesPath: 'test/fixtures/local',
       commitMessage: 'test-project',
       ignoredFiles: ['present-changed.txt']
-    }).then(({
-      status
-    }) => {
-      expect(status).to.not.contain('present-changed.txt');
-
-      assertNoUnstaged(status);
     });
+
+    expect(status).to.not.contain('present-changed.txt');
+
+    assertNoUnstaged(status);
   });
 });

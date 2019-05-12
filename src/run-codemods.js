@@ -2,12 +2,9 @@
 
 const utils = require('./utils');
 
-module.exports = function runCodemods(codemods) {
-  return Object.keys(codemods).reduce((promise, codemod) => {
-    return promise.then(() => {
-      return utils.runCodemod(codemods[codemod]);
-    });
-  }, Promise.resolve()).then(() => {
-    return utils.run('git add -A');
-  });
+module.exports = async function runCodemods(codemods) {
+  for (let codemod of Object.keys(codemods)) {
+    await utils.runCodemod(codemods[codemod]);
+  }
+  await utils.run('git add -A');
 };
