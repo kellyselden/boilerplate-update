@@ -45,7 +45,7 @@
     "eslint-config-sane": "^0.7.0",
     "eslint-plugin-mocha": "^5.2.0",
     "eslint-plugin-node": "^8.0.0",
-    "eslint-plugin-prefer-let": "kellyselden/eslint-plugin-prefer-let#const-require",
+    "eslint-plugin-prefer-let": "^1.0.1",
     "fixturify-project": "^1.8.0",
     "fs-extra": "^7.0.1",
     "git-fixtures": "^0.15.1",
