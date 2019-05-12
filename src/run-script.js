@@ -1,7 +1,7 @@
 'use strict';
 
-const denodeify = require('denodeify');
-const tmpDir = denodeify(require('tmp').dir);
+const { promisify } = require('util');
+const tmpDir = promisify(require('tmp').dir);
 
 function sanitize(str) {
   return str.replace(/\\/g, '\\\\');
