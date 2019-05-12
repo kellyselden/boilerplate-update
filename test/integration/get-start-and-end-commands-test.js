@@ -7,8 +7,8 @@ const co = require('co');
 const sinon = require('sinon');
 const fs = require('fs-extra');
 const Project = require('fixturify-project');
-const denodeify = require('denodeify');
-const tmpDir = denodeify(require('tmp').dir);
+const { promisify } = require('util');
+const tmpDir = promisify(require('tmp').dir);
 const utils = require('../../src/utils');
 const _getStartAndEndCommands = require('../../src/get-start-and-end-commands');
 

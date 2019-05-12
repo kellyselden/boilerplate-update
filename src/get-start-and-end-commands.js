@@ -3,9 +3,9 @@
 const path = require('path');
 const utils = require('./utils');
 const co = require('co');
-const denodeify = require('denodeify');
-const tmpDir = denodeify(require('tmp').dir);
-const rimraf = denodeify(require('rimraf'));
+const { promisify } = require('util');
+const tmpDir = promisify(require('tmp').dir);
+const rimraf = promisify(require('rimraf'));
 const cpr = path.resolve(path.dirname(require.resolve('cpr')), '../bin/cpr');
 const replaceFile = require('./replace-file');
 

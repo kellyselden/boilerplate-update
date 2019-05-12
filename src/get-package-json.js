@@ -1,8 +1,8 @@
 'use strict';
 
 const fs = require('fs');
-const denodeify = require('denodeify');
-const readFile = denodeify(fs.readFile);
+const { promisify } = require('util');
+const readFile = promisify(fs.readFile);
 
 module.exports = function getProjectType() {
   return readFile('package.json', 'utf8').catch(() => {
