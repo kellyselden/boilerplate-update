@@ -30,7 +30,7 @@
     "merge-package.json": "^2.0.3",
     "npx": "^10.2.0",
     "opn": "^5.4.0",
-    "p-reduce": "^1.0.0",
+    "p-reduce": "^2.0.0",
     "rimraf": "^2.6.3",
     "semver": "^6.0.0",
     "tmp": "0.1.0",
