@@ -3,15 +3,13 @@
 const fs = require('fs');
 const { promisify } = require('util');
 
-module.exports.run = require('./run');
+module.exports.run = require('git-diff-apply').run;
 module.exports.npx = require('./npx');
 module.exports.getCodemods = require('./get-codemods');
 module.exports.getNodeVersion = require('./get-node-version');
 module.exports.getVersions = require('./get-versions');
 module.exports.open = require('open');
-// module.exports.getApplicableCodemods = require('./get-applicable-codemods');
 module.exports.runCodemod = require('./run-codemod');
-// module.exports.resolve = promisify(require('resolve'));
 module.exports.require = require;
 module.exports.stat = promisify(fs.stat);
 module.exports.which = promisify(require('which'));

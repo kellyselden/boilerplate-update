@@ -1,6 +1,6 @@
 'use strict';
 
-const run = require('./run');
+const { run } = require('git-diff-apply');
 
 module.exports = async function npm(command) {
   return await run(`npm ${command}`);
