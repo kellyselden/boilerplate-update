@@ -2,7 +2,6 @@
 
 const mergePackageJson = require('merge-package.json');
 const gitDiffApply = require('git-diff-apply');
-const run = require('./run');
 const replaceFile = require('./replace-file');
 const promptAndRunCodemods = require('./prompt-and-run-codemods');
 const getStartAndEndCommands = require('./get-start-and-end-commands');
@@ -10,6 +9,8 @@ const getStats = require('./get-stats');
 const compareVersions = require('./compare-versions');
 const getPackageJson = require('./get-package-json');
 const _listCodemods = require('./list-codemods');
+
+const { run } = gitDiffApply;
 
 let callbackOptions = {};
 
@@ -20,7 +21,7 @@ async function resolveProperty(property) {
   return await property;
 }
 
-module.exports = async function boilerplateUpdate(options) {
+async function boilerplateUpdate(options) {
   let {
     projectOptions,
     listCodemods,
@@ -157,4 +158,7 @@ module.exports = async function boilerplateUpdate(options) {
     promise,
     resolveConflictsProcess
   };
-};
+}
+
+module.exports = boilerplateUpdate;
+module.exports.run = run;
