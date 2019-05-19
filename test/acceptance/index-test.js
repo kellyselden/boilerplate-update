@@ -191,7 +191,7 @@ describe(function() {
       }
     });
 
-    expect(isGitClean({ cwd: tmpPath })).to.be.ok;
+    expect(await isGitClean({ cwd: tmpPath })).to.be.ok;
 
     expect(stderr).to.contain('can\'t determine project');
   });
@@ -204,7 +204,7 @@ describe(function() {
       commitMessage: 'test-project'
     });
 
-    expect(isGitClean({ cwd: tmpPath })).to.be.ok;
+    expect(await isGitClean({ cwd: tmpPath })).to.be.ok;
 
     expect(stderr).to.contain('No package.json was found in this directory');
   });
@@ -217,7 +217,7 @@ describe(function() {
       commitMessage: 'test-project'
     });
 
-    expect(isGitClean({ cwd: tmpPath })).to.be.ok;
+    expect(await isGitClean({ cwd: tmpPath })).to.be.ok;
 
     expect(stderr).to.contain('The package.json is malformed');
   });
