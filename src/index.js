@@ -161,4 +161,3 @@ async function boilerplateUpdate(options) {
 }
 
 module.exports = boilerplateUpdate;
-module.exports.run = run;
