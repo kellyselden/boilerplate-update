@@ -41,7 +41,7 @@
     "cross-env": "^5.2.0",
     "eslint": "^5.11.1",
     "eslint-config-sane": "^0.8.0",
-    "eslint-plugin-mocha": "^5.2.0",
+    "eslint-plugin-mocha": "^6.0.0",
     "eslint-plugin-node": "^9.0.0",
     "eslint-plugin-prefer-let": "^1.0.1",
     "fixturify-project": "^1.8.0",
