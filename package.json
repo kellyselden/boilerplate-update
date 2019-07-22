@@ -25,7 +25,7 @@
   "dependencies": {
     "cpr": "^3.0.1",
     "debug": "^4.1.1",
-    "execa": "^1.0.0",
+    "execa": "^2.0.0",
     "git-diff-apply": "0.18.1",
     "inquirer": "^6.2.2",
     "merge-package.json": "^3.0.0",
