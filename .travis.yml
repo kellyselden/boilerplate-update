@@ -23,9 +23,8 @@ before_install:
 - rm /usr/local/bin/npx || true
 # test that we can't find it
 - "! which npx"
-script:
+before_script:
 - npm run lint
-- npm test
 jobs:
   include:
   - os: osx
@@ -33,6 +32,7 @@ jobs:
     cache: ignore
     before_install: ignore
     install: ignore
+    before_script: ignore
     script: ignore
     deploy:
       provider: npm
