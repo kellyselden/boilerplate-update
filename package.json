@@ -2,7 +2,10 @@
   "name": "boilerplate-update",
   "version": "0.22.3",
   "description": "Update boilerplate code between versions",
-  "main": "src/index.js",
+  "main": "src",
+  "files": [
+    "src"
+  ],
   "scripts": {
     "lint": "eslint .",
     "test": "cross-env DEBUG=boilerplate-update,git-diff-apply,git-fixtures mocha \"test/!(fixtures)/**/*-test.js\""
