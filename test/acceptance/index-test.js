@@ -46,7 +46,6 @@ describe(function() {
     dirty,
     subDir,
     projectOptions = ['test-project', 'unused'],
-    startVersion = '0.0.1',
     reset,
     compareOnly,
     statsOnly,
@@ -87,7 +86,7 @@ describe(function() {
         listCodemods,
         codemodsUrl: 'https://raw.githubusercontent.com/kellyselden/boilerplate-update-codemod-manifest-test/master/manifest.json',
         projectOptions,
-        startVersion,
+        startVersion: '0.0.1',
         endVersion: '0.0.2',
         createCustomDiff,
         customDiffOptions: {
