@@ -52,9 +52,10 @@ describe(function() {
     runCodemods,
     listCodemods,
     createCustomDiff,
-    ignoredFiles,
-    commitMessage
+    ignoredFiles
   }) {
+    let commitMessage = 'test-project';
+
     tmpPath = await buildTmp({
       fixturesPath,
       commitMessage,
@@ -150,8 +151,7 @@ describe(function() {
     let {
       status
     } = await merge({
-      fixturesPath: 'test/fixtures/local',
-      commitMessage: 'test-project'
+      fixturesPath: 'test/fixtures/local'
     });
 
     fixtureCompare({
@@ -168,7 +168,6 @@ describe(function() {
       stderr
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      commitMessage: 'test-project',
       dirty: true
     });
 
@@ -184,7 +183,6 @@ describe(function() {
       stderr
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      commitMessage: 'test-project',
       projectOptions() {
         throw 'can\'t determine project';
       }
@@ -199,8 +197,7 @@ describe(function() {
     let {
       stderr
     } = await merge({
-      fixturesPath: 'test/fixtures/package-json/missing',
-      commitMessage: 'test-project'
+      fixturesPath: 'test/fixtures/package-json/missing'
     });
 
     expect(await isGitClean({ cwd: tmpPath })).to.be.ok;
@@ -212,8 +209,7 @@ describe(function() {
     let {
       stderr
     } = await merge({
-      fixturesPath: 'test/fixtures/package-json/malformed',
-      commitMessage: 'test-project'
+      fixturesPath: 'test/fixtures/package-json/malformed'
     });
 
     expect(await isGitClean({ cwd: tmpPath })).to.be.ok;
@@ -226,7 +222,6 @@ describe(function() {
       status
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      commitMessage: 'test-project',
       reset: true
     });
 
@@ -254,7 +249,6 @@ describe(function() {
       status
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      commitMessage: 'test-project',
       compareOnly: true
     });
 
@@ -272,7 +266,6 @@ describe(function() {
       status
     } = await merge({
       fixturesPath: 'test/fixtures/merge',
-      commitMessage: 'test-project',
       statsOnly: true
     });
 
@@ -291,7 +284,6 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
       status
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      commitMessage: 'test-project',
       listCodemods: true
     });
 
@@ -311,7 +303,6 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
       status
     } = await merge({
       fixturesPath: 'test/fixtures/merge',
-      commitMessage: 'test-project',
       runCodemods: true
     });
 
@@ -333,7 +324,6 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
       status
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      commitMessage: 'test-project',
       subDir: 'foo/bar'
     });
 
@@ -350,7 +340,6 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
       status
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      commitMessage: 'test-project',
       createCustomDiff: true
     });
 
@@ -366,7 +355,6 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
       status
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      commitMessage: 'test-project',
       ignoredFiles: ['present-changed.txt']
     });
 
