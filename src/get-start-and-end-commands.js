@@ -63,6 +63,10 @@ async function tryPrepareCommandUsingCache({
   basedir,
   options
 }) {
+  if (!options.packageName) {
+    return;
+  }
+
   // can't use resolve here because there is no "main" in package.json
   let packageRoot = path.join(basedir, 'node_modules', options.packageName);
   try {
@@ -105,6 +109,10 @@ async function tryPrepareCommandUsingLocal(options) {
 }
 
 async function tryPrepareCommandUsingGlobal(options) {
+  if (!options.packageName) {
+    return;
+  }
+
   let command = options.commandName || options.packageName;
 
   let packagePath;

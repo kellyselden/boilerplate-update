@@ -191,6 +191,18 @@ describe(_getStartAndEndCommands, function() {
     ]);
   });
 
+  it('skips cache if no package name', async function() {
+    let statSpy = sandbox.spy(utils, 'stat');
+    let whichSpy = sandbox.spy(utils, 'which');
+
+    await getStartAndEndCommands({
+      packageName: null
+    });
+
+    expect(statSpy.callCount).to.equal(0);
+    expect(whichSpy.callCount).to.equal(0);
+  });
+
   it('misses local package if version mismatch', async function() {
     await setUpLocalScenario();
 
