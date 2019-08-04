@@ -160,35 +160,170 @@ describe(_getStartAndEndCommands, function() {
     });
   }
 
-  it('finds local package', async function() {
-    await setUpLocalScenario();
+  describe('local', function() {
+    it('finds local package', async function() {
+      await setUpLocalScenario();
 
-    let statSpy = sandbox.spy(utils, 'stat');
+      let statSpy = sandbox.spy(utils, 'stat');
 
-    let commands = await getStartAndEndCommands();
+      let commands = await getStartAndEndCommands();
 
-    expect(commands).to.deep.equal({
-      startCommand: `node ${cpr} ${startPath} .`,
-      endCommand: `node ${cpr} ${endPath} .`
+      expect(commands).to.deep.equal({
+        startCommand: `node ${cpr} ${startPath} .`,
+        endCommand: `node ${cpr} ${endPath} .`
+      });
+
+      expect(cacheStub1.callCount).to.equal(2);
+      expect(cacheStub2.callCount).to.equal(2);
+      expect(remoteStub1.callCount).to.equal(0);
+      expect(remoteStub2.callCount).to.equal(0);
+
+      expect(cacheStub1.args[0][0].options.key).to.equal('start');
+      expect(cacheStub1.args[0][0].packageRoot).to.equal(path.join(process.cwd(), 'node_modules/test-package'));
+      expect(cacheStub1.args[1][0].options.key).to.equal('end');
+      expect(cacheStub1.args[1][0].packageRoot).to.equal(path.join(process.cwd(), 'node_modules/test-package'));
+
+      expect(cacheStub2.args[0][0]).to.equal(path.resolve(startPath, '..')).and.to.be.a.directory();
+      expect(cacheStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
+
+      expect(statSpy.args).to.deep.equal([
+        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(process.cwd(), 'node_modules/test-package')]
+      ]);
     });
 
-    expect(cacheStub1.callCount).to.equal(2);
-    expect(cacheStub2.callCount).to.equal(2);
-    expect(remoteStub1.callCount).to.equal(0);
-    expect(remoteStub2.callCount).to.equal(0);
+    it('misses local package if version mismatch', async function() {
+      await setUpLocalScenario();
 
-    expect(cacheStub1.args[0][0].options.key).to.equal('start');
-    expect(cacheStub1.args[0][0].packageRoot).to.equal(path.join(process.cwd(), 'node_modules/test-package'));
-    expect(cacheStub1.args[1][0].options.key).to.equal('end');
-    expect(cacheStub1.args[1][0].packageRoot).to.equal(path.join(process.cwd(), 'node_modules/test-package'));
+      await getStartAndEndCommands({
+        packageVersion: '4.5.7'
+      });
 
-    expect(cacheStub2.args[0][0]).to.equal(path.resolve(startPath, '..')).and.to.be.a.directory();
-    expect(cacheStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
+      expect(cacheStub1.callCount).to.equal(0);
+      expect(cacheStub2.callCount).to.equal(0);
+      expect(remoteStub1.callCount).to.equal(2);
+      expect(remoteStub2.callCount).to.equal(2);
+    });
 
-    expect(statSpy.args).to.deep.equal([
-      [path.join(process.cwd(), 'node_modules/test-package')],
-      [path.join(process.cwd(), 'node_modules/test-package')]
-    ]);
+    it('throws if local `stat` throws unexpectedly', async function() {
+      await setUpLocalScenario();
+
+      sandbox.stub(utils, 'stat')
+        .withArgs(path.join(process.cwd(), 'node_modules/test-package'))
+        .rejects(new Error('test stat error'));
+
+      await expect(getStartAndEndCommands()).to.be.rejectedWith('test stat error');
+    });
+  });
+
+  describe('global', function() {
+    it('finds global package', async function() {
+      let globalPath = await setUpGlobalScenario();
+
+      let statSpy = sandbox.spy(utils, 'stat');
+
+      let commands = await getStartAndEndCommands();
+
+      expect(commands).to.deep.equal({
+        startCommand: `node ${cpr} ${startPath} .`,
+        endCommand: `node ${cpr} ${endPath} .`
+      });
+
+      expect(cacheStub1.callCount).to.equal(2);
+      expect(cacheStub2.callCount).to.equal(2);
+      expect(remoteStub1.callCount).to.equal(0);
+      expect(remoteStub2.callCount).to.equal(0);
+
+      expect(cacheStub1.args[0][0].options.key).to.equal('start');
+      expect(cacheStub1.args[0][0].packageRoot).to.equal(path.join(globalPath, 'node_modules/test-package'));
+      expect(cacheStub1.args[1][0].options.key).to.equal('end');
+      expect(cacheStub1.args[1][0].packageRoot).to.equal(path.join(globalPath, 'node_modules/test-package'));
+
+      expect(cacheStub2.args[0][0]).to.equal(path.resolve(startPath, '..')).and.to.be.a.directory();
+      expect(cacheStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
+
+      expect(statSpy.args).to.deep.equal([
+        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(globalPath, 'node_modules/test-package')],
+        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(globalPath, 'node_modules/test-package')]
+      ]);
+      expect(whichStub.args).to.deep.equal([
+        ['test-package'],
+        ['test-package']
+      ]);
+    });
+
+    it('misses global package if version mismatch', async function() {
+      await setUpGlobalScenario();
+
+      await getStartAndEndCommands({
+        packageVersion: '4.5.7'
+      });
+
+      expect(cacheStub1.callCount).to.equal(0);
+      expect(cacheStub2.callCount).to.equal(0);
+      expect(remoteStub1.callCount).to.equal(2);
+      expect(remoteStub2.callCount).to.equal(2);
+    });
+
+    it('throws if global `stat` throws unexpectedly', async function() {
+      let globalPath = await setUpGlobalScenario();
+
+      let { stat } = utils;
+
+      sandbox.stub(utils, 'stat')
+        .callsFake(stat)
+        .withArgs(path.join(globalPath, 'node_modules/test-package'))
+        .rejects(new Error('test stat error'));
+
+      await expect(getStartAndEndCommands()).to.be.rejectedWith('test stat error');
+    });
+
+    it('throws if `which` throws unexpectedly', async function() {
+      await setUpGlobalScenario();
+
+      whichStub.rejects(new Error('test which error'));
+
+      await expect(getStartAndEndCommands({
+        packageVersion: '4.5.7'
+      })).to.be.rejectedWith('test which error');
+    });
+
+    it('uses command name in `which` call', async function() {
+      let commandName = 'test-command';
+      let whichSpy = sandbox.spy(utils, 'which').withArgs(commandName);
+
+      await getStartAndEndCommands({
+        commandName
+      });
+
+      expect(whichSpy.callCount).to.equal(2);
+    });
+  });
+
+  describe('remote', function() {
+    it('calls remote package', async function() {
+      await setUpRemoteScenario();
+
+      let commands = await getStartAndEndCommands();
+
+      expect(commands).to.deep.equal({
+        startCommand: `node ${cpr} ${startPath} .`,
+        endCommand: `node ${cpr} ${endPath} .`
+      });
+
+      expect(cacheStub1.callCount).to.equal(0);
+      expect(cacheStub2.callCount).to.equal(0);
+      expect(remoteStub1.callCount).to.equal(2);
+      expect(remoteStub2.callCount).to.equal(2);
+
+      expect(remoteStub1.args[0][0].options.key).to.equal('start');
+      expect(remoteStub1.args[1][0].options.key).to.equal('end');
+
+      expect(remoteStub2.args[0][0]).to.equal(path.resolve(startPath, '..')).and.to.be.a.directory();
+      expect(remoteStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
+    });
   });
 
   it('skips cache if no package name', async function() {
@@ -201,135 +336,6 @@ describe(_getStartAndEndCommands, function() {
 
     expect(statSpy.callCount).to.equal(0);
     expect(whichSpy.callCount).to.equal(0);
-  });
-
-  it('misses local package if version mismatch', async function() {
-    await setUpLocalScenario();
-
-    await getStartAndEndCommands({
-      packageVersion: '4.5.7'
-    });
-
-    expect(cacheStub1.callCount).to.equal(0);
-    expect(cacheStub2.callCount).to.equal(0);
-    expect(remoteStub1.callCount).to.equal(2);
-    expect(remoteStub2.callCount).to.equal(2);
-  });
-
-  it('throws if local `stat` throws unexpectedly', async function() {
-    await setUpLocalScenario();
-
-    sandbox.stub(utils, 'stat')
-      .withArgs(path.join(process.cwd(), 'node_modules/test-package'))
-      .rejects(new Error('test stat error'));
-
-    await expect(getStartAndEndCommands()).to.be.rejectedWith('test stat error');
-  });
-
-  it('finds global package', async function() {
-    let globalPath = await setUpGlobalScenario();
-
-    let statSpy = sandbox.spy(utils, 'stat');
-
-    let commands = await getStartAndEndCommands();
-
-    expect(commands).to.deep.equal({
-      startCommand: `node ${cpr} ${startPath} .`,
-      endCommand: `node ${cpr} ${endPath} .`
-    });
-
-    expect(cacheStub1.callCount).to.equal(2);
-    expect(cacheStub2.callCount).to.equal(2);
-    expect(remoteStub1.callCount).to.equal(0);
-    expect(remoteStub2.callCount).to.equal(0);
-
-    expect(cacheStub1.args[0][0].options.key).to.equal('start');
-    expect(cacheStub1.args[0][0].packageRoot).to.equal(path.join(globalPath, 'node_modules/test-package'));
-    expect(cacheStub1.args[1][0].options.key).to.equal('end');
-    expect(cacheStub1.args[1][0].packageRoot).to.equal(path.join(globalPath, 'node_modules/test-package'));
-
-    expect(cacheStub2.args[0][0]).to.equal(path.resolve(startPath, '..')).and.to.be.a.directory();
-    expect(cacheStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
-
-    expect(statSpy.args).to.deep.equal([
-      [path.join(process.cwd(), 'node_modules/test-package')],
-      [path.join(globalPath, 'node_modules/test-package')],
-      [path.join(process.cwd(), 'node_modules/test-package')],
-      [path.join(globalPath, 'node_modules/test-package')]
-    ]);
-    expect(whichStub.args).to.deep.equal([
-      ['test-package'],
-      ['test-package']
-    ]);
-  });
-
-  it('misses global package if version mismatch', async function() {
-    await setUpGlobalScenario();
-
-    await getStartAndEndCommands({
-      packageVersion: '4.5.7'
-    });
-
-    expect(cacheStub1.callCount).to.equal(0);
-    expect(cacheStub2.callCount).to.equal(0);
-    expect(remoteStub1.callCount).to.equal(2);
-    expect(remoteStub2.callCount).to.equal(2);
-  });
-
-  it('throws if global `stat` throws unexpectedly', async function() {
-    let globalPath = await setUpGlobalScenario();
-
-    let { stat } = utils;
-
-    sandbox.stub(utils, 'stat')
-      .callsFake(stat)
-      .withArgs(path.join(globalPath, 'node_modules/test-package'))
-      .rejects(new Error('test stat error'));
-
-    await expect(getStartAndEndCommands()).to.be.rejectedWith('test stat error');
-  });
-
-  it('throws if `which` throws unexpectedly', async function() {
-    await setUpGlobalScenario();
-
-    whichStub.rejects(new Error('test which error'));
-
-    await expect(getStartAndEndCommands({
-      packageVersion: '4.5.7'
-    })).to.be.rejectedWith('test which error');
-  });
-
-  it('uses command name in `which` call', async function() {
-    let commandName = 'test-command';
-    let whichSpy = sandbox.spy(utils, 'which').withArgs(commandName);
-
-    await getStartAndEndCommands({
-      commandName
-    });
-
-    expect(whichSpy.callCount).to.equal(2);
-  });
-
-  it('calls remote package', async function() {
-    await setUpRemoteScenario();
-
-    let commands = await getStartAndEndCommands();
-
-    expect(commands).to.deep.equal({
-      startCommand: `node ${cpr} ${startPath} .`,
-      endCommand: `node ${cpr} ${endPath} .`
-    });
-
-    expect(cacheStub1.callCount).to.equal(0);
-    expect(cacheStub2.callCount).to.equal(0);
-    expect(remoteStub1.callCount).to.equal(2);
-    expect(remoteStub2.callCount).to.equal(2);
-
-    expect(remoteStub1.args[0][0].options.key).to.equal('start');
-    expect(remoteStub1.args[1][0].options.key).to.equal('end');
-
-    expect(remoteStub2.args[0][0]).to.equal(path.resolve(startPath, '..')).and.to.be.a.directory();
-    expect(remoteStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
   });
 
   it('mutates package.json', async function() {
