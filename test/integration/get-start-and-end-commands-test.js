@@ -299,6 +299,17 @@ describe(_getStartAndEndCommands, function() {
     })).to.be.rejectedWith('test which error');
   });
 
+  it('uses command name in `which` call', async function() {
+    let commandName = 'test-command';
+    let whichSpy = sandbox.spy(utils, 'which').withArgs(commandName);
+
+    await getStartAndEndCommands({
+      commandName
+    });
+
+    expect(whichSpy.callCount).to.equal(2);
+  });
+
   it('calls remote package', async function() {
     await setUpRemoteScenario();
 
