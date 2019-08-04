@@ -46,7 +46,7 @@ describe(_getStartAndEndCommands, function() {
     process.chdir(cwd);
   });
 
-  let createProject = async function({
+  async function createProject({
     tmpPath,
     projectName = 'test-project',
     addDependency = true
@@ -64,15 +64,15 @@ describe(_getStartAndEndCommands, function() {
     project.writeSync(tmpPath);
 
     return path.join(tmpPath, projectName);
-  };
+  }
 
-  let setUpLocalScenario = async function() {
+  async function setUpLocalScenario() {
     tmpPath = await createProject();
 
     process.chdir(tmpPath);
-  };
+  }
 
-  let setUpGlobalScenario = async function() {
+  async function setUpGlobalScenario() {
     tmpPath = await createProject({
       addDependency: false
     });
@@ -84,13 +84,13 @@ describe(_getStartAndEndCommands, function() {
     whichStub = sandbox.stub(utils, 'which').resolves(path.resolve(globalPath, '../fake/fake'));
 
     return globalPath;
-  };
+  }
 
-  let setUpRemoteScenario = async function() {
+  async function setUpRemoteScenario() {
     tmpPath = await createProject({
       addDependency: false
     });
-  };
+  }
 
   function getStartAndEndCommands(options) {
     // ensure order for assertions
@@ -99,7 +99,7 @@ describe(_getStartAndEndCommands, function() {
       resolve = _resolve;
     });
 
-    let callback2 = async function(cwd) {
+    async function callback2(cwd) {
       let tmpPath = await createProject({
         tmpPath: cwd
       });
@@ -107,7 +107,7 @@ describe(_getStartAndEndCommands, function() {
       resolve();
 
       return tmpPath;
-    };
+    }
 
     function callback1(stub2) {
       return function({
