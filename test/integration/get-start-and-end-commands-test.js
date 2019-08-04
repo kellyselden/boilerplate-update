@@ -206,8 +206,6 @@ describe(_getStartAndEndCommands, function() {
     });
 
     it('throws if local `stat` throws unexpectedly', async function() {
-      await setUpLocalScenario();
-
       sandbox.stub(utils, 'stat')
         .withArgs(path.join(process.cwd(), 'node_modules/test-package'))
         .rejects(new Error('test stat error'));
@@ -281,9 +279,7 @@ describe(_getStartAndEndCommands, function() {
     });
 
     it('throws if `which` throws unexpectedly', async function() {
-      await setUpGlobalScenario();
-
-      whichStub.rejects(new Error('test which error'));
+      whichStub = sandbox.stub(utils, 'which').rejects(new Error('test which error'));
 
       await expect(getStartAndEndCommands({
         packageVersion: '4.5.7'
