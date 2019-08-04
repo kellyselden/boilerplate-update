@@ -56,7 +56,7 @@ async function boilerplateUpdate(options) {
     customDiffOptions,
     ignoredFiles = [],
     wasRunAsExecutable
-  } = Object.assign({}, options, await resolveProperty(mergeOptions));
+  } = { ...options, ...await resolveProperty(mergeOptions) };
 
   startVersion = await resolveProperty(startVersion);
   endVersion = await resolveProperty(endVersion);
@@ -137,7 +137,7 @@ async function boilerplateUpdate(options) {
     return { promise: Promise.resolve() };
   }
 
-  let promise = (async function() {
+  let promise = (async() => {
     if (resolveConflictsProcess) {
       await new Promise(resolve => {
         resolveConflictsProcess.on('exit', resolve);

@@ -294,7 +294,7 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
 
   it('runs codemods', async function() {
     async function selectAllCodemods(codemods) {
-      return Object.keys(codemods).map(k => codemods[k]);
+      return Object.values(codemods);
     }
 
     sandbox.stub(utils, 'promptCodemods').callsFake(selectAllCodemods);
