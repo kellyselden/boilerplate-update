@@ -143,7 +143,7 @@ describe(_getStartAndEndCommands, function() {
       return await prepareCommand(...arguments);
     });
 
-    return _getStartAndEndCommands(Object.assign({
+    return _getStartAndEndCommands({
       projectName: 'test-project',
       packageName: 'test-package',
       packageVersion: '4.5.6',
@@ -155,8 +155,9 @@ describe(_getStartAndEndCommands, function() {
       },
       endOptions: {
         key: 'end'
-      }
-    }, options));
+      },
+      ...options
+    });
   }
 
   it('finds local package', async function() {

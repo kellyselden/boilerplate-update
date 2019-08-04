@@ -9,7 +9,7 @@ const cpr = path.resolve(path.dirname(require.resolve('cpr')), '../bin/cpr');
 const replaceFile = require('./replace-file');
 
 async function mutatePackageJson(cwd, callback) {
-  return await replaceFile(path.join(cwd, 'package.json'), async function(file) {
+  return await replaceFile(path.join(cwd, 'package.json'), async file => {
     let pkg = JSON.parse(file);
     await callback(pkg);
     return JSON.stringify(pkg, null, 2);
@@ -18,7 +18,7 @@ async function mutatePackageJson(cwd, callback) {
 
 module.exports = async function getStartAndEndCommands(options) {
   async function prepareCommand(key) {
-    let _options = Object.assign({}, options, options[key]);
+    let _options = { ...options, ...options[key] };
     delete _options[key];
     return await module.exports.prepareCommand(_options);
   }
@@ -37,7 +37,7 @@ module.exports = async function getStartAndEndCommands(options) {
   };
 };
 
-const _prepareCommand = async function _prepareCommand({
+async function _prepareCommand({
   createProject,
   options
 }) {
@@ -57,9 +57,9 @@ const _prepareCommand = async function _prepareCommand({
   ]);
 
   return `node ${cpr} ${appPath} .`;
-};
+}
 
-const tryPrepareCommandUsingCache = async function tryPrepareCommandUsingCache({
+async function tryPrepareCommandUsingCache({
   basedir,
   options
 }) {
@@ -86,7 +86,7 @@ const tryPrepareCommandUsingCache = async function tryPrepareCommandUsingCache({
     }),
     options
   });
-};
+}
 
 module.exports.prepareCommandUsingRemote = async function prepareCommandUsingRemote(options) {
   return await _prepareCommand({
@@ -104,7 +104,7 @@ async function tryPrepareCommandUsingLocal(options) {
   });
 }
 
-const tryPrepareCommandUsingGlobal = async function tryPrepareCommandUsingGlobal(options) {
+async function tryPrepareCommandUsingGlobal(options) {
   let command = options.commandName || options.packageName;
 
   let packagePath;
@@ -122,7 +122,7 @@ const tryPrepareCommandUsingGlobal = async function tryPrepareCommandUsingGlobal
     basedir: path.resolve(path.dirname(packagePath), '../lib'),
     options
   });
-};
+}
 
 module.exports.prepareCommand = async function prepareCommand(options) {
   let command = await tryPrepareCommandUsingLocal(options);

@@ -12,7 +12,7 @@ module.exports = async function getApplicableCodemods({
 }) {
   let nodeVersion = utils.getNodeVersion();
 
-  let versionRanges = Object.assign({}, packageJson.dependencies, packageJson.devDependencies);
+  let versionRanges = { ...packageJson.dependencies, ...packageJson.devDependencies };
 
   let codemods = await utils.getCodemods(url);
 
@@ -27,15 +27,14 @@ module.exports = async function getApplicableCodemods({
     }, resolvedVersions);
   }, {});
 
-  return Object.keys(codemods).filter(codemod => {
-    codemod = codemods[codemod];
+  return Object.entries(codemods).filter(([, codemod]) => {
     let keys = Object.keys(codemod.versions);
     let areVersionsInRange = keys.every(key => semver.gte(resolvedVersions[key], codemod.versions[key]));
     let hasCorrectProjectOption = projectOptions.some(option => codemod.projectOptions.includes(option));
     let isNodeVersionInRange = semver.gte(nodeVersion, codemod.nodeVersion);
     return areVersionsInRange && hasCorrectProjectOption && isNodeVersionInRange;
-  }).reduce((applicableCodemods, codemod) => {
-    applicableCodemods[codemod] = codemods[codemod];
+  }).reduce((applicableCodemods, [codemod, applicableCodemod]) => {
+    applicableCodemods[codemod] = applicableCodemod;
     return applicableCodemods;
   }, {});
 };
