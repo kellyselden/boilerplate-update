@@ -29,4 +29,12 @@ describe(runScript, function() {
 
     expect(result.name).to.equal('require');
   });
+
+  it('allows awaiting', async function() {
+    let script = 'return await 3 + 4';
+
+    let result = await runScript(script);
+
+    expect(result).to.equal(7);
+  });
 });
