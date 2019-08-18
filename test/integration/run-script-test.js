@@ -6,7 +6,7 @@ const runScript = require('../../src/run-script');
 
 describe(runScript, function() {
   it('runs script', async function() {
-    let script = '3 + 4';
+    let script = 'return 3 + 4';
 
     let result = await runScript(script);
 
@@ -14,11 +14,19 @@ describe(runScript, function() {
   });
 
   it('scopes tmp cwd', async function() {
-    let script = 'cwd';
+    let script = 'return cwd';
 
     let result = await runScript(script);
 
     expect(result).to.startWith(require('os').tmpdir());
     expect(result).to.not.equal(process.cwd());
+  });
+
+  it('scopes require', async function() {
+    let script = 'return require';
+
+    let result = await runScript(script);
+
+    expect(result.name).to.equal('require');
   });
 });
