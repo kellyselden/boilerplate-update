@@ -10,7 +10,7 @@ module.exports = async function npx(command, options) {
   await _command(npxCommand, {
     localDir: path.join(__dirname, '..'),
     stdio: 'inherit',
-    // shell: true,
+    shell: true,
     ...options
   });
 };
