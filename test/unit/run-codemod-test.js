@@ -22,60 +22,75 @@ describe(runCodemod, function() {
     sandbox.restore();
   });
 
-  it('runs a command', async function() {
-    await runCodemod({
-      commands: [
-        'test command'
-      ]
+  describe('command', function() {
+    it('runs a command', async function() {
+      await runCodemod({
+        commands: [
+          'test command'
+        ]
+      });
+
+      expect(npx.args).to.deep.equal([
+        ['test command']
+      ]);
+      expect(runScript.called).to.be.false;
     });
 
-    expect(npx.args).to.deep.equal([
-      ['test command']
-    ]);
-    expect(runScript.called).to.be.false;
+    it('runs multiple commands sequentially', async function() {
+      let npx1 = npx.withArgs('test command 1').callsFake(async() => {
+        expect(npx2.args).to.deep.equal([]);
+      });
+      let npx2 = npx.withArgs('test command 2').callsFake(async() => {
+        expect(npx1.args).to.deep.equal([['test command 1']]);
+      });
+
+      await runCodemod({
+        commands: [
+          'test command 1',
+          'test command 2'
+        ]
+      });
+
+      expect(npx.args).to.deep.equal([
+        ['test command 1'],
+        ['test command 2']
+      ]);
+    });
+
+    it('stops if one command errors', async function() {
+      npx.withArgs('test command 1').rejects();
+      let npx2 = npx.withArgs('test command 2');
+
+      await runCodemod({
+        commands: [
+          'test command 1',
+          'test command 2'
+        ]
+      });
+
+      expect(npx2.called).to.not.be.ok;
+    });
   });
 
-  it('runs multiple commands sequentially', async function() {
-    let npx1 = npx.withArgs('test command 1').callsFake(async() => {
-      expect(npx2.args).to.deep.equal([]);
-    });
-    let npx2 = npx.withArgs('test command 2').callsFake(async() => {
-      expect(npx1.args).to.deep.equal([['test command 1']]);
-    });
+  describe('script', function() {
+    it('runs a script', async function() {
+      await runCodemod({
+        script: 'test script'
+      });
 
-    await runCodemod({
-      commands: [
-        'test command 1',
-        'test command 2'
-      ]
+      expect(runScript.args).to.deep.equal([['test script']]);
+      expect(npx.called).to.be.false;
     });
 
-    expect(npx.args).to.deep.equal([
-      ['test command 1'],
-      ['test command 2']
-    ]);
-  });
+    it('doesn\'t throw if error', async function() {
+      runScript.rejects();
 
-  it('continues if one codemod errors', async function() {
-    npx.withArgs('test command 1').rejects();
-    let npx2 = npx.withArgs('test command 2').resolves();
+      await runCodemod({
+        script: 'test script'
+      });
 
-    await runCodemod({
-      commands: [
-        'test command 1',
-        'test command 2'
-      ]
+      expect(runScript.args).to.deep.equal([['test script']]);
+      expect(npx.called).to.be.false;
     });
-
-    expect(npx2.calledOnce).to.be.ok;
-  });
-
-  it('runs a script', async function() {
-    await runCodemod({
-      script: 'test script'
-    });
-
-    expect(runScript.args).to.deep.equal([['test script']]);
-    expect(npx.called).to.be.false;
   });
 });
