@@ -299,6 +299,8 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
 
     sandbox.stub(utils, 'promptCodemods').callsFake(selectAllCodemods);
 
+    let log = sandbox.stub(console, 'log');
+
     let {
       status
     } = await merge({
@@ -317,6 +319,17 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
 
     assertNoUnstaged(status);
     assertCodemodRan(status);
+
+    expect(log.withArgs('Running codemod commands-test-codemod')).to.be.called;
+    expect(log.withArgs('Running command 1 of 2')).to.be.called;
+    expect(log.withArgs('Finished running command 1 of 2')).to.be.called;
+    expect(log.withArgs('Running command 2 of 2')).to.be.called;
+    expect(log.withArgs('Finished running command 2 of 2')).to.be.called;
+    expect(log.withArgs('Finished running codemod commands-test-codemod')).to.be.called;
+    if (!process.env.NODE_LTS) {
+      expect(log.withArgs('Running codemod script-test-codemod')).to.be.called;
+      expect(log.withArgs('Finished running codemod script-test-codemod')).to.be.called;
+    }
   });
 
   it('scopes to sub dir if run from there', async function() {
