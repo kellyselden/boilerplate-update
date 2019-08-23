@@ -10,6 +10,7 @@ module.exports = async function runCodemod(codemod) {
       await utils.runScript(codemod.script);
     } catch (err) {
       console.error(`Error running script ${codemod.script}`);
+      console.error(err.stack);
       return;
     }
   } else {
