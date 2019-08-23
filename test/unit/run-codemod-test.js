@@ -113,7 +113,7 @@ describe(runCodemod, function() {
     });
 
     it('doesn\'t throw if error', async function() {
-      runScript.rejects();
+      runScript.rejects(new Error('test error'));
 
       await runCodemod({
         name: 'test-codemod',
@@ -125,6 +125,7 @@ describe(runCodemod, function() {
 
       expect(log.withArgs('Running codemod test-codemod')).to.be.called;
       expect(error.withArgs('Error running script test script')).to.be.called;
+      expect(error.withArgs(sinon.match('Error: test error'))).to.be.called;
       expect(log.withArgs('Finished running codemod test-codemod')).to.not.be.called;
     });
   });
