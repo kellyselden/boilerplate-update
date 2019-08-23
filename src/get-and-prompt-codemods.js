@@ -14,5 +14,10 @@ module.exports = async function getAndPromptCodemods({
     packageJson
   });
 
+  // Attach the name to the object for easy logging later.
+  for (let [name, codemod] of Object.entries(codemods)) {
+    codemod.name = name;
+  }
+
   return await utils.promptCodemods(codemods);
 };
