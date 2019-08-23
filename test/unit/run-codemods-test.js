@@ -31,7 +31,7 @@ describe(runCodemods, function() {
       }
     });
 
-    expect(runCodemod.args).to.deep.equal([[{
+    expect(runCodemod.args).to.deep.equal([['testCodemod', {
       commands: [
         'test command'
       ]
@@ -56,7 +56,7 @@ describe(runCodemods, function() {
       expect(runCodemod2.args).to.deep.equal([]);
     });
     let runCodemod2 = runCodemod.withArgs(testCodemod2).callsFake(async() => {
-      expect(runCodemod1.args).to.deep.equal([[testCodemod1]]);
+      expect(runCodemod1.args).to.deep.equal([['testCodemod1', testCodemod1]]);
     });
 
     await runCodemods({
@@ -65,8 +65,8 @@ describe(runCodemods, function() {
     });
 
     expect(runCodemod.args).to.deep.equal([
-      [testCodemod1],
-      [testCodemod2]
+      ['testCodemod1', testCodemod1],
+      ['testCodemod2', testCodemod2]
     ]);
   });
 });

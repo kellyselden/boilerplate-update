@@ -3,8 +3,8 @@
 
 const utils = require('./utils');
 
-module.exports = async function runCodemod(codemod) {
-  console.log(`Running codemod ${codemod.name}`);
+module.exports = async function runCodemod(name, codemod) {
+  console.log(`Running codemod ${name}`);
   if (codemod.script) {
     try {
       await utils.runScript(codemod.script);
@@ -25,5 +25,5 @@ module.exports = async function runCodemod(codemod) {
       console.log(`Finished running command ${i + 1} of ${codemod.commands.length}`);
     }
   }
-  console.log(`Finished running codemod ${codemod.name}`);
+  console.log(`Finished running codemod ${name}`);
 };

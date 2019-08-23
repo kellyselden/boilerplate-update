@@ -28,8 +28,7 @@ describe(runCodemod, function() {
 
   describe('command', function() {
     it('runs a command', async function() {
-      await runCodemod({
-        name: 'test-codemod',
+      await runCodemod('test-codemod', {
         commands: [
           'test command'
         ]
@@ -54,8 +53,7 @@ describe(runCodemod, function() {
         expect(npx1.args).to.deep.equal([['test command 1']]);
       });
 
-      await runCodemod({
-        name: 'test-codemod',
+      await runCodemod('test-codemod', {
         commands: [
           'test command 1',
           'test command 2'
@@ -78,8 +76,7 @@ describe(runCodemod, function() {
     it('stops if one command errors', async function() {
       npx.withArgs('test command 1').rejects();
 
-      await runCodemod({
-        name: 'test-codemod',
+      await runCodemod('test-codemod', {
         commands: [
           'test command 1',
           'test command 2'
@@ -100,8 +97,7 @@ describe(runCodemod, function() {
 
   describe('script', function() {
     it('runs a script', async function() {
-      await runCodemod({
-        name: 'test-codemod',
+      await runCodemod('test-codemod', {
         script: 'test script'
       });
 
@@ -115,8 +111,7 @@ describe(runCodemod, function() {
     it('doesn\'t throw if error', async function() {
       runScript.rejects();
 
-      await runCodemod({
-        name: 'test-codemod',
+      await runCodemod('test-codemod', {
         script: 'test script'
       });
 
