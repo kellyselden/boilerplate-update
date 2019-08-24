@@ -30,6 +30,14 @@ describe(runScript, function() {
     expect(result.name).to.equal('require');
   });
 
+  it('scopes execa', async function() {
+    let script = 'return execa';
+
+    let result = await runScript(script);
+
+    expect(result.name).to.equal('execa');
+  });
+
   it('allows awaiting', async function() {
     let script = 'return await 3 + 4';
 
