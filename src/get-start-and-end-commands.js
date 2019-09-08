@@ -7,6 +7,7 @@ const tmpDir = promisify(require('tmp').dir);
 const rimraf = promisify(require('rimraf'));
 const cpr = path.resolve(path.dirname(require.resolve('cpr')), '../bin/cpr');
 const replaceFile = require('./replace-file');
+const semver = require('semver');
 
 async function mutatePackageJson(cwd, callback) {
   return await replaceFile(path.join(cwd, 'package.json'), async file => {
@@ -79,10 +80,19 @@ async function tryPrepareCommandUsingCache({
     throw err;
   }
   let packageVersion = utils.require(path.join(packageRoot, 'package.json')).version;
-  if (packageVersion !== options.packageVersion) {
+
+  let isOutOfRange;
+  if (typeof options.packageRange === 'string') {
+    isOutOfRange = !semver.satisfies(packageVersion, options.packageRange);
+  } else {
+    isOutOfRange = packageVersion !== options.packageVersion;
+  }
+
+  if (isOutOfRange) {
     // installed version is out-of-date
     return;
   }
+
   return await _prepareCommand({
     createProject: options.createProjectFromCache({
       packageRoot,
@@ -155,9 +165,11 @@ module.exports.prepareCommand = async function prepareCommand(options) {
   if (command) {
     return command;
   }
+
   command = await tryPrepareCommandUsingGlobal(options);
   if (command) {
     return command;
   }
+
   return await module.exports.prepareCommandUsingRemote(options);
 };
