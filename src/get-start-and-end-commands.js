@@ -127,7 +127,7 @@ async function tryPrepareCommandUsingGlobal(options) {
   }
 
   return await tryPrepareCommandUsingCache({
-    basedir: path.resolve(path.dirname(packagePath), '../lib'),
+    basedir: path.dirname(packagePath),
     options
   });
 }

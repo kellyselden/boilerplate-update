@@ -48,12 +48,13 @@ describe(_getStartAndEndCommands, function() {
 
   async function createProject({
     tmpPath,
-    projectName = 'test-project',
     addDependency = true
   } = {}) {
     if (!tmpPath) {
       tmpPath = await tmpDir();
     }
+
+    let projectName = 'test-project';
 
     let project = new Project(projectName, '1.2.3');
 
@@ -77,11 +78,9 @@ describe(_getStartAndEndCommands, function() {
       addDependency: false
     });
 
-    let globalPath = await createProject({
-      projectName: 'lib'
-    });
+    let globalPath = await createProject();
 
-    whichStub = sandbox.stub(utils, 'which').resolves(path.resolve(globalPath, '../fake/fake'));
+    whichStub = sandbox.stub(utils, 'which').resolves(path.join(globalPath, 'fake'));
 
     return globalPath;
   }
