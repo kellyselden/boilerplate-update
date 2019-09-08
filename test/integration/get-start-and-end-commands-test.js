@@ -205,6 +205,19 @@ describe(_getStartAndEndCommands, function() {
       expect(remoteStub2.callCount).to.equal(2);
     });
 
+    it('finds local package if version in range', async function() {
+      await setUpLocalScenario();
+
+      await getStartAndEndCommands({
+        packageRange: '^4.0.0'
+      });
+
+      expect(cacheStub1.callCount).to.equal(2);
+      expect(cacheStub2.callCount).to.equal(2);
+      expect(remoteStub1.callCount).to.equal(0);
+      expect(remoteStub2.callCount).to.equal(0);
+    });
+
     it('throws if local `stat` throws unexpectedly', async function() {
       sandbox.stub(utils, 'stat')
         .withArgs(path.join(process.cwd(), 'node_modules/test-package'))
@@ -265,6 +278,19 @@ describe(_getStartAndEndCommands, function() {
       expect(cacheStub2.callCount).to.equal(0);
       expect(remoteStub1.callCount).to.equal(2);
       expect(remoteStub2.callCount).to.equal(2);
+    });
+
+    it('finds global package if version in range', async function() {
+      await setUpGlobalScenario();
+
+      await getStartAndEndCommands({
+        packageRange: '^4.0.0'
+      });
+
+      expect(cacheStub1.callCount).to.equal(2);
+      expect(cacheStub2.callCount).to.equal(2);
+      expect(remoteStub1.callCount).to.equal(0);
+      expect(remoteStub2.callCount).to.equal(0);
     });
 
     it('throws if global `stat` throws unexpectedly', async function() {
