@@ -81,7 +81,7 @@ describe(_getStartAndEndCommands, function() {
       projectName: 'lib'
     });
 
-    whichStub = sandbox.stub(utils, 'which').resolves(path.resolve(globalPath, '../fake/fake'));
+    whichStub = sandbox.stub(utils, 'which').resolves([path.resolve(globalPath, '../fake/fake')]);
 
     return globalPath;
   }
@@ -242,13 +242,15 @@ describe(_getStartAndEndCommands, function() {
 
       expect(statSpy.args).to.deep.equal([
         [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.resolve(globalPath, '../../node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')],
         [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.resolve(globalPath, '../../node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')]
       ]);
       expect(whichStub.args).to.deep.equal([
-        ['test-package'],
-        ['test-package']
+        ['test-package', { all: true }],
+        ['test-package', { all: true }]
       ]);
     });
 
