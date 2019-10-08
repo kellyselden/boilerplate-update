@@ -115,9 +115,9 @@ async function tryPrepareCommandUsingGlobal(options) {
 
   let command = options.commandName || options.packageName;
 
-  let packagePath;
+  let packagePaths;
   try {
-    packagePath = await utils.which(command);
+    packagePaths = await utils.which(command, { all: true });
   } catch (err) {
     if (err.message === `not found: ${command}`) {
       // not installed globally
@@ -126,10 +126,28 @@ async function tryPrepareCommandUsingGlobal(options) {
     throw err;
   }
 
-  return await tryPrepareCommandUsingCache({
-    basedir: path.resolve(path.dirname(packagePath), '../lib'),
-    options
-  });
+  // try all found executables
+  for (let packagePath of packagePaths) {
+    // try all known locations
+    for (let basedir of [
+      // for example
+      // ember-cli-update/node_modules/.bin/ember =>
+      // ember-cli-update/node_modules/ember-cli
+      path.resolve(path.dirname(packagePath), '../..'),
+      // for example
+      // .nvm/versions/node/v8.16.1/bin/ember =>
+      // .nvm/versions/node/v8.16.1/lib/node_modules/ember-cli
+      path.resolve(path.dirname(packagePath), '../lib')
+    ]) {
+      let command = await tryPrepareCommandUsingCache({
+        basedir,
+        options
+      });
+      if (command) {
+        return command;
+      }
+    }
+  }
 }
 
 module.exports.prepareCommand = async function prepareCommand(options) {
