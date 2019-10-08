@@ -12,6 +12,6 @@ module.exports.open = require('open');
 module.exports.runCodemod = require('./run-codemod');
 module.exports.require = require;
 module.exports.stat = promisify(fs.stat);
-module.exports.which = promisify(require('which'));
+module.exports.which = require('which');
 module.exports.runScript = require('./run-script');
 module.exports.promptCodemods = require('./prompt-codemods');
