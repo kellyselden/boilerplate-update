@@ -81,12 +81,9 @@ async function tryPrepareCommandUsingCache({
   }
   let packageVersion = utils.require(path.join(packageRoot, 'package.json')).version;
 
-  let isOutOfRange;
-  if (typeof options.packageRange === 'string') {
-    isOutOfRange = !semver.satisfies(packageVersion, options.packageRange);
-  } else {
-    isOutOfRange = packageVersion !== options.packageVersion;
-  }
+  let packageRange = typeof options.packageRange === 'string' ? options.packageRange : options.packageVersion;
+
+  let isOutOfRange = !semver.satisfies(packageVersion, packageRange);
 
   if (isOutOfRange) {
     // installed version is out-of-date
