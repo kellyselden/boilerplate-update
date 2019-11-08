@@ -18,18 +18,21 @@ async function mutatePackageJson(cwd, callback) {
 }
 
 module.exports = async function getStartAndEndCommands(options) {
-  async function prepareCommand(key) {
+  function prepareOptions(key) {
     let _options = { ...options, ...options[key] };
     delete _options[key];
-    return await module.exports.prepareCommand(_options);
+    return _options;
   }
+
+  let startOptions = prepareOptions('startOptions');
+  let endOptions = prepareOptions('endOptions');
 
   let [
     startCommand,
     endCommand
   ] = await Promise.all([
-    prepareCommand('startOptions'),
-    prepareCommand('endOptions')
+    module.exports.prepareCommand(startOptions),
+    module.exports.prepareCommand(endOptions)
   ]);
 
   return {
