@@ -21,6 +21,7 @@ module.exports = async function runCodemod(codemod) {
         await utils.npx(command);
       } catch (err) {
         console.error(`Error running command ${command}`);
+        console.error(err.stack);
         return;
       }
       console.log(`Finished running command ${i + 1} of ${codemod.commands.length}`);
