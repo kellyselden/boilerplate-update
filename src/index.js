@@ -26,6 +26,7 @@ async function boilerplateUpdate(options) {
     projectOptions,
     listCodemods,
     codemodsUrl,
+    codemodsJson,
     mergeOptions = {}
   } = options;
 
@@ -38,9 +39,10 @@ async function boilerplateUpdate(options) {
   callbackOptions.projectOptions = projectOptions;
 
   codemodsUrl = await resolveProperty(codemodsUrl);
+  codemodsJson = await resolveProperty(codemodsJson);
 
   if (listCodemods) {
-    return { promise: _listCodemods(codemodsUrl) };
+    return { promise: _listCodemods(codemodsUrl, codemodsJson) };
   }
 
   let {
@@ -87,6 +89,7 @@ async function boilerplateUpdate(options) {
         endVersion,
         remoteUrl,
         codemodsUrl,
+        codemodsJson,
         packageJson
       })
     };
@@ -96,6 +99,7 @@ async function boilerplateUpdate(options) {
     return {
       promise: promptAndRunCodemods({
         url: codemodsUrl,
+        json: codemodsJson,
         projectOptions,
         packageJson
       })

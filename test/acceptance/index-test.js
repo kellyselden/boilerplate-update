@@ -50,6 +50,7 @@ describe(function() {
     compareOnly,
     statsOnly,
     runCodemods,
+    codemodsJson,
     listCodemods,
     createCustomDiff,
     ignoredFiles
@@ -86,6 +87,7 @@ describe(function() {
         runCodemods,
         listCodemods,
         codemodsUrl: 'https://raw.githubusercontent.com/kellyselden/boilerplate-update-codemod-manifest-test/master/manifest.json',
+        codemodsJson,
         projectOptions,
         startVersion: '0.0.1',
         endVersion: '0.0.2',
@@ -290,6 +292,30 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
     assertNoStaged(status);
 
     expect(JSON.parse(result)).to.have.own.property('commands-test-codemod');
+  });
+
+  it('accepts codemods via json string', async function() {
+    let {
+      result,
+      status
+    } = await merge({
+      fixturesPath: 'test/fixtures/local',
+      listCodemods: true,
+      codemodsJson: JSON.stringify({
+        'test-codemod-json': {
+          versions: {
+            lodash: '3.0.0'
+          },
+          projectOptions: ['test-project', 'unused'],
+          nodeVersion: '6.0.0',
+          commands: []
+        }
+      })
+    });
+
+    assertNoStaged(status);
+
+    expect(JSON.parse(result)).to.have.own.property('test-codemod-json');
   });
 
   it('runs codemods', async function() {

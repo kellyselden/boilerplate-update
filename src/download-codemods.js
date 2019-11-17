@@ -25,5 +25,5 @@ module.exports = async function downloadCodemods(url) {
     }).on('error', reject);
   });
 
-  return JSON.parse(manifest);
+  return manifest;
 };

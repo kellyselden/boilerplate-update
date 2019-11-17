@@ -9,10 +9,12 @@ module.exports = async function getStats({
   endVersion,
   remoteUrl,
   codemodsUrl,
+  codemodsJson,
   packageJson
 }) {
   let codemods = await getApplicableCodemods({
     url: codemodsUrl,
+    json: codemodsJson,
     projectOptions,
     packageJson
   });

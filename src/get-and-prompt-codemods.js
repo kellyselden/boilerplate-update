@@ -5,11 +5,13 @@ const getApplicableCodemods = require('./get-applicable-codemods');
 
 module.exports = async function getAndPromptCodemods({
   url,
+  json,
   projectOptions,
   packageJson
 }) {
   let codemods = await getApplicableCodemods({
     url,
+    json,
     projectOptions,
     packageJson
   });
