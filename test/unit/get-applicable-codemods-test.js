@@ -8,14 +8,14 @@ const getApplicableCodemods = require('../../src/get-applicable-codemods');
 
 describe(getApplicableCodemods, function() {
   let sandbox;
-  let getCodemods;
+  let downloadCodemods;
   let getNodeVersion;
   let getVersions;
 
   beforeEach(function() {
     sandbox = sinon.createSandbox();
 
-    getCodemods = sandbox.stub(utils, 'getCodemods');
+    downloadCodemods = sandbox.stub(utils, 'downloadCodemods');
     getNodeVersion = sandbox.stub(utils, 'getNodeVersion');
     getVersions = sandbox.stub(utils, 'getVersions').resolves(['0.0.1', '0.0.2']);
   });
@@ -25,7 +25,7 @@ describe(getApplicableCodemods, function() {
   });
 
   it('works', async function() {
-    getCodemods.resolves({
+    downloadCodemods.resolves({
       testCodemod: {
         versions: {
           'test-dependency': '0.0.1'
@@ -57,13 +57,13 @@ describe(getApplicableCodemods, function() {
       }
     });
 
-    expect(getCodemods.args).to.deep.equal([['testUrl']]);
+    expect(downloadCodemods.args).to.deep.equal([['testUrl']]);
 
     expect(getVersions.args).to.deep.equal([['test-dependency']]);
   });
 
   it('excludes wrong option', async function() {
-    getCodemods.resolves({
+    downloadCodemods.resolves({
       testCodemod: {
         versions: {
           'test-dependency': '0.0.1'
@@ -88,7 +88,7 @@ describe(getApplicableCodemods, function() {
   });
 
   it('excludes wrong version', async function() {
-    getCodemods.resolves({
+    downloadCodemods.resolves({
       testCodemod: {
         versions: {
           'test-dependency': '0.0.2'
@@ -113,7 +113,7 @@ describe(getApplicableCodemods, function() {
   });
 
   it('excludes wrong node version', async function() {
-    getCodemods.resolves({
+    downloadCodemods.resolves({
       testCodemod: {
         versions: {
           'test-dependency': '0.0.1'
