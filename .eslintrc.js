@@ -25,7 +25,8 @@ module.exports = {
       },
       rules: {
         'mocha/no-setup-in-describe': 0,
-        'mocha/no-hooks-for-single-case': 0
+        'mocha/no-hooks-for-single-case': 0,
+        'mocha/no-exclusive-tests': 2
       }
     }
   ]
