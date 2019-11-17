@@ -5,6 +5,7 @@ const { promisify } = require('util');
 
 module.exports.run = require('git-diff-apply').run;
 module.exports.npx = require('./npx');
+module.exports.getCodemods = require('./get-codemods');
 module.exports.downloadCodemods = require('./download-codemods');
 module.exports.getNodeVersion = require('./get-node-version');
 module.exports.getVersions = require('./get-versions');

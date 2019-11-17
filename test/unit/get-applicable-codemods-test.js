@@ -8,14 +8,14 @@ const getApplicableCodemods = require('../../src/get-applicable-codemods');
 
 describe(getApplicableCodemods, function() {
   let sandbox;
-  let downloadCodemods;
+  let getCodemods;
   let getNodeVersion;
   let getVersions;
 
   beforeEach(function() {
     sandbox = sinon.createSandbox();
 
-    downloadCodemods = sandbox.stub(utils, 'downloadCodemods');
+    getCodemods = sandbox.stub(utils, 'getCodemods');
     getNodeVersion = sandbox.stub(utils, 'getNodeVersion');
     getVersions = sandbox.stub(utils, 'getVersions').resolves(['0.0.1', '0.0.2']);
   });
@@ -25,7 +25,7 @@ describe(getApplicableCodemods, function() {
   });
 
   it('works', async function() {
-    downloadCodemods.resolves({
+    getCodemods.resolves({
       testCodemod: {
         versions: {
           'test-dependency': '0.0.1'
@@ -39,6 +39,7 @@ describe(getApplicableCodemods, function() {
 
     let codemods = await getApplicableCodemods({
       url: 'testUrl',
+      json: 'testJson',
       projectOptions: ['testProjectOption'],
       packageJson: {
         dependencies: {
@@ -57,13 +58,13 @@ describe(getApplicableCodemods, function() {
       }
     });
 
-    expect(downloadCodemods.args).to.deep.equal([['testUrl']]);
+    expect(getCodemods.args).to.deep.equal([['testUrl', 'testJson']]);
 
     expect(getVersions.args).to.deep.equal([['test-dependency']]);
   });
 
   it('excludes wrong option', async function() {
-    downloadCodemods.resolves({
+    getCodemods.resolves({
       testCodemod: {
         versions: {
           'test-dependency': '0.0.1'
@@ -88,7 +89,7 @@ describe(getApplicableCodemods, function() {
   });
 
   it('excludes wrong version', async function() {
-    downloadCodemods.resolves({
+    getCodemods.resolves({
       testCodemod: {
         versions: {
           'test-dependency': '0.0.2'
@@ -113,7 +114,7 @@ describe(getApplicableCodemods, function() {
   });
 
   it('excludes wrong node version', async function() {
-    downloadCodemods.resolves({
+    getCodemods.resolves({
       testCodemod: {
         versions: {
           'test-dependency': '0.0.1'

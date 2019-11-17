@@ -12,6 +12,6 @@ describe(downloadCodemods, function() {
   it('downloads codemods', async function() {
     let codemods = await downloadCodemods(url);
 
-    expect(codemods).to.be.an.instanceof(Object);
+    expect(() => JSON.parse(codemods)).to.not.throw;
   });
 });

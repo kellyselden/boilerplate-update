@@ -1,9 +1,9 @@
 'use strict';
 
-const downloadCodemods = require('./download-codemods');
+const getCodemods = require('./get-codemods');
 
-module.exports = async function listCodemods(url) {
-  let codemods = await downloadCodemods(url);
+module.exports = async function listCodemods(url, json) {
+  let codemods = await getCodemods(url, json);
 
   return JSON.stringify(codemods, null, 2);
 };
