@@ -2,15 +2,15 @@
 
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
-const getCodemods = require('../../src/get-codemods');
+const downloadCodemods = require('../../src/download-codemods');
 
 const url = 'https://cdn.jsdelivr.net/gh/kellyselden/boilerplate-update/test/fixtures/codemod-manifest.json';
 
-describe(getCodemods, function() {
+describe(downloadCodemods, function() {
   this.timeout(5 * 1000);
 
-  it('gets codemods', async function() {
-    let codemods = await getCodemods(url);
+  it('downloads codemods', async function() {
+    let codemods = await downloadCodemods(url);
 
     expect(codemods).to.be.an.instanceof(Object);
   });

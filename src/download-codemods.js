@@ -3,7 +3,7 @@
 const https = require('https');
 const HttpProxyAgent = require('https-proxy-agent');
 
-module.exports = async function getCodemods(url) {
+module.exports = async function downloadCodemods(url) {
   let manifest = '';
 
   // support corporate firewalls

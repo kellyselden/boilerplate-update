@@ -14,7 +14,7 @@ module.exports = async function getApplicableCodemods({
 
   let versionRanges = { ...packageJson.dependencies, ...packageJson.devDependencies };
 
-  let codemods = await utils.getCodemods(url);
+  let codemods = await utils.downloadCodemods(url);
 
   let resolvedVersions = await pReduce(Object.keys(codemods), async(resolvedVersions, codemod) => {
     return await pReduce(Object.keys(codemods[codemod].versions), async(resolvedVersions, packageName) => {
