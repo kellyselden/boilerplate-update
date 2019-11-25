@@ -17,7 +17,10 @@ async function mutatePackageJson(cwd, callback) {
   });
 }
 
-module.exports = async function getStartAndEndCommands(options) {
+module.exports = async function getStartAndEndCommands({
+  reset,
+  options
+}) {
   function prepareOptions(key) {
     let _options = { ...options, ...options[key] };
     delete _options[key];
@@ -31,7 +34,7 @@ module.exports = async function getStartAndEndCommands(options) {
     startCommand,
     endCommand
   ] = await Promise.all([
-    module.exports.prepareCommand(startOptions),
+    reset ? null : module.exports.prepareCommand(startOptions),
     module.exports.prepareCommand(endOptions)
   ]);
 
