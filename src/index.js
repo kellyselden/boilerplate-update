@@ -110,7 +110,10 @@ async function boilerplateUpdate(options) {
   let endCommand;
 
   if (createCustomDiff) {
-    let commands = await getStartAndEndCommands(await resolveProperty(customDiffOptions));
+    let commands = await getStartAndEndCommands({
+      reset,
+      options: await resolveProperty(customDiffOptions)
+    });
 
     startCommand = commands.startCommand;
     endCommand = commands.endCommand;
