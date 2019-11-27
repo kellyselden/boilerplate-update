@@ -151,8 +151,12 @@ async function boilerplateUpdate(options) {
       });
     }
 
-    let fromPackageJson = from['package.json'];
-    let toPackageJson = to['package.json'];
+    function getPackageJson(obj) {
+      return obj['package.json'] || '{}';
+    }
+
+    let fromPackageJson = getPackageJson(from);
+    let toPackageJson = getPackageJson(to);
 
     await replaceFile('package.json', async myPackageJson => {
       return await mergePackageJson(myPackageJson, fromPackageJson, toPackageJson);
