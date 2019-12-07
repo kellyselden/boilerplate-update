@@ -1,15 +1,22 @@
 'use strict';
 
-const path = require('path');
 const { command: _command } = require('execa');
 const debug = require('debug')('boilerplate-update');
 
-module.exports = async function npx(command, options) {
+function npx(command, options) {
   let npxCommand = `npx ${command}`;
+
   debug(npxCommand);
-  await _command(npxCommand, {
-    localDir: path.join(__dirname, '..'),
-    stdio: 'inherit',
+
+  let ps = _command(npxCommand, {
+    preferLocal: true,
+    stdio: ['pipe', 'pipe', 'inherit'],
     ...options
   });
-};
+
+  ps.stdout.pipe(process.stdout);
+
+  return ps;
+}
+
+module.exports = npx;
