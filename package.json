@@ -29,7 +29,7 @@
     "git-diff-apply": "0.19.7",
     "https-proxy-agent": "^3.0.0",
     "inquirer": "^7.0.0",
-    "merge-package.json": "^3.1.1",
+    "merge-package.json": "^3.1.2",
     "npx": "^10.2.0",
     "open": "^7.0.0",
     "p-reduce": "^2.0.0",
