@@ -144,6 +144,10 @@ async function tryPrepareCommandUsingGlobal(options) {
     // try all known locations
     for (let basedir of [
       // for example
+      // C:\Users\kelly\AppData\Roaming\npm\ember.CMD
+      // C:\Users\kelly\AppData\Roaming\npm\node_modules\ember-cli
+      path.dirname(packagePath),
+      // for example
       // ember-cli-update/node_modules/.bin/ember =>
       // ember-cli-update/node_modules/ember-cli
       path.resolve(path.dirname(packagePath), '../..'),

@@ -240,6 +240,45 @@ describe(_getStartAndEndCommands, function() {
   });
 
   describe('global', function() {
+    it('finds global package in system global', async function() {
+      let globalPath = await setUpGlobalScenario({
+        whichPath: 'fake'
+      });
+
+      let statSpy = sandbox.spy(utils, 'stat');
+
+      let commands = await getStartAndEndCommands();
+
+      expect(commands).to.deep.equal({
+        startCommand: `node ${cpr} ${startPath} .`,
+        endCommand: `node ${cpr} ${endPath} .`
+      });
+
+      expect(cacheStub1.callCount).to.equal(2);
+      expect(cacheStub2.callCount).to.equal(2);
+      expect(remoteStub1.callCount).to.equal(0);
+      expect(remoteStub2.callCount).to.equal(0);
+
+      expect(cacheStub1.args[0][0].options.key).to.equal('start');
+      expect(cacheStub1.args[0][0].packageRoot).to.equal(path.join(globalPath, 'node_modules/test-package'));
+      expect(cacheStub1.args[1][0].options.key).to.equal('end');
+      expect(cacheStub1.args[1][0].packageRoot).to.equal(path.join(globalPath, 'node_modules/test-package'));
+
+      expect(cacheStub2.args[0][0]).to.equal(path.resolve(startPath, '..')).and.to.be.a.directory();
+      expect(cacheStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
+
+      expect(statSpy.args).to.deep.equal([
+        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(globalPath, 'node_modules/test-package')],
+        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(globalPath, 'node_modules/test-package')]
+      ]);
+      expect(whichStub.args).to.deep.equal([
+        ['test-package', { all: true }],
+        ['test-package', { all: true }]
+      ]);
+    });
+
     it('finds global package in project node_modules', async function() {
       let globalPath = await setUpGlobalScenario({
         whichPath: 'fake/fake/fake'
@@ -269,8 +308,10 @@ describe(_getStartAndEndCommands, function() {
 
       expect(statSpy.args).to.deep.equal([
         [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(globalPath, 'fake/fake/node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')],
         [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(globalPath, 'fake/fake/node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')]
       ]);
       expect(whichStub.args).to.deep.equal([
@@ -309,9 +350,11 @@ describe(_getStartAndEndCommands, function() {
 
       expect(statSpy.args).to.deep.equal([
         [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.resolve(globalPath, '../fake/node_modules/test-package')],
         [path.resolve(globalPath, '../../node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')],
         [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.resolve(globalPath, '../fake/node_modules/test-package')],
         [path.resolve(globalPath, '../../node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')]
       ]);
