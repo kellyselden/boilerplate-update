@@ -29,6 +29,7 @@ jobs:
   include:
   - os: osx
   - stage: Deploy
+    if: tag IS present
     cache: ignore
     before_install: ignore
     install: ignore
