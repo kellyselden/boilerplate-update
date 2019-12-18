@@ -11,6 +11,7 @@ const semver = require('semver');
 
 module.exports = async function getStartAndEndCommands({
   reset,
+  init,
   options
 }) {
   function prepareOptions(key) {
@@ -26,7 +27,7 @@ module.exports = async function getStartAndEndCommands({
     startCommand,
     endCommand
   ] = await Promise.all([
-    reset ? null : module.exports.prepareCommand(startOptions),
+    reset || init ? null : module.exports.prepareCommand(startOptions),
     module.exports.prepareCommand(endOptions)
   ]);
 
