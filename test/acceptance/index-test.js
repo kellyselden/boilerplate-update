@@ -228,7 +228,7 @@ describe(function() {
     });
 
     fixtureCompare({
-      mergeFixtures: 'test/fixtures/end/test-project'
+      mergeFixtures: 'test/fixtures/reset/test-project'
     });
 
     expect(status).to.match(/^ M present-added-changed\.txt$/m);
