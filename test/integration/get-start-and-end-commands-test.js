@@ -18,7 +18,6 @@ const cpr = path.resolve(__dirname, '../../node_modules/cpr/bin/cpr');
 describe(_getStartAndEndCommands, function() {
   let cwd;
   let sandbox;
-  let tmpPath;
   let cacheStub1;
   let cacheStub2;
   let remoteStub1;
@@ -67,9 +66,11 @@ describe(_getStartAndEndCommands, function() {
   }
 
   async function setUpLocalScenario() {
-    tmpPath = await createProject();
+    let localPath = await createProject();
 
-    process.chdir(tmpPath);
+    process.chdir(localPath);
+
+    return localPath;
   }
 
   async function setUpGlobalScenario({
@@ -88,7 +89,7 @@ describe(_getStartAndEndCommands, function() {
   }
 
   async function setUpRemoteScenario() {
-    tmpPath = await createProject({
+    return await createProject({
       addDependency: false
     });
   }
@@ -424,7 +425,7 @@ describe(_getStartAndEndCommands, function() {
   });
 
   it('mutates package.json', async function() {
-    tmpPath = await createProject();
+    await createProject();
 
     mutateStub2.callsFake(async json => {
       json.fakeProperty = true;
@@ -437,12 +438,12 @@ describe(_getStartAndEndCommands, function() {
   });
 
   it('removes files before checking in', async function() {
-    await setUpLocalScenario();
+    let localPath = await setUpLocalScenario();
 
     await Promise.all([
-      fs.mkdir(path.join(tmpPath, '.git')),
-      fs.ensureFile(path.join(tmpPath, 'package-lock.json')),
-      fs.ensureFile(path.join(tmpPath, 'yarn.lock'))
+      fs.mkdir(path.join(localPath, '.git')),
+      fs.ensureFile(path.join(localPath, 'package-lock.json')),
+      fs.ensureFile(path.join(localPath, 'yarn.lock'))
     ]);
 
     await getStartAndEndCommands();
