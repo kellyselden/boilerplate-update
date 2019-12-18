@@ -100,6 +100,7 @@ describe(_getStartAndEndCommands, function() {
 
   function getStartAndEndCommands({
     reset,
+    init,
     options
   } = {}) {
     // ensure order for assertions
@@ -146,7 +147,7 @@ describe(_getStartAndEndCommands, function() {
     sandbox.stub(_getStartAndEndCommands, 'prepareCommand').callsFake(async function({
       key
     }) {
-      if (key === 'end' && !reset) {
+      if (key === 'end' && !(reset || init)) {
         await promise;
       }
       return await prepareCommand(...arguments);
@@ -154,6 +155,7 @@ describe(_getStartAndEndCommands, function() {
 
     return _getStartAndEndCommands({
       reset,
+      init,
       options: {
         projectName: 'test-project',
         packageName: 'test-package',
@@ -566,6 +568,26 @@ describe(_getStartAndEndCommands, function() {
 
     let commands = await getStartAndEndCommands({
       reset: true
+    });
+
+    expect(commands).to.deep.equal({
+      startCommand: null,
+      endCommand: `node ${cpr} ${endPath} .`
+    });
+
+    expect(cacheStub1.callCount).to.equal(1);
+    expect(cacheStub2.callCount).to.equal(1);
+
+    expect(cacheStub1.args[0][0].options.key).to.equal('end');
+
+    expect(cacheStub2.args[0][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
+  });
+
+  it('skips start if init', async function() {
+    await setUpLocalScenario();
+
+    let commands = await getStartAndEndCommands({
+      init: true
     });
 
     expect(commands).to.deep.equal({

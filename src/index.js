@@ -50,6 +50,7 @@ async function boilerplateUpdate(options) {
     compareOnly,
     resolveConflicts,
     reset,
+    init,
     statsOnly,
     runCodemods,
     startVersion,
@@ -112,6 +113,7 @@ async function boilerplateUpdate(options) {
   if (createCustomDiff) {
     let commands = await getStartAndEndCommands({
       reset,
+      init,
       options: await resolveProperty(customDiffOptions)
     });
 
@@ -119,7 +121,7 @@ async function boilerplateUpdate(options) {
     endCommand = commands.endCommand;
   }
 
-  if (!reset) {
+  if (!(reset || init)) {
     ignoredFiles.push('package.json');
   }
 
@@ -134,13 +136,14 @@ async function boilerplateUpdate(options) {
     resolveConflicts,
     ignoredFiles,
     reset,
+    init,
     createCustomDiff,
     startCommand,
     endCommand,
     wasRunAsExecutable
   });
 
-  if (reset) {
+  if (reset || init) {
     return { promise: Promise.resolve() };
   }
 

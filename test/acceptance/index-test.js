@@ -47,6 +47,7 @@ describe(function() {
     subDir,
     projectOptions = ['test-project', 'unused'],
     reset,
+    init,
     compareOnly,
     statsOnly,
     runCodemods,
@@ -83,6 +84,7 @@ describe(function() {
         resolveConflicts: true,
         compareOnly,
         reset,
+        init,
         statsOnly,
         runCodemods,
         listCodemods,
@@ -235,6 +237,28 @@ describe(function() {
     expect(status).to.match(/^ M present-changed\.txt$/m);
     expect(status).to.match(/^ D removed-changed\.txt$/m);
     expect(status).to.match(/^ D removed-unchanged\.txt$/m);
+    expect(status).to.match(/^\?{2} added-changed\.txt$/m);
+    expect(status).to.match(/^\?{2} added-unchanged\.txt$/m);
+    expect(status).to.match(/^\?{2} missing-changed\.txt$/m);
+    expect(status).to.match(/^\?{2} missing-unchanged\.txt$/m);
+
+    assertNoStaged(status);
+  });
+
+  it('inits app', async function() {
+    let {
+      status
+    } = await merge({
+      fixturesPath: 'test/fixtures/local',
+      init: true
+    });
+
+    fixtureCompare({
+      mergeFixtures: 'test/fixtures/init/test-project'
+    });
+
+    expect(status).to.match(/^ M present-added-changed\.txt$/m);
+    expect(status).to.match(/^ M present-changed\.txt$/m);
     expect(status).to.match(/^\?{2} added-changed\.txt$/m);
     expect(status).to.match(/^\?{2} added-unchanged\.txt$/m);
     expect(status).to.match(/^\?{2} missing-changed\.txt$/m);
