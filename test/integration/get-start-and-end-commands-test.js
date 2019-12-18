@@ -76,10 +76,6 @@ describe(_getStartAndEndCommands, function() {
     projectName,
     whichPath = 'fake/fake/fake'
   } = {}) {
-    tmpPath = await createProject({
-      addDependency: false
-    });
-
     let globalPath = await createProject({
       projectName
     });
