@@ -30,7 +30,7 @@ module.exports = async function getApplicableCodemods({
 
   return Object.entries(codemods).filter(([, codemod]) => {
     let keys = Object.keys(codemod.versions);
-    let areVersionsInRange = keys.every(key => semver.gte(resolvedVersions[key], codemod.versions[key]));
+    let areVersionsInRange = keys.every(key => resolvedVersions[key] && semver.gte(resolvedVersions[key], codemod.versions[key]));
     let hasCorrectProjectOption = projectOptions.some(option => codemod.projectOptions.includes(option));
     let isNodeVersionInRange = semver.gte(nodeVersion, codemod.nodeVersion);
     return areVersionsInRange && hasCorrectProjectOption && isNodeVersionInRange;
