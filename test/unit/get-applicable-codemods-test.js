@@ -137,4 +137,56 @@ describe(getApplicableCodemods, function() {
 
     expect(codemods).to.deep.equal({});
   });
+
+  it('excludes codemod with unsatisfied dependency', async function() {
+    getCodemods.resolves({
+      testCodemod: {
+        versions: {
+          'test-dependency': '0.0.2'
+        },
+        projectOptions: ['testProjectOption'],
+        nodeVersion: '4.0.0'
+      }
+    });
+
+    getNodeVersion.returns('4.0.0');
+
+    let codemods = await getApplicableCodemods({
+      projectOptions: ['testProjectOption'],
+      packageJson: {
+        dependencies: {
+          'just-another-dependency': '^0.0.1'
+        }
+      }
+    });
+
+    expect(codemods).to.deep.equal({});
+  });
+
+  it('uses minimal applicable version for empty constraint', async function() {
+    let actualCodeMods = {
+      testCodemod: {
+        versions: {
+          'test-dependency': '0.0.1'
+        },
+        projectOptions: ['testProjectOption'],
+        nodeVersion: '4.0.0'
+      }
+    };
+
+    getCodemods.resolves(actualCodeMods);
+
+    getNodeVersion.returns('4.0.0');
+
+    let codemods = await getApplicableCodemods({
+      projectOptions: ['testProjectOption'],
+      packageJson: {
+        dependencies: {
+          'test-dependency': ''
+        }
+      }
+    });
+
+    expect(codemods).to.deep.equal(actualCodeMods);
+  });
 });
