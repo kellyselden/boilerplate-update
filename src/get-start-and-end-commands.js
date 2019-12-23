@@ -115,10 +115,18 @@ module.exports.prepareCommandUsingRemote = async function prepareCommandUsingRem
 };
 
 async function tryPrepareCommandUsingLocal(options) {
-  return await tryPrepareCommandUsingCache({
-    basedir: process.cwd(),
-    options
-  });
+  for (let basedir of [
+    process.cwd(),
+    path.resolve(__dirname, '../../..')
+  ]) {
+    let command = await tryPrepareCommandUsingCache({
+      basedir,
+      options
+    });
+    if (command) {
+      return command;
+    }
+  }
 }
 
 async function tryPrepareCommandUsingGlobal(options) {
