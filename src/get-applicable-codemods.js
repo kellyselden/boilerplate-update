@@ -20,7 +20,7 @@ module.exports = async function getApplicableCodemods({
   let resolvedVersions = await pReduce(Object.keys(codemods), async(resolvedVersions, codemod) => {
     return await pReduce(Object.keys(codemods[codemod].versions), async(resolvedVersions, packageName) => {
       let packageRange = versionRanges[packageName];
-      if (versionRanges.hasOwnProperty(packageName) && !resolvedVersions[packageName]) {
+      if (Object.prototype.hasOwnProperty.call(versionRanges, packageName) && !resolvedVersions[packageName]) {
         // eslint-disable-next-line require-atomic-updates
         resolvedVersions[packageName] = await resolveVersionRange(packageName, packageRange);
       }
@@ -30,7 +30,7 @@ module.exports = async function getApplicableCodemods({
 
   return Object.entries(codemods).filter(([, codemod]) => {
     let keys = Object.keys(codemod.versions);
-    let areVersionsInRange = keys.every(key => resolvedVersions.hasOwnProperty(key) && semver.gte(resolvedVersions[key], codemod.versions[key]));
+    let areVersionsInRange = keys.every(key => Object.prototype.hasOwnProperty.call(resolvedVersions, key) && semver.gte(resolvedVersions[key], codemod.versions[key]));
     let hasCorrectProjectOption = projectOptions.some(option => codemod.projectOptions.includes(option));
     let isNodeVersionInRange = semver.gte(nodeVersion, codemod.nodeVersion);
     return areVersionsInRange && hasCorrectProjectOption && isNodeVersionInRange;

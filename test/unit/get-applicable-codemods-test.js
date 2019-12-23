@@ -164,7 +164,7 @@ describe(getApplicableCodemods, function() {
   });
 
   it('uses minimal applicable version for empty constraint', async function() {
-    const actualCodeMods = {
+    let actualCodeMods = {
       testCodemod: {
         versions: {
           'test-dependency': '0.0.1'
