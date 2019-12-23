@@ -65,8 +65,12 @@ describe(_getStartAndEndCommands, function() {
     return path.join(tmpPath, projectName);
   }
 
-  async function setUpLocalScenario() {
-    let localPath = await createProject();
+  async function setUpLocalScenario({
+    addDependency = true
+  } = {}) {
+    let localPath = await createProject({
+      addDependency
+    });
 
     process.chdir(localPath);
 
@@ -169,7 +173,7 @@ describe(_getStartAndEndCommands, function() {
   }
 
   describe('local', function() {
-    it('finds local package', async function() {
+    it('finds local package in project dir', async function() {
       await setUpLocalScenario();
 
       let statSpy = sandbox.spy(utils, 'stat');
@@ -197,6 +201,56 @@ describe(_getStartAndEndCommands, function() {
       expect(statSpy.args).to.deep.equal([
         [path.join(process.cwd(), 'node_modules/test-package')],
         [path.join(process.cwd(), 'node_modules/test-package')]
+      ]);
+    });
+
+    it('finds local package in package dir', async function() {
+      await setUpLocalScenario({
+        addDependency: false
+      });
+
+      let {
+        stat,
+        require
+      } = utils;
+
+      let statStub = sandbox.stub(utils, 'stat')
+        .callsFake(stat);
+
+      statStub
+        .withArgs(path.resolve(__dirname, '../../../../node_modules/test-package'))
+        .resolves();
+
+      sandbox.stub(utils, 'require')
+        .callsFake(require)
+        .withArgs(path.resolve(__dirname, '../../../../node_modules/test-package/package.json'))
+        .returns({ version: '4.5.6' });
+
+      let commands = await getStartAndEndCommands();
+
+      expect(commands).to.deep.equal({
+        startCommand: `node ${cpr} ${startPath} .`,
+        endCommand: `node ${cpr} ${endPath} .`
+      });
+
+      expect(cacheStub1.callCount).to.equal(2);
+      expect(cacheStub2.callCount).to.equal(2);
+      expect(remoteStub1.callCount).to.equal(0);
+      expect(remoteStub2.callCount).to.equal(0);
+
+      expect(cacheStub1.args[0][0].options.key).to.equal('start');
+      expect(cacheStub1.args[0][0].packageRoot).to.equal(path.resolve(__dirname, '../../../../node_modules/test-package'));
+      expect(cacheStub1.args[1][0].options.key).to.equal('end');
+      expect(cacheStub1.args[1][0].packageRoot).to.equal(path.resolve(__dirname, '../../../../node_modules/test-package'));
+
+      expect(cacheStub2.args[0][0]).to.equal(path.resolve(startPath, '..')).and.to.be.a.directory();
+      expect(cacheStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
+
+      expect(statStub.args).to.deep.equal([
+        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.resolve(__dirname, '../../../../node_modules/test-package')],
+        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.resolve(__dirname, '../../../../node_modules/test-package')]
       ]);
     });
 
@@ -269,8 +323,10 @@ describe(_getStartAndEndCommands, function() {
 
       expect(statSpy.args).to.deep.equal([
         [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')],
         [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')]
       ]);
       expect(whichStub.args).to.deep.equal([
@@ -308,9 +364,11 @@ describe(_getStartAndEndCommands, function() {
 
       expect(statSpy.args).to.deep.equal([
         [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.join(globalPath, 'fake/fake/node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')],
         [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.join(globalPath, 'fake/fake/node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')]
       ]);
@@ -350,10 +408,12 @@ describe(_getStartAndEndCommands, function() {
 
       expect(statSpy.args).to.deep.equal([
         [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.resolve(globalPath, '../fake/node_modules/test-package')],
         [path.resolve(globalPath, '../../node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')],
         [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.resolve(globalPath, '../fake/node_modules/test-package')],
         [path.resolve(globalPath, '../../node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')]
