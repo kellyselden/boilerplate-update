@@ -6,16 +6,8 @@ const { promisify } = require('util');
 const tmpDir = promisify(require('tmp').dir);
 const rimraf = promisify(require('rimraf'));
 const cpr = path.resolve(path.dirname(require.resolve('cpr')), '../bin/cpr');
-const replaceFile = require('./replace-file');
+const mutatePackageJson = require('./mutate-package-json');
 const semver = require('semver');
-
-async function mutatePackageJson(cwd, callback) {
-  return await replaceFile(path.join(cwd, 'package.json'), async file => {
-    let pkg = JSON.parse(file);
-    await callback(pkg);
-    return JSON.stringify(pkg, null, 2);
-  });
-}
 
 module.exports = async function getStartAndEndCommands({
   reset,
