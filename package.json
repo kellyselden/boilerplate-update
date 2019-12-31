@@ -1,6 +1,6 @@
 {
   "name": "boilerplate-update",
-  "version": "0.31.2",
+  "version": "0.31.3",
   "description": "Update boilerplate code between versions",
   "main": "src",
   "files": [
