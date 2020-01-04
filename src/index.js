@@ -57,8 +57,7 @@ async function boilerplateUpdate(options) {
     endVersion,
     createCustomDiff,
     customDiffOptions,
-    ignoredFiles = [],
-    wasRunAsExecutable
+    ignoredFiles = []
   } = { ...options, ...await resolveProperty(mergeOptions) };
 
   startVersion = await resolveProperty(startVersion);
@@ -139,8 +138,7 @@ async function boilerplateUpdate(options) {
     init,
     createCustomDiff,
     startCommand,
-    endCommand,
-    wasRunAsExecutable
+    endCommand
   });
 
   if (reset || init) {
