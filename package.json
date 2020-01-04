@@ -54,7 +54,7 @@
     "fixturify-project": "^1.8.0",
     "fs-extra": "^8.0.0",
     "git-fixtures": "^2.1.0",
-    "mocha": "^6.0.0",
+    "mocha": "^7.0.0",
     "mocha-helpers": "^4.0.0",
     "renovate-config-standard": "^2.0.0",
     "sinon": "^8.0.0",
