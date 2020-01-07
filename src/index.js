@@ -66,8 +66,14 @@ async function boilerplateUpdate(options) {
   callbackOptions.startVersion = startVersion;
   callbackOptions.endVersion = endVersion;
 
-  let startTag = `v${startVersion}`;
-  let endTag = `v${endVersion}`;
+  let startTag;
+  let endTag;
+  if (startVersion) {
+    startTag = `v${startVersion}`;
+  }
+  if (endVersion) {
+    endTag = `v${endVersion}`;
+  }
 
   remoteUrl = await resolveProperty(remoteUrl);
 

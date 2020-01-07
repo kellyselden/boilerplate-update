@@ -3,6 +3,7 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const path = require('path');
+const fs = require('fs-extra');
 const sinon = require('sinon');
 const {
   buildTmp,
@@ -48,6 +49,7 @@ describe(function() {
     projectOptions = ['test-project', 'unused'],
     reset,
     init,
+    startVersion = '0.0.1',
     compareOnly,
     statsOnly,
     runCodemods,
@@ -91,7 +93,7 @@ describe(function() {
         codemodsUrl: 'https://raw.githubusercontent.com/kellyselden/boilerplate-update-codemod-manifest-test/master/manifest.json',
         codemodsJson,
         projectOptions,
-        startVersion: '0.0.1',
+        startVersion,
         endVersion: '0.0.2',
         createCustomDiff,
         customDiffOptions: {
@@ -398,19 +400,41 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
     assertNoUnstaged(status);
   });
 
-  it('can create a personal diff instead of using an output repo', async function() {
-    let {
-      status
-    } = await merge({
-      fixturesPath: 'test/fixtures/local',
-      createCustomDiff: true
+  describe('custom diff', function() {
+    it('can create a personal diff instead of using an output repo', async function() {
+      let {
+        status
+      } = await merge({
+        fixturesPath: 'test/fixtures/local',
+        createCustomDiff: true
+      });
+
+      fixtureCompare({
+        mergeFixtures: 'test/fixtures/merge/test-project'
+      });
+
+      assertNoUnstaged(status);
     });
 
-    fixtureCompare({
-      mergeFixtures: 'test/fixtures/merge/test-project'
-    });
+    it('can ignore one of the versions', async function() {
+      let {
+        status
+      } = await merge({
+        fixturesPath: 'test/fixtures/local',
+        createCustomDiff: true,
+        startVersion: null
+      });
 
-    assertNoUnstaged(status);
+      fixtureCompare({
+        mergeFixtures: 'test/fixtures/merge/test-project'
+      });
+
+      assertNoUnstaged(status);
+
+      let stagedCommitMessage = await fs.readFile(path.join(tmpPath, '.git/MERGE_MSG'), 'utf8');
+
+      expect(stagedCommitMessage).to.startWith('v0.0.2');
+    });
   });
 
   it('can ignore extra files', async function() {
