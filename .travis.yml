@@ -37,9 +37,8 @@ jobs:
     script: ignore
     deploy:
       provider: npm
-      email: kellyselden@gmail.com
-      api_key:
-        secure: X968IfMlehlUw8YMnX9YSxDSY+UDrll1SpHJKjPL50tHbZ2jHFXd8KhvqIHr4WBJaeHHDfvqxdYkZZIf7cq6OVzCys2TZqrsp6uK2GYVnjM4/KC7M6l0PTcFXF6i0dWKbaZN0iV3ph9aKe5c3r/y2zJSFvayAde7cKoOPWM01z3d6e45ZHhsioFfju7da97raVoycgLdClUGHsnfzkPRKrmVRQ6hcL/AMtsVAqWLojBElxUD5ZgWMQsxcg6GE469Rm14Et8Ml+mrBlZRaLX2ibFj/zVfhSUWup1v9ga6DoLfpLAOfownNSaa2XbvZfPQCMfuqDULWatkWggQxqRhp21cTyzo/t/rg2tvmBGaRIfPHNEGxff1QlrScpR8seDbGA34ovyktFTDQoXTrKRF+wvnOmrGKBKvACorgnvs3jRlDV6L/wwaeyfxkc+YKRIZYSD2dGtJSwTCZsibQ2xnmdW94b+ezwVOKJH42ZwLe02ra3TuSrzf1VxDpDuhvE7+hJqXZ3ZPhnhtQ+pMc0pqcZJuiZabAsMcCd29RNGihARvZQsXOqCngsR4hLGraU9aiTKL+86YGCyHJavmCb0AgwnEo9gJxxdLmsbCA8wFT8gXoA0LpUlLBT/HlkxL3u+uOYlfcBOOuqZSXW/25CsGkGTOlo9eNCWjlvUV8eKMBxk=
+      email: $NPM_EMAIL
+      api_key: $NPM_TOKEN
       on:
         tags: true
         repo: kellyselden/boilerplate-update
