@@ -10,14 +10,12 @@ describe(getApplicableCodemods, function() {
   let sandbox;
   let getCodemods;
   let getNodeVersion;
-  let getVersions;
 
   beforeEach(function() {
     sandbox = sinon.createSandbox();
 
     getCodemods = sandbox.stub(utils, 'getCodemods');
     getNodeVersion = sandbox.stub(utils, 'getNodeVersion');
-    getVersions = sandbox.stub(utils, 'getVersions').resolves(['0.0.1', '0.0.2']);
   });
 
   afterEach(function() {
@@ -59,8 +57,6 @@ describe(getApplicableCodemods, function() {
     });
 
     expect(getCodemods.args).to.deep.equal([['testUrl', 'testJson']]);
-
-    expect(getVersions.args).to.deep.equal([['test-dependency']]);
   });
 
   it('excludes wrong option', async function() {
@@ -167,7 +163,7 @@ describe(getApplicableCodemods, function() {
     let actualCodeMods = {
       testCodemod: {
         versions: {
-          'test-dependency': '0.0.1'
+          'test-dependency': '0.0.0'
         },
         projectOptions: ['testProjectOption'],
         nodeVersion: '4.0.0'

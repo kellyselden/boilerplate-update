@@ -2,7 +2,6 @@
 
 const utils = require('./utils');
 const semver = require('semver');
-const resolveVersionRange = require('./resolve-version-range');
 const pReduce = require('p-reduce');
 
 module.exports = async function getApplicableCodemods({
@@ -21,7 +20,7 @@ module.exports = async function getApplicableCodemods({
     return await pReduce(Object.keys(codemods[codemod].versions), async(resolvedVersions, packageName) => {
       if (Object.prototype.hasOwnProperty.call(versionRanges, packageName) && !resolvedVersions[packageName]) {
         let packageRange = versionRanges[packageName];
-        resolvedVersions[packageName] = await resolveVersionRange(packageName, packageRange);
+        resolvedVersions[packageName] = semver.minVersion(packageRange).version;
       }
       return resolvedVersions;
     }, resolvedVersions);

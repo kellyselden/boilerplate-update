@@ -8,7 +8,6 @@ module.exports.npx = require('./npx');
 module.exports.getCodemods = require('./get-codemods');
 module.exports.downloadCodemods = require('./download-codemods');
 module.exports.getNodeVersion = require('./get-node-version');
-module.exports.getVersions = require('./get-versions');
 module.exports.open = require('open');
 module.exports.runCodemod = require('./run-codemod');
 module.exports.require = require;
