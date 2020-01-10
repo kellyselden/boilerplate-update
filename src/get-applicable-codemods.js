@@ -21,7 +21,6 @@ module.exports = async function getApplicableCodemods({
     return await pReduce(Object.keys(codemods[codemod].versions), async(resolvedVersions, packageName) => {
       let packageRange = versionRanges[packageName];
       if (Object.prototype.hasOwnProperty.call(versionRanges, packageName) && !resolvedVersions[packageName]) {
-        // eslint-disable-next-line require-atomic-updates
         resolvedVersions[packageName] = await resolveVersionRange(packageName, packageRange);
       }
       return resolvedVersions;
