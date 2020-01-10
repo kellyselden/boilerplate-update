@@ -4,7 +4,7 @@ const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const downloadCodemods = require('../../src/download-codemods');
 
-const url = 'https://cdn.jsdelivr.net/gh/kellyselden/boilerplate-update/test/fixtures/codemod-manifest.json';
+const url = 'git+ssh://git@github.com/kellyselden/boilerplate-update-codemod-manifest-test.git#semver:*';
 
 describe(downloadCodemods, function() {
   this.timeout(5 * 1000);
@@ -12,6 +12,6 @@ describe(downloadCodemods, function() {
   it('downloads codemods', async function() {
     let codemods = await downloadCodemods(url);
 
-    expect(() => JSON.parse(codemods)).to.not.throw;
+    expect(Object.keys(codemods)).to.have.lengthOf.above(0);
   });
 });

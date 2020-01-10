@@ -14,12 +14,10 @@ describe(getCodemods, function() {
   it('gets codemods via url', async function() {
     let expected = { testCodemod: '' };
 
-    let json = JSON.stringify(expected);
-
     let url = 'testUrl';
 
     let downloadCodemods = sinon.stub(utils, 'downloadCodemods')
-      .withArgs(url).resolves(json);
+      .withArgs(url).resolves(expected);
 
     let actual = await getCodemods(url);
 
