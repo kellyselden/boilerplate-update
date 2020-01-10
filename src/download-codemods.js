@@ -1,29 +1,18 @@
 'use strict';
 
-const https = require('https');
-const HttpProxyAgent = require('https-proxy-agent');
+const pacote = require('pacote');
+const { promisify } = require('util');
+const tmpDir = promisify(require('tmp').dir);
+const path = require('path');
 
 module.exports = async function downloadCodemods(url) {
-  let manifest = '';
+  let dest = await tmpDir();
 
-  // support corporate firewalls
-  let proxy = process.env.https_proxy
-    || process.env.HTTPS_PROXY
-    || process.env.http_proxy
-    || process.env.HTTP_PROXY;
+  await pacote.extract(url, dest);
 
-  let httpOptions = {};
-  if (proxy) {
-    httpOptions = { agent: new HttpProxyAgent(proxy) };
-  }
+  let { main } = require(path.join(dest, 'package'));
 
-  await new Promise((resolve, reject) => {
-    https.get(url, httpOptions, res => {
-      res.on('data', d => {
-        manifest += d;
-      }).on('end', resolve);
-    }).on('error', reject);
-  });
+  let manifest = require(path.join(dest, main));
 
   return manifest;
 };
