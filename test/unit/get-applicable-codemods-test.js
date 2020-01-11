@@ -26,14 +26,14 @@ describe(getApplicableCodemods, function() {
     getCodemods.resolves({
       testCodemod: {
         versions: {
-          'test-dependency': '0.0.1'
+          'test-dependency': '^0.1.0'
         },
         projectOptions: ['testProjectOption'],
-        nodeVersion: '4.0.0'
+        nodeVersion: '>4.0.0'
       }
     });
 
-    getNodeVersion.returns('4.0.0');
+    getNodeVersion.returns('6.0.0');
 
     let codemods = await getApplicableCodemods({
       url: 'testUrl',
@@ -41,7 +41,7 @@ describe(getApplicableCodemods, function() {
       projectOptions: ['testProjectOption'],
       packageJson: {
         dependencies: {
-          'test-dependency': '^0.0.1'
+          'test-dependency': '^0.1.1'
         }
       }
     });
@@ -49,10 +49,10 @@ describe(getApplicableCodemods, function() {
     expect(codemods).to.deep.equal({
       testCodemod: {
         versions: {
-          'test-dependency': '0.0.1'
+          'test-dependency': '^0.1.0'
         },
         projectOptions: ['testProjectOption'],
-        nodeVersion: '4.0.0'
+        nodeVersion: '>4.0.0'
       }
     });
 
