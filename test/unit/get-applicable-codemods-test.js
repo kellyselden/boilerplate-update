@@ -25,11 +25,11 @@ describe(getApplicableCodemods, function() {
   it('works', async function() {
     getCodemods.resolves({
       testCodemod: {
-        versions: {
+        versionRanges: {
           'test-dependency': '^0.1.0'
         },
         projectOptions: ['testProjectOption'],
-        nodeVersion: '>4.0.0'
+        nodeVersionRange: '>4.0.0'
       }
     });
 
@@ -48,11 +48,11 @@ describe(getApplicableCodemods, function() {
 
     expect(codemods).to.deep.equal({
       testCodemod: {
-        versions: {
+        versionRanges: {
           'test-dependency': '^0.1.0'
         },
         projectOptions: ['testProjectOption'],
-        nodeVersion: '>4.0.0'
+        nodeVersionRange: '>4.0.0'
       }
     });
 
@@ -62,11 +62,11 @@ describe(getApplicableCodemods, function() {
   it('excludes wrong option', async function() {
     getCodemods.resolves({
       testCodemod: {
-        versions: {
+        versionRanges: {
           'test-dependency': '0.0.1'
         },
         projectOptions: ['testProjectOption2'],
-        nodeVersion: '4.0.0'
+        nodeVersionRange: '4.0.0'
       }
     });
 
@@ -87,11 +87,11 @@ describe(getApplicableCodemods, function() {
   it('excludes wrong version', async function() {
     getCodemods.resolves({
       testCodemod: {
-        versions: {
+        versionRanges: {
           'test-dependency': '0.0.2'
         },
         projectOptions: ['testProjectOption'],
-        nodeVersion: '4.0.0'
+        nodeVersionRange: '4.0.0'
       }
     });
 
@@ -112,11 +112,11 @@ describe(getApplicableCodemods, function() {
   it('excludes wrong node version', async function() {
     getCodemods.resolves({
       testCodemod: {
-        versions: {
+        versionRanges: {
           'test-dependency': '0.0.1'
         },
         projectOptions: ['testProjectOption'],
-        nodeVersion: '6.0.0'
+        nodeVersionRange: '6.0.0'
       }
     });
 
@@ -137,11 +137,11 @@ describe(getApplicableCodemods, function() {
   it('excludes codemod with unsatisfied dependency', async function() {
     getCodemods.resolves({
       testCodemod: {
-        versions: {
+        versionRanges: {
           'test-dependency': '0.0.2'
         },
         projectOptions: ['testProjectOption'],
-        nodeVersion: '4.0.0'
+        nodeVersionRange: '4.0.0'
       }
     });
 
@@ -162,11 +162,11 @@ describe(getApplicableCodemods, function() {
   it('uses minimal applicable version for empty constraint', async function() {
     let actualCodeMods = {
       testCodemod: {
-        versions: {
+        versionRanges: {
           'test-dependency': '0.0.0'
         },
         projectOptions: ['testProjectOption'],
-        nodeVersion: '4.0.0'
+        nodeVersionRange: '4.0.0'
       }
     };
 
