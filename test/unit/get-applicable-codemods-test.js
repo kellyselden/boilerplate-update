@@ -160,7 +160,7 @@ describe(getApplicableCodemods, function() {
   });
 
   it('uses minimal applicable version for empty constraint', async function() {
-    let actualCodeMods = {
+    getCodemods.resolves({
       testCodemod: {
         versionRanges: {
           'test-dependency': '0.0.0'
@@ -168,9 +168,7 @@ describe(getApplicableCodemods, function() {
         projectOptions: ['testProjectOption'],
         nodeVersionRange: '4.0.0'
       }
-    };
-
-    getCodemods.resolves(actualCodeMods);
+    });
 
     getNodeVersion.returns('4.0.0');
 
@@ -183,6 +181,14 @@ describe(getApplicableCodemods, function() {
       }
     });
 
-    expect(codemods).to.deep.equal(actualCodeMods);
+    expect(codemods).to.deep.equal({
+      testCodemod: {
+        versionRanges: {
+          'test-dependency': '0.0.0'
+        },
+        projectOptions: ['testProjectOption'],
+        nodeVersionRange: '4.0.0'
+      }
+    });
   });
 });
