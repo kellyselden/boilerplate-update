@@ -28,7 +28,7 @@ module.exports = async function getApplicableCodemods({
 
   return Object.entries(codemods).filter(([, codemod]) => {
     let packageNames = Object.keys(codemod.versionRanges);
-    let areVersionsInRange = packageNames.every(packageName => resolvedVersions[packageName] && semver.satisfies(resolvedVersions[packageName], codemod.versionRanges[packageName]));
+    let areVersionsInRange = packageNames.every(packageName => resolvedVersions[packageName] && semver.satisfies(resolvedVersions[packageName], codemod.versionRanges[packageName], { includePrerelease: true }));
     let hasCorrectProjectOption = projectOptions.some(projectOption => codemod.projectOptions.includes(projectOption));
     let isNodeVersionInRange = semver.satisfies(nodeVersion, codemod.nodeVersionRange);
     return areVersionsInRange && hasCorrectProjectOption && isNodeVersionInRange;
