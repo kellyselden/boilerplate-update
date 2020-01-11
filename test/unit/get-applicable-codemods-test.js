@@ -191,4 +191,37 @@ describe(getApplicableCodemods, function() {
       }
     });
   });
+
+  it('includes prerelease', async function() {
+    getCodemods.resolves({
+      testCodemod: {
+        versionRanges: {
+          'test-dependency': '>=1.0.0-beta.1'
+        },
+        projectOptions: ['testProjectOption'],
+        nodeVersionRange: '4.0.0'
+      }
+    });
+
+    getNodeVersion.returns('4.0.0');
+
+    let codemods = await getApplicableCodemods({
+      projectOptions: ['testProjectOption'],
+      packageJson: {
+        dependencies: {
+          'test-dependency': '2.0.0-beta.1'
+        }
+      }
+    });
+
+    expect(codemods).to.deep.equal({
+      testCodemod: {
+        versionRanges: {
+          'test-dependency': '>=1.0.0-beta.1'
+        },
+        projectOptions: ['testProjectOption'],
+        nodeVersionRange: '4.0.0'
+      }
+    });
+  });
 });
