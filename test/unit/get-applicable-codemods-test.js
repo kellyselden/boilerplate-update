@@ -84,6 +84,36 @@ describe(getApplicableCodemods, function() {
     expect(codemods).to.deep.equal({});
   });
 
+  it('options are optional', async function() {
+    getCodemods.resolves({
+      testCodemod: {
+        versionRanges: {
+          'test-dependency': '0.0.1'
+        },
+        nodeVersionRange: '4.0.0'
+      }
+    });
+
+    getNodeVersion.returns('4.0.0');
+
+    let codemods = await getApplicableCodemods({
+      packageJson: {
+        dependencies: {
+          'test-dependency': '^0.0.1'
+        }
+      }
+    });
+
+    expect(codemods).to.deep.equal({
+      testCodemod: {
+        versionRanges: {
+          'test-dependency': '0.0.1'
+        },
+        nodeVersionRange: '4.0.0'
+      }
+    });
+  });
+
   it('excludes wrong version', async function() {
     getCodemods.resolves({
       testCodemod: {
@@ -107,6 +137,30 @@ describe(getApplicableCodemods, function() {
     });
 
     expect(codemods).to.deep.equal({});
+  });
+
+  it('versions are optional', async function() {
+    getCodemods.resolves({
+      testCodemod: {
+        projectOptions: ['testProjectOption'],
+        nodeVersionRange: '4.0.0'
+      }
+    });
+
+    getNodeVersion.returns('4.0.0');
+
+    let codemods = await getApplicableCodemods({
+      projectOptions: ['testProjectOption'],
+      packageJson: {
+      }
+    });
+
+    expect(codemods).to.deep.equal({
+      testCodemod: {
+        projectOptions: ['testProjectOption'],
+        nodeVersionRange: '4.0.0'
+      }
+    });
   });
 
   it('excludes wrong node version', async function() {

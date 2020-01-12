@@ -17,7 +17,7 @@ module.exports = async function getApplicableCodemods({
   let codemods = await utils.getCodemods(url, json);
 
   let resolvedVersions = await pReduce(Object.keys(codemods), async(resolvedVersions, codemod) => {
-    return await pReduce(Object.keys(codemods[codemod].versionRanges), async(resolvedVersions, packageName) => {
+    return await pReduce(Object.keys(codemods[codemod].versionRanges || {}), async(resolvedVersions, packageName) => {
       if (Object.prototype.hasOwnProperty.call(versionRanges, packageName) && !resolvedVersions[packageName]) {
         let versionRange = versionRanges[packageName];
         resolvedVersions[packageName] = semver.minVersion(versionRange).version;
@@ -27,9 +27,9 @@ module.exports = async function getApplicableCodemods({
   }, {});
 
   return Object.entries(codemods).filter(([, codemod]) => {
-    let packageNames = Object.keys(codemod.versionRanges);
+    let packageNames = Object.keys(codemod.versionRanges || {});
     let areVersionsInRange = packageNames.every(packageName => resolvedVersions[packageName] && semver.satisfies(resolvedVersions[packageName], codemod.versionRanges[packageName], { includePrerelease: true }));
-    let hasCorrectProjectOption = projectOptions.some(projectOption => codemod.projectOptions.includes(projectOption));
+    let hasCorrectProjectOption = !codemod.projectOptions || projectOptions.some(projectOption => codemod.projectOptions.includes(projectOption));
     let isNodeVersionInRange = semver.satisfies(nodeVersion, codemod.nodeVersionRange);
     return areVersionsInRange && hasCorrectProjectOption && isNodeVersionInRange;
   }).reduce((applicableCodemods, [codemod, applicableCodemod]) => {
