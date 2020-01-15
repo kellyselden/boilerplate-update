@@ -24,6 +24,7 @@ module.exports = async function getStats({
     startVersion,
     endVersion,
     remoteUrl,
+    codemodsSource,
     codemods
   });
 };
