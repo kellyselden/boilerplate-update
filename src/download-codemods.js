@@ -5,11 +5,11 @@ const { promisify } = require('util');
 const tmpDir = promisify(require('tmp').dir);
 const path = require('path');
 const npa = require('npm-package-arg');
+const https = require('https');
+const HttpProxyAgent = require('https-proxy-agent');
 
-async function downloadAndCheckForUpdates(source) {
+async function downloadAndCheckForUpdates(spec) {
   let dest = await tmpDir();
-
-  let spec = npa(source);
 
   let extract = pacote.extract(spec, dest);
 
@@ -43,10 +43,37 @@ async function requireManifest(cwd) {
   return require(path.join(cwd, main));
 }
 
-async function downloadCodemods(url) {
-  let dest = await module.exports.downloadAndCheckForUpdates(url);
+async function downloadCodemods(source) {
+  let spec = npa(source);
 
-  let manifest = module.exports.requireManifest(dest);
+  let manifest;
+
+  if (spec.type === 'remote') {
+    manifest = '';
+
+    // support corporate firewalls
+    let proxy = process.env.https_proxy
+      || process.env.HTTPS_PROXY
+      || process.env.http_proxy
+      || process.env.HTTP_PROXY;
+
+    let httpOptions = {};
+    if (proxy) {
+      httpOptions = { agent: new HttpProxyAgent(proxy) };
+    }
+
+    await new Promise((resolve, reject) => {
+      https.get(source, httpOptions, res => {
+        res.on('data', d => {
+          manifest += d;
+        }).on('end', resolve);
+      }).on('error', reject);
+    });
+  } else {
+    let dest = await module.exports.downloadAndCheckForUpdates(spec);
+
+    manifest = module.exports.requireManifest(dest);
+  }
 
   return manifest;
 }

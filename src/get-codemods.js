@@ -2,9 +2,9 @@
 
 const utils = require('./utils');
 
-module.exports = async function getCodemods(url, json) {
+module.exports = async function getCodemods(source, json) {
   if (!json) {
-    return await utils.downloadCodemods(url);
+    return await utils.downloadCodemods(source);
   }
 
   return JSON.parse(json);

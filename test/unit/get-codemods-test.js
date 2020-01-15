@@ -11,15 +11,15 @@ describe(getCodemods, function() {
     sinon.restore();
   });
 
-  it('gets codemods via url', async function() {
+  it('gets codemods via source', async function() {
     let expected = { testCodemod: '' };
 
-    let url = 'testUrl';
+    let source = 'testSource';
 
     let downloadCodemods = sinon.stub(utils, 'downloadCodemods')
-      .withArgs(url).resolves(expected);
+      .withArgs(source).resolves(expected);
 
-    let actual = await getCodemods(url);
+    let actual = await getCodemods(source);
 
     expect(actual).to.deep.equal(expected);
 
