@@ -90,7 +90,7 @@ describe(function() {
         statsOnly,
         runCodemods,
         listCodemods,
-        codemodsUrl: 'git+ssh://git@github.com/kellyselden/boilerplate-update-codemod-manifest-test.git#semver:*',
+        codemodsSource: 'git+ssh://git@github.com/kellyselden/boilerplate-update-codemod-manifest-test.git#semver:*',
         codemodsJson,
         projectOptions,
         startVersion,

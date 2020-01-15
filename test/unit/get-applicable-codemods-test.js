@@ -36,7 +36,7 @@ describe(getApplicableCodemods, function() {
     getNodeVersion.returns('6.0.0');
 
     let codemods = await getApplicableCodemods({
-      url: 'testUrl',
+      source: 'testSource',
       json: 'testJson',
       projectOptions: ['testProjectOption'],
       packageJson: {
@@ -56,7 +56,7 @@ describe(getApplicableCodemods, function() {
       }
     });
 
-    expect(getCodemods.args).to.deep.equal([['testUrl', 'testJson']]);
+    expect(getCodemods.args).to.deep.equal([['testSource', 'testJson']]);
   });
 
   it('excludes wrong option', async function() {
