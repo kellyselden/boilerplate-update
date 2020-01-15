@@ -5,6 +5,7 @@ module.exports = function formatStats({
   startVersion,
   endVersion,
   remoteUrl,
+  codemodsSource,
   codemods
 }) {
   return [
@@ -12,6 +13,7 @@ module.exports = function formatStats({
     `from version: ${startVersion}`,
     `to version: ${endVersion}`,
     remoteUrl ? `output repo: ${remoteUrl}` : null,
+    `codemods source: ${codemodsSource}`,
     `applicable codemods: ${Object.keys(codemods).join(', ')}`
   ].filter(Boolean).join('\n');
 };
