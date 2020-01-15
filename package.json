@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "lint": "eslint . --ext js,json",
-    "test": "cross-env DEBUG=boilerplate-update,git-diff-apply,git-fixtures mocha \"test/!(fixtures)/**/*-test.js\""
+    "test": "mocha --recursive"
   },
   "repository": {
     "type": "git",
@@ -50,7 +50,7 @@
     "eslint-config-sane": "0.8.5",
     "eslint-config-sane-node": "0.2.2",
     "eslint-plugin-json-files": "0.8.0",
-    "eslint-plugin-mocha": "^6.0.0",
+    "eslint-plugin-mocha": "^6.2.2",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prefer-let": "^1.0.1",
     "fixturify-project": "^1.8.0",
