@@ -61,9 +61,7 @@
     "mocha-helpers": "^4.2.1",
     "renovate-config-standard": "^2.0.0",
     "sinon": "^8.0.0",
-    "sinon-chai": "^3.3.0"
-  },
-  "optionalDependencies": {
+    "sinon-chai": "^3.3.0",
     "standard-node-template": "0.0.1"
   }
 }
