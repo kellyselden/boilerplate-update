@@ -18,7 +18,8 @@
         {
           "name": "@kellyselden/node-template",
           "options": [
-            "--repo-slug=kellyselden/boilerplate-update"
+            "--repo-slug=kellyselden/boilerplate-update",
+            "--ci-provider=travis-ci"
           ]
         }
       ]
