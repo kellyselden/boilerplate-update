@@ -13,7 +13,7 @@
         "--timeout",
         "999999",
         "--colors",
-        "${workspaceRoot}/test/!(fixtures)/**/*-test.js"
+        "--recursive"
       ],
       "env": {
         "DEBUG": "boilerplate-update,git-diff-apply,git-fixtures"
