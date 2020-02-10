@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 const mergePackageJson = require('merge-package.json');
 const gitDiffApply = require('git-diff-apply');
 const replaceFile = require('./replace-file');
@@ -23,6 +24,7 @@ async function resolveProperty(property) {
 
 async function boilerplateUpdate(options) {
   let {
+    cwd = process.cwd(),
     projectOptions,
     listCodemods,
     codemodsSource,
@@ -30,7 +32,7 @@ async function boilerplateUpdate(options) {
     mergeOptions = {}
   } = options;
 
-  let packageJson = await getPackageJson();
+  let packageJson = await getPackageJson(cwd);
 
   callbackOptions.packageJson = packageJson;
 
@@ -107,7 +109,8 @@ async function boilerplateUpdate(options) {
         source: codemodsSource,
         json: codemodsJson,
         projectOptions,
-        packageJson
+        packageJson,
+        cwd
       })
     };
   }
@@ -117,6 +120,7 @@ async function boilerplateUpdate(options) {
 
   if (createCustomDiff) {
     let commands = await getStartAndEndCommands({
+      cwd,
       reset,
       init,
       options: await resolveProperty(customDiffOptions)
@@ -135,6 +139,7 @@ async function boilerplateUpdate(options) {
     to,
     resolveConflictsProcess
   } = await gitDiffApply({
+    cwd,
     remoteUrl,
     startTag,
     endTag,
@@ -165,11 +170,13 @@ async function boilerplateUpdate(options) {
     let fromPackageJson = getPackageJson(from);
     let toPackageJson = getPackageJson(to);
 
-    await replaceFile('package.json', async myPackageJson => {
+    await replaceFile(path.join(cwd, 'package.json'), async myPackageJson => {
       return await mergePackageJson(myPackageJson, fromPackageJson, toPackageJson);
     });
 
-    await run('git add package.json');
+    await run('git add package.json', {
+      cwd
+    });
   })();
 
   return {

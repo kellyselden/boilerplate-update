@@ -3,13 +3,14 @@
 const path = require('path');
 const utils = require('./utils');
 const { promisify } = require('util');
-const tmpDir = promisify(require('tmp').dir);
+const createTmpDir = promisify(require('tmp').dir);
 const rimraf = promisify(require('rimraf'));
 const cpr = path.resolve(path.dirname(require.resolve('cpr')), '../bin/cpr');
 const mutatePackageJson = require('./mutate-package-json');
 const semver = require('semver');
 
 module.exports = async function getStartAndEndCommands({
+  cwd,
   reset,
   init,
   options
@@ -23,12 +24,19 @@ module.exports = async function getStartAndEndCommands({
   let startOptions = prepareOptions('startOptions');
   let endOptions = prepareOptions('endOptions');
 
+  function _prepareCommand(options) {
+    return module.exports.prepareCommand({
+      cwd,
+      options
+    });
+  }
+
   let [
     startCommand,
     endCommand
   ] = await Promise.all([
-    reset || init ? null : module.exports.prepareCommand(startOptions),
-    module.exports.prepareCommand(endOptions)
+    reset || init ? null : _prepareCommand(startOptions),
+    _prepareCommand(endOptions)
   ]);
 
   return {
@@ -41,7 +49,7 @@ async function _prepareCommand({
   createProject,
   options
 }) {
-  let cwd = await tmpDir();
+  let cwd = await createTmpDir();
 
   let appPath = await createProject(cwd);
 
@@ -107,9 +115,9 @@ module.exports.prepareCommandUsingRemote = async function prepareCommandUsingRem
   });
 };
 
-async function tryPrepareCommandUsingLocal(options) {
+async function tryPrepareCommandUsingLocal(options, cwd) {
   for (let basedir of [
-    process.cwd(),
+    cwd,
     path.resolve(__dirname, '../../..')
   ]) {
     let command = await tryPrepareCommandUsingCache({
@@ -168,8 +176,11 @@ async function tryPrepareCommandUsingGlobal(options) {
   }
 }
 
-module.exports.prepareCommand = async function prepareCommand(options) {
-  let command = await tryPrepareCommandUsingLocal(options);
+module.exports.prepareCommand = async function prepareCommand({
+  cwd,
+  options
+}) {
+  let command = await tryPrepareCommandUsingLocal(options, cwd);
   if (command) {
     return command;
   }

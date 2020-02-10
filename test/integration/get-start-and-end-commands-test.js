@@ -7,7 +7,7 @@ const sinon = require('sinon');
 const fs = require('fs-extra');
 const Project = require('fixturify-project');
 const { promisify } = require('util');
-const tmpDir = promisify(require('tmp').dir);
+const createTmpDir = promisify(require('tmp').dir);
 const utils = require('../../src/utils');
 const _getStartAndEndCommands = require('../../src/get-start-and-end-commands');
 
@@ -27,19 +27,15 @@ describe(_getStartAndEndCommands, function() {
   let endPath;
   let whichStub;
 
-  before(function() {
-    cwd = process.cwd();
-  });
-
   beforeEach(function() {
+    cwd = process.cwd();
+
     mutateStub2 = sinon.stub().resolves();
     mutateStub1 = sinon.stub().returns(mutateStub2);
   });
 
   afterEach(function() {
     sinon.restore();
-
-    process.chdir(cwd);
   });
 
   async function createProject({
@@ -48,7 +44,7 @@ describe(_getStartAndEndCommands, function() {
     addDependency = true
   } = {}) {
     if (!tmpPath) {
-      tmpPath = await tmpDir();
+      tmpPath = await createTmpDir();
     }
 
     let project = new Project(projectName, '1.2.3');
@@ -69,7 +65,7 @@ describe(_getStartAndEndCommands, function() {
       addDependency
     });
 
-    process.chdir(localPath);
+    cwd = localPath;
 
     return localPath;
   }
@@ -142,7 +138,9 @@ describe(_getStartAndEndCommands, function() {
     remoteStub1 = sinon.stub().callsFake(callback1(remoteStub2));
 
     sinon.stub(_getStartAndEndCommands, 'prepareCommand').callsFake(async function({
-      key
+      options: {
+        key
+      }
     }) {
       if (key === 'end' && !(reset || init)) {
         await promise;
@@ -151,6 +149,7 @@ describe(_getStartAndEndCommands, function() {
     });
 
     return _getStartAndEndCommands({
+      cwd,
       reset,
       init,
       options: {
@@ -190,16 +189,16 @@ describe(_getStartAndEndCommands, function() {
       expect(remoteStub2.callCount).to.equal(0);
 
       expect(cacheStub1.args[0][0].options.key).to.equal('start');
-      expect(cacheStub1.args[0][0].packageRoot).to.equal(path.join(process.cwd(), 'node_modules/test-package'));
+      expect(cacheStub1.args[0][0].packageRoot).to.equal(path.join(cwd, 'node_modules/test-package'));
       expect(cacheStub1.args[1][0].options.key).to.equal('end');
-      expect(cacheStub1.args[1][0].packageRoot).to.equal(path.join(process.cwd(), 'node_modules/test-package'));
+      expect(cacheStub1.args[1][0].packageRoot).to.equal(path.join(cwd, 'node_modules/test-package'));
 
       expect(cacheStub2.args[0][0]).to.equal(path.resolve(startPath, '..')).and.to.be.a.directory();
       expect(cacheStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
 
       expect(statSpy.args).to.deep.equal([
-        [path.join(process.cwd(), 'node_modules/test-package')],
-        [path.join(process.cwd(), 'node_modules/test-package')]
+        [path.join(cwd, 'node_modules/test-package')],
+        [path.join(cwd, 'node_modules/test-package')]
       ]);
     });
 
@@ -246,9 +245,9 @@ describe(_getStartAndEndCommands, function() {
       expect(cacheStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
 
       expect(statStub.args).to.deep.equal([
-        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(cwd, 'node_modules/test-package')],
         [path.resolve(__dirname, '../../../../node_modules/test-package')],
-        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(cwd, 'node_modules/test-package')],
         [path.resolve(__dirname, '../../../../node_modules/test-package')]
       ]);
     });
@@ -285,7 +284,7 @@ describe(_getStartAndEndCommands, function() {
 
     it('throws if local `stat` throws unexpectedly', async function() {
       sinon.stub(utils, 'stat')
-        .withArgs(path.join(process.cwd(), 'node_modules/test-package'))
+        .withArgs(path.join(cwd, 'node_modules/test-package'))
         .rejects(new Error('test stat error'));
 
       await expect(getStartAndEndCommands()).to.be.rejectedWith('test stat error');
@@ -321,10 +320,10 @@ describe(_getStartAndEndCommands, function() {
       expect(cacheStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
 
       expect(statSpy.args).to.deep.equal([
-        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(cwd, 'node_modules/test-package')],
         [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')],
-        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(cwd, 'node_modules/test-package')],
         [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')]
       ]);
@@ -362,11 +361,11 @@ describe(_getStartAndEndCommands, function() {
       expect(cacheStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
 
       expect(statSpy.args).to.deep.equal([
-        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(cwd, 'node_modules/test-package')],
         [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.join(globalPath, 'fake/fake/node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')],
-        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(cwd, 'node_modules/test-package')],
         [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.join(globalPath, 'fake/fake/node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')]
@@ -406,12 +405,12 @@ describe(_getStartAndEndCommands, function() {
       expect(cacheStub2.args[1][0]).to.equal(path.resolve(endPath, '..')).and.to.be.a.directory();
 
       expect(statSpy.args).to.deep.equal([
-        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(cwd, 'node_modules/test-package')],
         [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.resolve(globalPath, '../fake/node_modules/test-package')],
         [path.resolve(globalPath, '../../node_modules/test-package')],
         [path.join(globalPath, 'node_modules/test-package')],
-        [path.join(process.cwd(), 'node_modules/test-package')],
+        [path.join(cwd, 'node_modules/test-package')],
         [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.resolve(globalPath, '../fake/node_modules/test-package')],
         [path.resolve(globalPath, '../../node_modules/test-package')],

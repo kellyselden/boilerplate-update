@@ -7,7 +7,8 @@ module.exports = async function promptAndRunCodemods({
   source,
   json,
   projectOptions,
-  packageJson
+  packageJson,
+  cwd
 }) {
   let codemods = await getAndPromptCodemods({
     source,
@@ -16,5 +17,5 @@ module.exports = async function promptAndRunCodemods({
     packageJson
   });
 
-  await runCodemods(codemods);
+  await runCodemods(codemods, cwd);
 };

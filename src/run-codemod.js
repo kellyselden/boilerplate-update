@@ -3,11 +3,11 @@
 
 const utils = require('./utils');
 
-module.exports = async function runCodemod(codemod) {
+module.exports = async function runCodemod(codemod, cwd) {
   console.log(`Running codemod ${codemod.name}`);
   if (codemod.script) {
     try {
-      await utils.runScript(codemod.script);
+      await utils.runScript(codemod.script, cwd);
     } catch (err) {
       console.error(`Error running script ${codemod.script}`);
       console.error(err.stack);
@@ -18,7 +18,7 @@ module.exports = async function runCodemod(codemod) {
       console.log(`Running command ${i + 1} of ${codemod.commands.length}`);
       let command = codemod.commands[i];
       try {
-        await utils.npx(command);
+        await utils.npx(command, { cwd });
       } catch (err) {
         console.error(`Error running command ${command}`);
         console.error(err.stack);
