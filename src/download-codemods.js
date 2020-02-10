@@ -2,14 +2,14 @@
 
 const pacote = require('pacote');
 const { promisify } = require('util');
-const tmpDir = promisify(require('tmp').dir);
+const createTmpDir = promisify(require('tmp').dir);
 const path = require('path');
 const npa = require('npm-package-arg');
 const https = require('https');
 const HttpProxyAgent = require('https-proxy-agent');
 
 async function downloadAndCheckForUpdates(spec) {
-  let dest = await tmpDir();
+  let dest = await createTmpDir();
 
   let extract = pacote.extract(spec, dest);
 

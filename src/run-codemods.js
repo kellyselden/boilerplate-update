@@ -2,9 +2,12 @@
 
 const utils = require('./utils');
 
-module.exports = async function runCodemods(codemods) {
+module.exports = async function runCodemods(codemods, cwd) {
   for (let codemod in codemods) {
-    await utils.runCodemod(codemods[codemod]);
+    await utils.runCodemod(codemods[codemod], cwd);
   }
-  await utils.run('git add -A');
+
+  await utils.run('git add -A', {
+    cwd
+  });
 };

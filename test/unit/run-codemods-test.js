@@ -26,13 +26,13 @@ describe(runCodemods, function() {
           'test command'
         ]
       }
-    });
+    }, '/test/cwd');
 
     expect(runCodemod.args).to.deep.equal([[{
       commands: [
         'test command'
       ]
-    }]]);
+    }, '/test/cwd']]);
 
     expect(run.calledOnce, 'stages files').to.be.ok;
   });
@@ -53,17 +53,17 @@ describe(runCodemods, function() {
       expect(runCodemod2.args).to.deep.equal([]);
     });
     let runCodemod2 = runCodemod.withArgs(testCodemod2).callsFake(async() => {
-      expect(runCodemod1.args).to.deep.equal([[testCodemod1]]);
+      expect(runCodemod1.args).to.deep.equal([[testCodemod1, '/test/cwd']]);
     });
 
     await runCodemods({
       testCodemod1,
       testCodemod2
-    });
+    }, '/test/cwd');
 
     expect(runCodemod.args).to.deep.equal([
-      [testCodemod1],
-      [testCodemod2]
+      [testCodemod1, '/test/cwd'],
+      [testCodemod2, '/test/cwd']
     ]);
   });
 });

@@ -24,17 +24,10 @@ const {
 describe(function() {
   this.timeout(30 * 1000);
 
-  let cwd;
   let tmpPath;
-
-  before(function() {
-    cwd = process.cwd();
-  });
 
   afterEach(function() {
     sinon.restore();
-
-    process.chdir(cwd);
   });
 
   async function merge({
@@ -62,8 +55,6 @@ describe(function() {
       subDir
     });
 
-    process.chdir(tmpPath);
-
     function createProject({
       options
     }) {
@@ -77,6 +68,7 @@ describe(function() {
         promise: boilerplateUpdatePromise,
         resolveConflictsProcess
       } = await boilerplateUpdate({
+        cwd: tmpPath,
         remoteUrl: () => 'https://github.com/kellyselden/boilerplate-update-output-repo-test',
         resolveConflicts: true,
         compareOnly,
@@ -139,7 +131,7 @@ describe(function() {
     mergeFixtures
   }) {
     let actual = tmpPath;
-    let expected = path.join(cwd, mergeFixtures);
+    let expected = mergeFixtures;
 
     _fixtureCompare({
       expect,

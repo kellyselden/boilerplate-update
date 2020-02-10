@@ -30,10 +30,10 @@ describe(runCodemod, function() {
         commands: [
           'test command'
         ]
-      });
+      }, '/test/cwd');
 
       expect(npx.args).to.deep.equal([
-        ['test command']
+        ['test command', { cwd: '/test/cwd' }]
       ]);
       expect(runScript).to.not.be.called;
 
@@ -48,7 +48,7 @@ describe(runCodemod, function() {
         expect(npx2.args).to.deep.equal([]);
       });
       let npx2 = npx.withArgs('test command 2').callsFake(async() => {
-        expect(npx1.args).to.deep.equal([['test command 1']]);
+        expect(npx1.args).to.deep.equal([['test command 1', { cwd: '/test/cwd' }]]);
       });
 
       await runCodemod({
@@ -57,11 +57,11 @@ describe(runCodemod, function() {
           'test command 1',
           'test command 2'
         ]
-      });
+      }, '/test/cwd');
 
       expect(npx.args).to.deep.equal([
-        ['test command 1'],
-        ['test command 2']
+        ['test command 1', { cwd: '/test/cwd' }],
+        ['test command 2', { cwd: '/test/cwd' }]
       ]);
 
       expect(log.withArgs('Running codemod test-codemod')).to.be.called;
@@ -100,9 +100,9 @@ describe(runCodemod, function() {
       await runCodemod({
         name: 'test-codemod',
         script: 'test script'
-      });
+      }, '/test/cwd');
 
-      expect(runScript.args).to.deep.equal([['test script']]);
+      expect(runScript.args).to.deep.equal([['test script', '/test/cwd']]);
       expect(npx).to.not.be.called;
 
       expect(log.withArgs('Running codemod test-codemod')).to.be.called;
@@ -115,9 +115,9 @@ describe(runCodemod, function() {
       await runCodemod({
         name: 'test-codemod',
         script: 'test script'
-      });
+      }, '/test/cwd');
 
-      expect(runScript.args).to.deep.equal([['test script']]);
+      expect(runScript.args).to.deep.equal([['test script', '/test/cwd']]);
       expect(npx).to.not.be.called;
 
       expect(log.withArgs('Running codemod test-codemod')).to.be.called;
