@@ -7,17 +7,14 @@ const compareVersions = require('../../src/compare-versions');
 const utils = require('../../src/utils');
 
 describe(compareVersions, function() {
-  let sandbox;
   let open;
 
   beforeEach(function() {
-    sandbox = sinon.createSandbox();
-
-    open = sandbox.stub(utils, 'open');
+    open = sinon.stub(utils, 'open');
   });
 
   afterEach(function() {
-    sandbox.restore();
+    sinon.restore();
   });
 
   it('works', function() {

@@ -25,19 +25,14 @@ describe(function() {
   this.timeout(30 * 1000);
 
   let cwd;
-  let sandbox;
   let tmpPath;
 
   before(function() {
     cwd = process.cwd();
   });
 
-  beforeEach(function() {
-    sandbox = sinon.createSandbox();
-  });
-
   afterEach(function() {
-    sandbox.restore();
+    sinon.restore();
 
     process.chdir(cwd);
   });
@@ -270,7 +265,7 @@ describe(function() {
   });
 
   it('opens compare url', async function() {
-    let open = sandbox.stub(utils, 'open');
+    let open = sinon.stub(utils, 'open');
 
     let {
       result,
@@ -350,9 +345,9 @@ applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', scrip
       return Object.values(codemods);
     }
 
-    sandbox.stub(utils, 'promptCodemods').callsFake(selectAllCodemods);
+    sinon.stub(utils, 'promptCodemods').callsFake(selectAllCodemods);
 
-    let log = sandbox.stub(console, 'log');
+    let log = sinon.stub(console, 'log');
 
     let {
       status

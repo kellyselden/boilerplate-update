@@ -17,7 +17,6 @@ const cpr = path.resolve(__dirname, '../../node_modules/cpr/bin/cpr');
 
 describe(_getStartAndEndCommands, function() {
   let cwd;
-  let sandbox;
   let cacheStub1;
   let cacheStub2;
   let remoteStub1;
@@ -33,14 +32,12 @@ describe(_getStartAndEndCommands, function() {
   });
 
   beforeEach(function() {
-    sandbox = sinon.createSandbox();
-
-    mutateStub2 = sandbox.stub().resolves();
-    mutateStub1 = sandbox.stub().returns(mutateStub2);
+    mutateStub2 = sinon.stub().resolves();
+    mutateStub1 = sinon.stub().returns(mutateStub2);
   });
 
   afterEach(function() {
-    sandbox.restore();
+    sinon.restore();
 
     process.chdir(cwd);
   });
@@ -85,7 +82,7 @@ describe(_getStartAndEndCommands, function() {
       projectName
     });
 
-    whichStub = sandbox.stub(utils, 'which').resolves([
+    whichStub = sinon.stub(utils, 'which').resolves([
       path.resolve(globalPath, whichPath)
     ]);
 
@@ -139,12 +136,12 @@ describe(_getStartAndEndCommands, function() {
       };
     }
 
-    cacheStub2 = sandbox.stub().callsFake(callback2);
-    cacheStub1 = sandbox.stub().callsFake(callback1(cacheStub2));
-    remoteStub2 = sandbox.stub().callsFake(callback2);
-    remoteStub1 = sandbox.stub().callsFake(callback1(remoteStub2));
+    cacheStub2 = sinon.stub().callsFake(callback2);
+    cacheStub1 = sinon.stub().callsFake(callback1(cacheStub2));
+    remoteStub2 = sinon.stub().callsFake(callback2);
+    remoteStub1 = sinon.stub().callsFake(callback1(remoteStub2));
 
-    sandbox.stub(_getStartAndEndCommands, 'prepareCommand').callsFake(async function({
+    sinon.stub(_getStartAndEndCommands, 'prepareCommand').callsFake(async function({
       key
     }) {
       if (key === 'end' && !(reset || init)) {
@@ -178,7 +175,7 @@ describe(_getStartAndEndCommands, function() {
     it('finds local package in project dir', async function() {
       await setUpLocalScenario();
 
-      let statSpy = sandbox.spy(utils, 'stat');
+      let statSpy = sinon.spy(utils, 'stat');
 
       let commands = await getStartAndEndCommands();
 
@@ -216,14 +213,14 @@ describe(_getStartAndEndCommands, function() {
         require
       } = utils;
 
-      let statStub = sandbox.stub(utils, 'stat')
+      let statStub = sinon.stub(utils, 'stat')
         .callsFake(stat);
 
       statStub
         .withArgs(path.resolve(__dirname, '../../../../node_modules/test-package'))
         .resolves();
 
-      sandbox.stub(utils, 'require')
+      sinon.stub(utils, 'require')
         .callsFake(require)
         .withArgs(path.resolve(__dirname, '../../../../node_modules/test-package/package.json'))
         .returns({ version: '4.5.6' });
@@ -287,7 +284,7 @@ describe(_getStartAndEndCommands, function() {
     });
 
     it('throws if local `stat` throws unexpectedly', async function() {
-      sandbox.stub(utils, 'stat')
+      sinon.stub(utils, 'stat')
         .withArgs(path.join(process.cwd(), 'node_modules/test-package'))
         .rejects(new Error('test stat error'));
 
@@ -301,7 +298,7 @@ describe(_getStartAndEndCommands, function() {
         whichPath: 'fake'
       });
 
-      let statSpy = sandbox.spy(utils, 'stat');
+      let statSpy = sinon.spy(utils, 'stat');
 
       let commands = await getStartAndEndCommands();
 
@@ -342,7 +339,7 @@ describe(_getStartAndEndCommands, function() {
         whichPath: 'fake/fake/fake'
       });
 
-      let statSpy = sandbox.spy(utils, 'stat');
+      let statSpy = sinon.spy(utils, 'stat');
 
       let commands = await getStartAndEndCommands();
 
@@ -386,7 +383,7 @@ describe(_getStartAndEndCommands, function() {
         whichPath: '../fake/fake'
       });
 
-      let statSpy = sandbox.spy(utils, 'stat');
+      let statSpy = sinon.spy(utils, 'stat');
 
       let commands = await getStartAndEndCommands();
 
@@ -461,7 +458,7 @@ describe(_getStartAndEndCommands, function() {
 
       let { stat } = utils;
 
-      sandbox.stub(utils, 'stat')
+      sinon.stub(utils, 'stat')
         .callsFake(stat)
         .withArgs(path.join(globalPath, 'node_modules/test-package'))
         .rejects(new Error('test stat error'));
@@ -470,7 +467,7 @@ describe(_getStartAndEndCommands, function() {
     });
 
     it('throws if `which` throws unexpectedly', async function() {
-      whichStub = sandbox.stub(utils, 'which').rejects(new Error('test which error'));
+      whichStub = sinon.stub(utils, 'which').rejects(new Error('test which error'));
 
       await expect(getStartAndEndCommands({
         packageVersion: '4.5.7'
@@ -479,7 +476,7 @@ describe(_getStartAndEndCommands, function() {
 
     it('uses command name in `which` call', async function() {
       let commandName = 'test-command';
-      let whichSpy = sandbox.spy(utils, 'which').withArgs(commandName);
+      let whichSpy = sinon.spy(utils, 'which').withArgs(commandName);
 
       await getStartAndEndCommands({
         options: {
@@ -516,8 +513,8 @@ describe(_getStartAndEndCommands, function() {
   });
 
   it('skips cache if no package name', async function() {
-    let statSpy = sandbox.spy(utils, 'stat');
-    let whichSpy = sandbox.spy(utils, 'which');
+    let statSpy = sinon.spy(utils, 'stat');
+    let whichSpy = sinon.spy(utils, 'which');
 
     await getStartAndEndCommands({
       options: {

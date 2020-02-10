@@ -7,23 +7,20 @@ const utils = require('../../src/utils');
 const runCodemod = require('../../src/run-codemod');
 
 describe(runCodemod, function() {
-  let sandbox;
   let npx;
   let runScript;
   let log;
   let error;
 
   beforeEach(function() {
-    sandbox = sinon.createSandbox();
-
-    npx = sandbox.stub(utils, 'npx').resolves();
-    runScript = sandbox.stub(utils, 'runScript').resolves();
-    log = sandbox.stub(console, 'log');
-    error = sandbox.stub(console, 'error');
+    npx = sinon.stub(utils, 'npx').resolves();
+    runScript = sinon.stub(utils, 'runScript').resolves();
+    log = sinon.stub(console, 'log');
+    error = sinon.stub(console, 'error');
   });
 
   afterEach(function() {
-    sandbox.restore();
+    sinon.restore();
   });
 
   describe('command', function() {
