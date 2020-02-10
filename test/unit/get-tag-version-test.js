@@ -7,17 +7,14 @@ const sinon = require('sinon');
 const npm = require('../../src/npm');
 
 describe(getTagVersion, function() {
-  let sandbox;
   let npmJsonStub;
 
   beforeEach(function() {
-    sandbox = sinon.createSandbox();
-
-    npmJsonStub = sandbox.stub(npm, 'json');
+    npmJsonStub = sinon.stub(npm, 'json');
   });
 
   afterEach(function() {
-    sandbox.restore();
+    sinon.restore();
   });
 
   it('allows version override', async function() {

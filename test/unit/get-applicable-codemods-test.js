@@ -7,19 +7,16 @@ const utils = require('../../src/utils');
 const getApplicableCodemods = require('../../src/get-applicable-codemods');
 
 describe(getApplicableCodemods, function() {
-  let sandbox;
   let getCodemods;
   let getNodeVersion;
 
   beforeEach(function() {
-    sandbox = sinon.createSandbox();
-
-    getCodemods = sandbox.stub(utils, 'getCodemods');
-    getNodeVersion = sandbox.stub(utils, 'getNodeVersion');
+    getCodemods = sinon.stub(utils, 'getCodemods');
+    getNodeVersion = sinon.stub(utils, 'getNodeVersion');
   });
 
   afterEach(function() {
-    sandbox.restore();
+    sinon.restore();
   });
 
   it('works', async function() {
