@@ -20,7 +20,8 @@
           "options": [
             "--repo-slug=kellyselden/boilerplate-update",
             "--travis-ci",
-            "--appveyor=iobmwgpka2lwtq6s"
+            "--appveyor=iobmwgpka2lwtq6s",
+            "--renovate"
           ]
         }
       ]
