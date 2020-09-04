@@ -64,7 +64,7 @@ async function _prepareCommand({
     rimraf(path.join(appPath, 'yarn.lock'))
   ]);
 
-  return `node ${cpr} ${appPath} .`;
+  return `node "${cpr}" "${appPath}" .`;
 }
 
 async function tryPrepareCommandUsingCache({
