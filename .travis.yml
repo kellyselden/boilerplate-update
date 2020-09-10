@@ -46,6 +46,7 @@ jobs:
       npx https://github.com/kellyselden/ember-cli-update-action.git#semver:^1.10.2
       --pull-request-url https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
       --autofix-command "npm run lint -- --fix"
+      --ignore-to
   - if: tag IS present
     name: deploy
     before_install: ignore
