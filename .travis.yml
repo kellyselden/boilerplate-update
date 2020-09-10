@@ -33,9 +33,6 @@ jobs:
   - os: osx
   - if: branch = master AND type = pull_request
     name: ember-cli-update
-    # node v14.10.0 is broken
-    # npm ERR! cb.apply is not a function
-    node_js: '14.4'
     before_install: ignore
     before_script: ignore
     script:
