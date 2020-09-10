@@ -41,7 +41,7 @@
     "which": "^2.0.1"
   },
   "devDependencies": {
-    "@kellyselden/node-template": "0.12.3",
+    "@kellyselden/node-template": "1.1.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-fs": "^2.0.0",
