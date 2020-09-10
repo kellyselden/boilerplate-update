@@ -15,7 +15,7 @@ cache:
   - "$HOME/.npm"
 before_install:
 - npm config set spin false
-- if [ "$TRAVIS_NODE_VERSION" = "8" ]; then
+- if [ "$TRAVIS_NODE_VERSION" != "node" ]; then
     export NODE_LTS="true";
   fi
 - which npx

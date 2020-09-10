@@ -17,14 +17,14 @@ install:
   - ps: Install-Product node $env:nodejs_version
   - npm config set spin false
   - ps: >-
-      if ($env:nodejs_version -eq "8") {
+      if ($env:nodejs_version) {
         [Environment]::SetEnvironmentVariable("NODE_LTS", "true", "User")
       }
   - RefreshEnv
   - where npx
   # don't accidentally use the global npx
   - ps: >-
-      if ($env:nodejs_version -eq "8") {
+      if ($env:nodejs_version) {
         rm "C:\Program Files (x86)\nodejs\npx*"
       } else {
         rm "C:\Program Files\nodejs\npx*"
