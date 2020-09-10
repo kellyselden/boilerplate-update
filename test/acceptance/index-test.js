@@ -291,7 +291,7 @@ from version: 0.0.1
 to version: 0.0.2
 output repo: https://github.com/kellyselden/boilerplate-update-output-repo-test
 codemods source: git+ssh://git@github.com/kellyselden/boilerplate-update-codemod-manifest-test.git#semver:*
-applicable codemods: commands-test-codemod${process.env.NODE_LTS ? '' : ', script-test-codemod'}`);
+applicable codemods: commands-test-codemod, script-test-codemod${process.env.NODE_LTS ? '' : ''}`);
   });
 
   it('lists codemods', async function() {
