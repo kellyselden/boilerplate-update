@@ -53,7 +53,7 @@
     "eslint-plugin-mocha": "^8.0.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prefer-let": "^1.0.2",
-    "fixturify-project": "^1.8.0",
+    "fixturify-project": "^2.0.0",
     "fs-extra": "^8.0.0",
     "git-fixtures": "^2.1.0",
     "mocha": "^8.1.3",
