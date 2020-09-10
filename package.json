@@ -20,7 +20,7 @@
   "author": "Kelly Selden",
   "license": "MIT",
   "engines": {
-    "node": ">=8.10"
+    "node": ">=10.12"
   },
   "dependencies": {
     "cpr": "^3.0.1",
