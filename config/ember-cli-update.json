@@ -19,7 +19,7 @@
           "name": "@kellyselden/node-template",
           "options": [
             "--repo-slug=kellyselden/boilerplate-update",
-            "--travis-ci",
+            "--github-actions",
             "--appveyor=iobmwgpka2lwtq6s",
             "--renovate"
           ]
