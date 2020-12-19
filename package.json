@@ -26,7 +26,7 @@
     "cpr": "^3.0.1",
     "debug": "^4.1.1",
     "execa": "^5.0.0",
-    "git-diff-apply": "0.22.10",
+    "git-diff-apply": "1.0.0",
     "https-proxy-agent": "^5.0.0",
     "inquirer": "^7.0.0",
     "merge-package.json": "^3.1.8",
