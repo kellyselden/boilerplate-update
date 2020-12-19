@@ -2,7 +2,7 @@ environment:
   matrix:
     - nodejs_version: "10"
     - nodejs_version: ""
-  DEBUG: "boilerplate-update,git-diff-apply,git-fixtures"
+  DEBUG: "boilerplate-update,git-diff-apply"
 
 branches:
   only:

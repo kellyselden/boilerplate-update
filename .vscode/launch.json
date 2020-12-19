@@ -16,7 +16,7 @@
         "--recursive"
       ],
       "env": {
-        "DEBUG": "boilerplate-update,git-diff-apply,git-fixtures"
+        "DEBUG": "boilerplate-update,git-diff-apply"
       },
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std"

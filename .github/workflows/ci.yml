@@ -44,7 +44,7 @@ jobs:
     - run: npm test
       env:
         NODE_LTS: ${{ matrix.node != '*' }}
-        DEBUG: boilerplate-update,git-diff-apply,git-fixtures
+        DEBUG: boilerplate-update,git-diff-apply
 
   ember-cli-update:
     needs: test
