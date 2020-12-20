@@ -11,7 +11,7 @@ module.exports = async function getTagVersion({
 }) {
   if (distTags.indexOf(range) > -1) {
     let distTag = range;
-    return await npm.json(`view ${packageName}@${distTag} version`);
+    return await npm.json('view', `${packageName}@${distTag}`, 'version');
   }
 
   let isAbsolute = !!semver.clean(range);
