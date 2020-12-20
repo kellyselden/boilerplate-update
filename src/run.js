@@ -3,11 +3,16 @@
 const debug = require('./debug');
 const execa = require('execa');
 
-async function exec() {
+function exec() {
   debug(...arguments);
-  let { stdout } = await execa.command(...arguments);
-  debug(stdout);
-  return stdout;
+
+  let ps = execa.command(...arguments);
+
+  ps.stdout.on('data', data => {
+    debug(data.toString());
+  });
+
+  return ps;
 }
 
 module.exports = {
