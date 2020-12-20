@@ -10,7 +10,7 @@ const getStats = require('./get-stats');
 const compareVersions = require('./compare-versions');
 const getPackageJson = require('./get-package-json');
 const _listCodemods = require('./list-codemods');
-const { exec } = require('./run');
+const { spawn } = require('./run');
 
 let callbackOptions = {};
 
@@ -173,7 +173,7 @@ async function boilerplateUpdate(options) {
       return await mergePackageJson(myPackageJson, fromPackageJson, toPackageJson);
     });
 
-    await exec('git add package.json', {
+    await spawn('git', ['add', 'package.json'], {
       cwd
     });
   })();
