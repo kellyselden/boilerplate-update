@@ -1,8 +1,7 @@
 'use strict';
 
 const pacote = require('pacote');
-const { promisify } = require('util');
-const createTmpDir = promisify(require('tmp').dir);
+const { createTmpDir } = require('./tmp');
 const path = require('path');
 const npa = require('npm-package-arg');
 const https = require('https');

@@ -1,7 +1,6 @@
 'use strict';
 
-const { promisify } = require('util');
-const createTmpDir = promisify(require('tmp').dir);
+const { createTmpDir } = require('./tmp');
 const execa = require('execa');
 
 const AsyncFunction = Object.getPrototypeOf(async function() {}).constructor;

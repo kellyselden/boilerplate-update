@@ -3,8 +3,7 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const runScript = require('../../src/run-script');
-const { promisify } = require('util');
-const createTmpDir = promisify(require('tmp').dir);
+const { createTmpDir } = require('../../src/tmp');
 const fs = require('fs-extra');
 
 describe(runScript, function() {
