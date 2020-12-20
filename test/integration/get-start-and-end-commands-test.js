@@ -6,8 +6,7 @@ const path = require('path');
 const sinon = require('sinon');
 const fs = require('fs-extra');
 const Project = require('fixturify-project');
-const { promisify } = require('util');
-const createTmpDir = promisify(require('tmp').dir);
+const { createTmpDir } = require('../../src/tmp');
 const utils = require('../../src/utils');
 const _getStartAndEndCommands = require('../../src/get-start-and-end-commands');
 
