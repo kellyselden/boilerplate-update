@@ -1,11 +1,11 @@
 'use strict';
 
-const { exec } = require('./run');
+const { spawn } = require('./run');
 
-module.exports = async function npm(command) {
-  return await exec(`npm ${command}`);
+module.exports = async function npm() {
+  return await spawn('npm', ...arguments);
 };
 
-module.exports.json = async function npmJson(command) {
-  return JSON.parse(await module.exports(`${command} --json`));
+module.exports.json = async function npmJson() {
+  return JSON.parse(await module.exports(...arguments, '--json'));
 };
