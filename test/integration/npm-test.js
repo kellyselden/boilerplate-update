@@ -9,7 +9,7 @@ describe(function() {
 
   describe(npm, function() {
     it('works', async function() {
-      let result = await npm('install -h');
+      let result = await npm('install', '-h');
 
       expect(result).to.include('isntal');
     });
@@ -17,7 +17,7 @@ describe(function() {
 
   describe(npm.json, function() {
     it('works', async function() {
-      let result = await npm.json('v lodash');
+      let result = await npm.json('v', 'lodash');
 
       expect(result.name).to.equal('lodash');
     });
