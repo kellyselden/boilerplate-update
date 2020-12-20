@@ -1,7 +1,7 @@
 'use strict';
 
 const { command: _command } = require('execa');
-const debug = require('debug')('boilerplate-update');
+const debug = require('./debug');
 
 function npx(command, options) {
   let npxCommand = `npx ${command}`;
