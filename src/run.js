@@ -18,7 +18,7 @@ function bind(execa) {
 const _spawn = bind(execa);
 const _exec = bind(execa.command);
 
-function spawn(bin, args, options) {
+function spawn(bin, args = [], options) {
   debug(bin, ...args.map(arg => `"${arg}"`), options);
 
   return _spawn(...arguments);
