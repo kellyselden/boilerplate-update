@@ -32,7 +32,7 @@ describe(getTagVersion, function() {
   });
 
   it('resolves dist-tags', async function() {
-    npmJsonStub.withArgs(['view', 'foo@bar', 'version']).resolves('2.14.0');
+    npmJsonStub.withArgs('view foo@bar version').resolves('2.14.0');
 
     expect(await getTagVersion({
       range: 'bar',
