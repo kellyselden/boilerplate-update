@@ -3,9 +3,13 @@
 const { exec } = require('./run');
 
 module.exports = async function npm(command) {
-  return (await exec(`npm ${command}`)).stdout;
+  let ps = await exec(`npm ${command}`);
+
+  return ps.stdout;
 };
 
 module.exports.json = async function npmJson(command) {
-  return JSON.parse(await module.exports(`${command} --json`));
+  let text = await module.exports(`${command} --json`);
+
+  return JSON.parse(text);
 };
