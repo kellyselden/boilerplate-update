@@ -32,7 +32,7 @@
     "merge-package.json": "^3.1.8",
     "npm-package-arg": "^8.0.1",
     "npx": "^10.2.0",
-    "open": "^7.3.0",
+    "open": "^8.0.0",
     "p-reduce": "^2.0.0",
     "pacote": "11.3.3",
     "rimraf": "^3.0.0",
