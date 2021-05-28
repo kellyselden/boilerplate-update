@@ -26,11 +26,15 @@ jobs:
         - ubuntu-latest
         - macos-latest
         node:
+<<<<<<< HEAD
         - 10
         - '*'
         exclude:
         - os: macos-latest
           node: '*'
+=======
+        - 12
+>>>>>>> 1b406bc (v1.4.5...v2.0.0)
 
     runs-on: ${{ matrix.os }}
 

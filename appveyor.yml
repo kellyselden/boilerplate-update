@@ -1,8 +1,12 @@
 environment:
   matrix:
+<<<<<<< HEAD
     - nodejs_version: "10"
     - nodejs_version: ""
   DEBUG: "boilerplate-update,git-diff-apply"
+=======
+    - nodejs_version: "12"
+>>>>>>> 1b406bc (v1.4.5...v2.0.0)
 
 branches:
   only:
