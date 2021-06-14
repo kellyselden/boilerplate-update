@@ -2,7 +2,6 @@
 
 const utils = require('./utils');
 const semver = require('semver');
-const pReduce = require('p-reduce');
 
 module.exports = async function getApplicableCodemods({
   source,
@@ -15,6 +14,9 @@ module.exports = async function getApplicableCodemods({
   let versionRanges = { ...packageJson.dependencies, ...packageJson.devDependencies };
 
   let codemods = await utils.getCodemods(source, json);
+
+  // eslint-disable-next-line prefer-let/prefer-let
+  const { default: pReduce } = await import('p-reduce');
 
   let resolvedVersions = await pReduce(Object.keys(codemods), async(resolvedVersions, codemod) => {
     return await pReduce(Object.keys(codemods[codemod].versionRanges || {}), async(resolvedVersions, packageName) => {
