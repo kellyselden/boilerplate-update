@@ -19,7 +19,10 @@
         "DEBUG": "boilerplate-update,git-diff-apply"
       },
       "internalConsoleOptions": "openOnSessionStart",
-      "outputCapture": "std"
+      "outputCapture": "std",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
     }
   ]
 }
