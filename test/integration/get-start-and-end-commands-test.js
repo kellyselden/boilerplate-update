@@ -5,7 +5,7 @@ const { expect } = require('chai');
 const path = require('path');
 const sinon = require('sinon');
 const fs = require('fs-extra');
-const Project = require('fixturify-project');
+const { Project } = require('fixturify-project');
 const { createTmpDir } = require('../../src/tmp');
 const utils = require('../../src/utils');
 const _getStartAndEndCommands = require('../../src/get-start-and-end-commands');
@@ -52,9 +52,11 @@ describe(_getStartAndEndCommands, function() {
       project.addDependency('test-package', '4.5.6');
     }
 
-    project.writeSync(tmpPath);
+    project.baseDir = path.join(tmpPath, projectName);
 
-    return path.join(tmpPath, projectName);
+    project.writeSync();
+
+    return project.baseDir;
   }
 
   async function setUpLocalScenario({
