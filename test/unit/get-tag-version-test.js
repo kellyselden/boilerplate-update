@@ -40,6 +40,6 @@ describe(getTagVersion, function() {
       distTags: ['bar']
     })).to.equal('2.14.0');
 
-    expect(npmJsonStub.calledOnce).to.be.ok;
+    expect(npmJsonStub).to.be.calledOnce;
   });
 });

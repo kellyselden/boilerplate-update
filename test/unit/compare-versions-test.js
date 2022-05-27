@@ -24,7 +24,7 @@ describe(compareVersions, function() {
       endTag: 'v3.0.2'
     });
 
-    expect(open.calledOnce).to.be.ok;
+    expect(open).to.be.calledOnce;
     expect(open.args[0][0]).to.equal('test-url/compare/v2.18.2...v3.0.2');
   });
 });
