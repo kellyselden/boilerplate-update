@@ -2,19 +2,14 @@
 
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
-const sinon = require('sinon');
 const compareVersions = require('../../src/compare-versions');
 const utils = require('../../src/utils');
 
-describe(compareVersions, function() {
+describe(compareVersions, function({ sinon }) {
   let open;
 
   beforeEach(function() {
     open = sinon.stub(utils, 'open');
-  });
-
-  afterEach(function() {
-    sinon.restore();
   });
 
   it('works', function() {

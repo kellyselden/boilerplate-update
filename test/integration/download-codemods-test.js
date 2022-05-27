@@ -3,9 +3,8 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const downloadCodemods = require('../../src/download-codemods');
-const sinon = require('sinon');
 
-describe(downloadCodemods, function() {
+describe(downloadCodemods, function({ sinon }) {
   this.timeout(5e3);
 
   it('downloads codemods', async function() {
@@ -32,8 +31,6 @@ describe(downloadCodemods, function() {
 
     afterEach(function() {
       expect(this.codemods).to.deep.equal({ foo: 'bar' });
-
-      sinon.restore();
     });
 
     it('git semver', async function() {
