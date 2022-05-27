@@ -1,7 +1,7 @@
 'use strict';
 
-const npm = require('./npm');
 const semver = require('semver');
+const pacote = require('pacote');
 
 module.exports = async function getTagVersion({
   range,
@@ -11,7 +11,8 @@ module.exports = async function getTagVersion({
 }) {
   if (distTags.indexOf(range) > -1) {
     let distTag = range;
-    return await npm.json('view', `${packageName}@${distTag}`, 'version');
+    let manifest = await pacote.manifest(`${packageName}@${distTag}`);
+    return manifest.version;
   }
 
   let isAbsolute = !!semver.clean(range);
