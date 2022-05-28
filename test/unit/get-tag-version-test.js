@@ -4,13 +4,13 @@ const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const getTagVersion = require('../../src/get-tag-version');
 const sinon = require('sinon');
-const npm = require('../../src/npm');
+const pacote = require('pacote');
 
 describe(getTagVersion, function() {
-  let npmJsonStub;
+  let pacoteManifestStub;
 
   beforeEach(function() {
-    npmJsonStub = sinon.stub(npm, 'json');
+    pacoteManifestStub = sinon.stub(pacote, 'manifest');
   });
 
   afterEach(function() {
@@ -32,7 +32,7 @@ describe(getTagVersion, function() {
   });
 
   it('resolves dist-tags', async function() {
-    npmJsonStub.withArgs('view', 'foo@bar', 'version').resolves('2.14.0');
+    pacoteManifestStub.withArgs('foo@bar').resolves({ version: '2.14.0' });
 
     expect(await getTagVersion({
       range: 'bar',
@@ -40,6 +40,6 @@ describe(getTagVersion, function() {
       distTags: ['bar']
     })).to.equal('2.14.0');
 
-    expect(npmJsonStub).to.be.calledOnce;
+    expect(pacoteManifestStub).to.be.calledOnce;
   });
 });

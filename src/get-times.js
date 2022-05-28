@@ -1,9 +1,9 @@
 'use strict';
 
-const npm = require('./npm');
+const pacote = require('pacote');
 
 module.exports = async function getTimes(packageName) {
-  let time = await npm.json('view', packageName, 'time');
+  let { time } = await pacote.packument(packageName, { fullMetadata: true });
   delete time['created'];
   delete time['modified'];
   return time;
