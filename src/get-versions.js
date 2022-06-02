@@ -1,7 +1,9 @@
 'use strict';
 
-const npm = require('./npm');
+const pacote = require('pacote');
 
 module.exports = async function getVersions(packageName) {
-  return await npm.json('view', packageName, 'versions');
+  let packument = await pacote.packument(packageName);
+
+  return Object.keys(packument.versions);
 };
