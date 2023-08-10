@@ -24,7 +24,5 @@ module.exports.assertNoStaged = function(status) {
 module.exports.assertCodemodRan = function(status) {
   expect(status).to.match(/^A {2}.*added-changed-copy\.txt$/m);
   expect(status).to.match(/^A {2}.*added-unchanged-copy\.txt$/m);
-  if (!process.env.NODE_LTS) {
-    expect(status).to.match(/^A {2}.*present-changed-copy\.txt$/m);
-  }
+  expect(status).to.match(/^A {2}.*present-changed-copy\.txt$/m);
 };

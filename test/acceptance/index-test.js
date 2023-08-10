@@ -291,7 +291,7 @@ from version: 0.0.1
 to version: 0.0.2
 output repo: https://github.com/kellyselden/boilerplate-update-output-repo-test
 codemods source: git+ssh://git@github.com/kellyselden/boilerplate-update-codemod-manifest-test.git#semver:*
-applicable codemods: commands-test-codemod, script-test-codemod${process.env.NODE_LTS ? '' : ''}`);
+applicable codemods: commands-test-codemod, script-test-codemod`);
   });
 
   it('lists codemods', async function() {
@@ -349,9 +349,6 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
     });
 
     let mergeFixtures = 'test/fixtures/codemod/latest-node/test-project';
-    if (process.env.NODE_LTS) {
-      mergeFixtures = 'test/fixtures/codemod/min-node/test-project';
-    }
 
     fixtureCompare({
       mergeFixtures
@@ -366,10 +363,8 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
     expect(log.withArgs('Running command 2 of 2')).to.be.called;
     expect(log.withArgs('Finished running command 2 of 2')).to.be.called;
     expect(log.withArgs('Finished running codemod commands-test-codemod')).to.be.called;
-    if (!process.env.NODE_LTS) {
-      expect(log.withArgs('Running codemod script-test-codemod')).to.be.called;
-      expect(log.withArgs('Finished running codemod script-test-codemod')).to.be.called;
-    }
+    expect(log.withArgs('Running codemod script-test-codemod')).to.be.called;
+    expect(log.withArgs('Finished running codemod script-test-codemod')).to.be.called;
   });
 
   it('scopes to sub dir if run from there', async function() {
