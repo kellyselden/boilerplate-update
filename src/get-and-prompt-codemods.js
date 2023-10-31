@@ -1,7 +1,7 @@
 'use strict';
 
-const utils = require('./utils');
 const getApplicableCodemods = require('./get-applicable-codemods');
+const promptCodemods = require('./prompt-codemods');
 
 module.exports = async function getAndPromptCodemods({
   source,
@@ -21,5 +21,5 @@ module.exports = async function getAndPromptCodemods({
     codemod.name = name;
   }
 
-  return await utils.promptCodemods(codemods);
+  return await promptCodemods(codemods);
 };
