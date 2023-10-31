@@ -7,7 +7,6 @@ const fs = require('fs-extra');
 const sinon = require('sinon');
 const {
   buildTmp,
-  processIo,
   processExit,
   fixtureCompare: _fixtureCompare
 } = require('git-fixtures');
@@ -18,6 +17,7 @@ const {
   assertNormalUpdate,
   assertNoUnstaged,
   assertNoStaged,
+  assertAllStaged,
   assertCodemodRan
 } = require('../helpers/assertions');
 
@@ -65,12 +65,10 @@ describe(function() {
 
     try {
       let {
-        promise: boilerplateUpdatePromise,
-        resolveConflictsProcess
+        promise: boilerplateUpdatePromise
       } = await boilerplateUpdate({
         cwd: tmpPath,
         remoteUrl: () => 'https://github.com/kellyselden/boilerplate-update-output-repo-test',
-        resolveConflicts: true,
         compareOnly,
         reset,
         init,
@@ -98,25 +96,12 @@ describe(function() {
         ignoredFiles
       });
 
-      if (!resolveConflictsProcess) {
-        return await processExit({
-          promise: boilerplateUpdatePromise,
-          cwd: tmpPath,
-          commitMessage,
-          expect
-        });
-      }
-
-      let ioPromise = processIo({
-        ps: resolveConflictsProcess,
+      return await processExit({
+        promise: boilerplateUpdatePromise,
         cwd: tmpPath,
         commitMessage,
         expect
       });
-
-      await boilerplateUpdatePromise;
-
-      return await ioPromise;
     } catch (err) {
       return await processExit({
         promise: Promise.reject(err),
@@ -152,7 +137,7 @@ describe(function() {
     });
 
     assertNormalUpdate(status);
-    assertNoUnstaged(status);
+    assertAllStaged(status);
   });
 
   it('handles dirty', async function() {
@@ -385,7 +370,7 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
     });
 
     assertNormalUpdate(status);
-    assertNoUnstaged(status);
+    assertAllStaged(status);
   });
 
   describe('custom diff', function() {
@@ -401,7 +386,7 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
         mergeFixtures: 'test/fixtures/merge/test-project'
       });
 
-      assertNoUnstaged(status);
+      assertAllStaged(status);
     });
 
     it('can ignore one of the versions', async function() {
@@ -414,10 +399,10 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
       });
 
       fixtureCompare({
-        mergeFixtures: 'test/fixtures/merge/test-project'
+        mergeFixtures: 'test/fixtures/merge/no-start-version/test-project'
       });
 
-      assertNoUnstaged(status);
+      assertAllStaged(status);
 
       let stagedCommitMessage = await fs.readFile(path.join(tmpPath, '.git/MERGE_MSG'), 'utf8');
 
@@ -435,6 +420,6 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
 
     expect(status).to.not.contain('present-changed.txt');
 
-    assertNoUnstaged(status);
+    assertAllStaged(status);
   });
 });
