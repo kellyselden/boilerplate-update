@@ -313,11 +313,11 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
   });
 
   it('runs codemods', async function() {
-    async function selectAllCodemods(codemods) {
-      return Object.values(codemods);
+    async function selectAllCodemods([{ choices }]) {
+      return { codemods: choices };
     }
 
-    sinon.stub(utils, 'promptCodemods').callsFake(selectAllCodemods);
+    sinon.stub(utils, 'prompt').callsFake(selectAllCodemods);
 
     let log = sinon.stub(console, 'log');
 
