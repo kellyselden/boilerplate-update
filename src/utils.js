@@ -14,4 +14,4 @@ module.exports.require = require;
 module.exports.stat = promisify(fs.stat);
 module.exports.which = require('which');
 module.exports.runScript = require('./run-script');
-module.exports.prompt = require('./prompt');
+module.exports.inquirerPrompt = require('./inquirer-prompt');

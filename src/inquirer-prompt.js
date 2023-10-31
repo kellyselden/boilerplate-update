@@ -2,6 +2,6 @@
 
 const inquirer = require('inquirer');
 
-module.exports = function prompt() {
+module.exports = function inquirerPrompt() {
   return inquirer.prompt(...arguments);
 };

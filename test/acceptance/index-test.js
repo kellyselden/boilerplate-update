@@ -317,7 +317,7 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
       return { codemods: choices };
     }
 
-    sinon.stub(utils, 'prompt').callsFake(selectAllCodemods);
+    sinon.stub(utils, 'inquirerPrompt').callsFake(selectAllCodemods);
 
     let log = sinon.stub(console, 'log');
 
