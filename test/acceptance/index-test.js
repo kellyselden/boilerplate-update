@@ -4,7 +4,6 @@ const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const path = require('path');
 const fs = require('fs-extra');
-const sinon = require('sinon');
 const {
   buildTmp,
   processExit,
@@ -21,14 +20,10 @@ const {
   assertCodemodRan
 } = require('../helpers/assertions');
 
-describe(function() {
+describe(function({ sinon }) {
   this.timeout(30e3);
 
   let tmpPath;
-
-  afterEach(function() {
-    sinon.restore();
-  });
 
   async function merge({
     fixturesPath,

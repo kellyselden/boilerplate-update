@@ -3,7 +3,6 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('chai');
 const path = require('path');
-const sinon = require('sinon');
 const fs = require('fs-extra');
 const { Project } = require('fixturify-project');
 const { createTmpDir } = require('../../src/tmp');
@@ -14,7 +13,7 @@ const { prepareCommand } = _getStartAndEndCommands;
 
 const cpr = path.resolve(__dirname, '../../node_modules/cpr/bin/cpr');
 
-describe(_getStartAndEndCommands, function() {
+describe(_getStartAndEndCommands, function({ sinon }) {
   let cwd;
   let cacheStub1;
   let cacheStub2;
@@ -31,10 +30,6 @@ describe(_getStartAndEndCommands, function() {
 
     mutateStub2 = sinon.stub().resolves();
     mutateStub1 = sinon.stub().returns(mutateStub2);
-  });
-
-  afterEach(function() {
-    sinon.restore();
   });
 
   async function createProject({

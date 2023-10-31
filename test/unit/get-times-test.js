@@ -3,18 +3,13 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const getTimes = require('../../src/get-times');
-const sinon = require('sinon');
 const pacote = require('pacote');
 
-describe(getTimes, function() {
+describe(getTimes, function({ sinon }) {
   let pacotePackumentStub;
 
   beforeEach(function() {
     pacotePackumentStub = sinon.stub(pacote, 'packument');
-  });
-
-  afterEach(function() {
-    sinon.restore();
   });
 
   it('allows semver hints', async function() {

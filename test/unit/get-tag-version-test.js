@@ -3,18 +3,13 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const getTagVersion = require('../../src/get-tag-version');
-const sinon = require('sinon');
 const pacote = require('pacote');
 
-describe(getTagVersion, function() {
+describe(getTagVersion, function({ sinon }) {
   let pacoteManifestStub;
 
   beforeEach(function() {
     pacoteManifestStub = sinon.stub(pacote, 'manifest');
-  });
-
-  afterEach(function() {
-    sinon.restore();
   });
 
   it('allows version override', async function() {

@@ -3,14 +3,9 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const getCodemods = require('../../src/get-codemods');
-const sinon = require('sinon');
 const utils = require('../../src/utils');
 
-describe(getCodemods, function() {
-  afterEach(function() {
-    sinon.restore();
-  });
-
+describe(getCodemods, function({ sinon }) {
   it('gets codemods via source', async function() {
     let expected = { testCodemod: '' };
 

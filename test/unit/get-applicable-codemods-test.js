@@ -2,21 +2,17 @@
 
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
-const sinon = require('sinon');
 const utils = require('../../src/utils');
 const getApplicableCodemods = require('../../src/get-applicable-codemods');
 
-describe(getApplicableCodemods, function() {
+describe(getApplicableCodemods, function({ sinon }) {
+
   let getCodemods;
   let getNodeVersion;
 
   beforeEach(function() {
     getCodemods = sinon.stub(utils, 'getCodemods');
     getNodeVersion = sinon.stub(utils, 'getNodeVersion');
-  });
-
-  afterEach(function() {
-    sinon.restore();
   });
 
   it('works', async function() {
