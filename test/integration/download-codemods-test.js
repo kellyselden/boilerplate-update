@@ -5,7 +5,7 @@ const { expect } = require('../helpers/chai');
 const downloadCodemods = require('../../src/download-codemods');
 
 describe(downloadCodemods, function({ sinon }) {
-  this.timeout(5e3);
+  this.timeout(10e3);
 
   it('downloads codemods', async function() {
     let source = 'git+ssh://git@github.com/kellyselden/boilerplate-update-codemod-manifest-test.git#semver:*';
