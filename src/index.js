@@ -78,7 +78,10 @@ async function boilerplateUpdate(options) {
   remoteUrl = await resolveProperty(remoteUrl);
 
   if (compareOnly) {
+    let { default: open } = await import('open');
+
     compareVersions({
+      open,
       remoteUrl,
       startTag,
       endTag

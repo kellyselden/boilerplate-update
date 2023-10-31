@@ -3,17 +3,17 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const compareVersions = require('../../src/compare-versions');
-const utils = require('../../src/utils');
 
 describe(compareVersions, function({ sinon }) {
   let open;
 
   beforeEach(function() {
-    open = sinon.stub(utils, 'open');
+    open = sinon.spy();
   });
 
   it('works', function() {
     compareVersions({
+      open,
       remoteUrl: 'test-url',
       startTag: 'v2.18.2',
       endTag: 'v3.0.2'

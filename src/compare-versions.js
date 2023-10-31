@@ -3,6 +3,7 @@
 const utils = require('./utils');
 
 module.exports = function compareVersions({
+  open,
   remoteUrl,
   startTag,
   endTag
@@ -12,7 +13,7 @@ module.exports = function compareVersions({
   // even though this returns a promise, we don't want to use
   // it because it blocks the process
   // we want to open the browser and exit
-  utils.open(compareUrl, {
+  utils.open.call(open, compareUrl, {
     url: true,
 
     // this means it no longer returns a promise
