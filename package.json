@@ -20,7 +20,7 @@
   "author": "Kelly Selden",
   "license": "MIT",
   "engines": {
-    "node": ">=14.15"
+    "node": ">=16.13"
   },
   "dependencies": {
     "cpr": "^3.0.1",
@@ -62,6 +62,6 @@
     "renovate-config-standard": "2.1.2",
     "sinon": "^13.0.0",
     "sinon-chai": "^3.7.0",
-    "standard-node-template": "2.1.0"
+    "standard-node-template": "3.3.0"
   }
 }
