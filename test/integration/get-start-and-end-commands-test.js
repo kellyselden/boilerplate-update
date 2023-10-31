@@ -49,7 +49,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
     project.baseDir = path.join(tmpPath, projectName);
 
-    project.writeSync();
+    await project.write();
 
     return project.baseDir;
   }
