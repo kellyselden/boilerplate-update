@@ -317,7 +317,7 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
       return { codemods: choices };
     }
 
-    sinon.stub(utils, 'prompt').callsFake(selectAllCodemods);
+    let prompt = sinon.stub(utils, 'prompt').callsFake(selectAllCodemods);
 
     let log = sinon.stub(console, 'log');
 
@@ -339,6 +339,8 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
 
     assertNoUnstaged(status);
     assertCodemodRan(status);
+
+    expect(prompt).to.be.calledOnce;
 
     expect(log.withArgs('Running codemod commands-test-codemod')).to.be.called;
     expect(log.withArgs('Running command 1 of 2')).to.be.called;
