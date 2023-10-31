@@ -8,6 +8,7 @@ const rimraf = promisify(require('rimraf'));
 const cpr = path.resolve(path.dirname(require.resolve('cpr')), '../bin/cpr');
 const mutatePackageJson = require('./mutate-package-json');
 const semver = require('semver');
+const os = require('os');
 
 module.exports = async function getStartAndEndCommands({
   cwd,
@@ -31,13 +32,23 @@ module.exports = async function getStartAndEndCommands({
     });
   }
 
-  let [
-    startCommand,
-    endCommand
-  ] = await Promise.all([
-    reset || init ? null : _prepareCommand(startOptions),
-    _prepareCommand(endOptions)
-  ]);
+  let startCommand;
+  let endCommand;
+
+  if (os.platform() === 'win32') {
+    // running two npx commands in parallel on Windows causes it to break the npx cache
+    // folders and throw strange permissions errors. We need to run them in series
+    startCommand = await reset || init ? null : _prepareCommand(startOptions);
+    endCommand = await _prepareCommand(endOptions);
+  } else {
+    [
+      startCommand,
+      endCommand
+    ] = await Promise.all([
+      reset || init ? null : _prepareCommand(startOptions),
+      _prepareCommand(endOptions)
+    ]);
+  }
 
   return {
     startCommand,
