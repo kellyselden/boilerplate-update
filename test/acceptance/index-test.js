@@ -18,6 +18,7 @@ const {
   assertNormalUpdate,
   assertNoUnstaged,
   assertNoStaged,
+  assertAllStaged,
   assertCodemodRan
 } = require('../helpers/assertions');
 
@@ -70,7 +71,6 @@ describe(function() {
       } = await boilerplateUpdate({
         cwd: tmpPath,
         remoteUrl: () => 'https://github.com/kellyselden/boilerplate-update-output-repo-test',
-        resolveConflicts: true,
         compareOnly,
         reset,
         init,
@@ -152,7 +152,7 @@ describe(function() {
     });
 
     assertNormalUpdate(status);
-    assertNoUnstaged(status);
+    assertAllStaged(status);
   });
 
   it('handles dirty', async function() {
@@ -385,7 +385,7 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
     });
 
     assertNormalUpdate(status);
-    assertNoUnstaged(status);
+    assertAllStaged(status);
   });
 
   describe('custom diff', function() {
@@ -401,7 +401,7 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
         mergeFixtures: 'test/fixtures/merge/test-project'
       });
 
-      assertNoUnstaged(status);
+      assertAllStaged(status);
     });
 
     it('can ignore one of the versions', async function() {
@@ -414,10 +414,10 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
       });
 
       fixtureCompare({
-        mergeFixtures: 'test/fixtures/merge/test-project'
+        mergeFixtures: 'test/fixtures/merge/no-start-version/test-project'
       });
 
-      assertNoUnstaged(status);
+      assertAllStaged(status);
 
       let stagedCommitMessage = await fs.readFile(path.join(tmpPath, '.git/MERGE_MSG'), 'utf8');
 
@@ -435,6 +435,6 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
 
     expect(status).to.not.contain('present-changed.txt');
 
-    assertNoUnstaged(status);
+    assertAllStaged(status);
   });
 });

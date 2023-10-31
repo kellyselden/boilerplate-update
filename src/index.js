@@ -49,7 +49,6 @@ async function boilerplateUpdate(options) {
   let {
     remoteUrl,
     compareOnly,
-    resolveConflicts,
     reset,
     init,
     statsOnly,
@@ -135,14 +134,12 @@ async function boilerplateUpdate(options) {
 
   let {
     from,
-    to,
-    resolveConflictsProcess
+    to
   } = await gitDiffApply({
     cwd,
     remoteUrl,
     startTag,
     endTag,
-    resolveConflicts,
     ignoredFiles,
     reset,
     init,
@@ -156,12 +153,6 @@ async function boilerplateUpdate(options) {
   }
 
   let promise = (async() => {
-    if (resolveConflictsProcess) {
-      await new Promise(resolve => {
-        resolveConflictsProcess.on('exit', resolve);
-      });
-    }
-
     function getPackageJson(obj) {
       return obj['package.json'] || '{}';
     }
@@ -179,8 +170,7 @@ async function boilerplateUpdate(options) {
   })();
 
   return {
-    promise,
-    resolveConflictsProcess
+    promise
   };
 }
 
