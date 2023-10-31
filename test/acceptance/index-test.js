@@ -22,7 +22,7 @@ const {
 } = require('../helpers/assertions');
 
 describe(function() {
-  this.timeout(30 * 1000);
+  this.timeout(30e3);
 
   let tmpPath;
 

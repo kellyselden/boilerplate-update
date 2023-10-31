@@ -6,7 +6,7 @@ const downloadCodemods = require('../../src/download-codemods');
 const sinon = require('sinon');
 
 describe(downloadCodemods, function() {
-  this.timeout(5 * 1000);
+  this.timeout(5e3);
 
   it('downloads codemods', async function() {
     let source = 'git+ssh://git@github.com/kellyselden/boilerplate-update-codemod-manifest-test.git#semver:*';
