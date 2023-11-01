@@ -3,7 +3,6 @@
 const fs = require('fs');
 const { promisify } = require('util');
 
-module.exports.run = require('./run').exec;
 module.exports.npx = require('./npx');
 module.exports.getCodemods = require('./get-codemods');
 module.exports.downloadCodemods = require('./download-codemods');
