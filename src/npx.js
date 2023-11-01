@@ -1,14 +1,9 @@
 'use strict';
 
 const { exec } = require('./run');
-const debug = require('./debug');
 
 function npx(command, options) {
-  let npxCommand = `npx ${command}`;
-
-  debug(npxCommand);
-
-  let ps = exec(npxCommand, {
+  let ps = exec(`npx ${command}`, {
     preferLocal: true,
     stdio: ['pipe', 'pipe', 'inherit'],
     ...options
