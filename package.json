@@ -27,7 +27,7 @@
     "debug": "^4.2.0",
     "execa": "^5.0.0",
     "git-diff-apply": "^6.0.0",
-    "https-proxy-agent": "^6.0.0",
+    "https-proxy-agent": "^7.0.0",
     "inquirer": "^8.0.0",
     "merge-package.json": "^7.0.0",
     "npm-package-arg": "^11.0.0",
