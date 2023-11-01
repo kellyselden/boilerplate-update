@@ -56,11 +56,11 @@ async function _prepareCommand({
     await mutatePackageJson(appPath, options.mutatePackageJson(options));
   }
 
-  await Promise.all([
-    rimraf(path.join(appPath, '.git')),
-    rimraf(path.join(appPath, 'node_modules')),
-    rimraf(path.join(appPath, 'package-lock.json')),
-    rimraf(path.join(appPath, 'yarn.lock'))
+  await rimraf([
+    path.join(appPath, '.git'),
+    path.join(appPath, 'node_modules'),
+    path.join(appPath, 'package-lock.json'),
+    path.join(appPath, 'yarn.lock')
   ]);
 
   return `node ${cpr} ${appPath} .`;
