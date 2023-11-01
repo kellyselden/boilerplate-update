@@ -2,9 +2,8 @@
 
 const path = require('path');
 const utils = require('./utils');
-const { promisify } = require('util');
 const { createTmpDir } = require('./tmp');
-const rimraf = promisify(require('rimraf'));
+const { rimraf } = require('rimraf');
 const cpr = path.resolve(path.dirname(require.resolve('cpr')), '../bin/cpr');
 const mutatePackageJson = require('./mutate-package-json');
 const semver = require('semver');
