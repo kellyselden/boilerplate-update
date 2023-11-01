@@ -252,7 +252,8 @@ describe(function({ sinon }) {
     expect(result, 'don\'t accidentally print anything to the console').to.be.undefined;
 
     expect(open).to.be.calledOnce;
-    expect(open.args[0][0]).to.equal('https://github.com/kellyselden/boilerplate-update-output-repo-test/compare/v0.0.1...v0.0.2');
+    expect(open.getCall(0).thisValue).to.equal((await import('open')).default);
+    expect(open.getCall(0).args[0]).to.equal('https://github.com/kellyselden/boilerplate-update-output-repo-test/compare/v0.0.1...v0.0.2');
   });
 
   it('shows stats only', async function() {
