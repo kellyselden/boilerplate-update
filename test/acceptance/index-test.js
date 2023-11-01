@@ -342,6 +342,7 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
     assertCodemodRan(status);
 
     expect(prompt).to.be.calledOnce;
+    expect(prompt.getCall(0).thisValue).to.equal((await import('inquirer')).default.prompt);
 
     expect(log.withArgs('Running codemod commands-test-codemod')).to.be.called;
     expect(log.withArgs('Running command 1 of 2')).to.be.called;
