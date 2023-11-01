@@ -10,7 +10,9 @@ const HttpProxyAgent = require('https-proxy-agent');
 async function downloadAndCheckForUpdates(spec) {
   let dest = await createTmpDir();
 
-  let extract = pacote.extract(spec, dest);
+  let extract = pacote.extract(spec, dest, {
+    Arborist: require('@npmcli/arborist')
+  });
 
   let resolve;
 
