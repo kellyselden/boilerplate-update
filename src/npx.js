@@ -3,15 +3,11 @@
 const { exec } = require('./run');
 
 function npx(command, options) {
-  let ps = exec(`npx ${command}`, {
+  return exec(`npx ${command}`, {
     preferLocal: true,
-    stdio: ['pipe', 'pipe', 'inherit'],
+    stdio: ['pipe', 'inherit', 'inherit'],
     ...options
   });
-
-  ps.stdout.pipe(process.stdout);
-
-  return ps;
 }
 
 module.exports = npx;
