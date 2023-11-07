@@ -5,7 +5,7 @@ const { exec } = require('./run');
 function npx(command, options) {
   let ps = exec(`npx ${command}`, {
     preferLocal: true,
-    stdio: ['pipe', 'pipe', 'inherit'],
+    stdio: ['ignore', 'pipe', 'inherit'],
     ...options
   });
 
