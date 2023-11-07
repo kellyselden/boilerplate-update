@@ -7,7 +7,7 @@ function bind(execa) {
   return function() {
     let ps = execa(...arguments);
 
-    ps.stdout.on('data', data => {
+    ps.stdout?.on('data', data => {
       debug(data.toString());
     });
 
