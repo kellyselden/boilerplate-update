@@ -1,7 +1,6 @@
 'use strict';
 
 const debug = require('./debug');
-const execa = require('execa');
 
 function bind(execa) {
   return function() {
@@ -15,16 +14,21 @@ function bind(execa) {
   };
 }
 
-const _spawn = bind(execa);
-const _exec = bind(execa.command);
+async function spawn(bin, args = [], options) {
+  let { execa } = await import('execa');
 
-function spawn(bin, args = [], options) {
+  let _spawn = bind(execa);
+
   debug(bin, ...args.map(arg => `"${arg}"`), options);
 
   return _spawn(...arguments);
 }
 
-function exec() {
+async function exec() {
+  let { execaCommand } = await import('execa');
+
+  let _exec = bind(execaCommand);
+
   debug(...arguments);
 
   return _exec(...arguments);
