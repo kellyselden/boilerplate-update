@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@kellyselden/node-template": "5.0.1",
-    "chai": "^4.3.10",
+    "chai": "^5.0.0",
     "chai-as-promised": "^7.1.1",
     "chai-fs": "^2.0.0",
     "chai-semver": "^1.0.2",
