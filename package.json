@@ -26,7 +26,7 @@
     "@npmcli/arborist": "^7.0.0",
     "cpr": "^3.0.1",
     "debug": "^4.2.0",
-    "execa": "^8.0.0",
+    "execa": "^9.0.0",
     "git-diff-apply": "^6.0.0",
     "https-proxy-agent": "^7.0.0",
     "inquirer": "^10.0.0",
