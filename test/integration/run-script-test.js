@@ -50,11 +50,13 @@ describe(runScript, function() {
   });
 
   it('scopes execa', async function() {
+    let { execa } = await import('execa');
+
     let script = 'return execa';
 
     let result = await runScript(script, tmpDir);
 
-    expect(result.name).to.equal('execa');
+    expect(result.name).to.equal(execa.name);
   });
 
   it('allows awaiting', async function() {
