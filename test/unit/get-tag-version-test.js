@@ -3,7 +3,7 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const getTagVersion = require('../../src/get-tag-version');
-const pacote = require('pacote');
+const pacote = require('pacote-with-npm-config');
 
 describe(getTagVersion, function({ sinon }) {
   let pacoteManifestStub;

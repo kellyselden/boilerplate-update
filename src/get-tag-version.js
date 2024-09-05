@@ -1,7 +1,7 @@
 'use strict';
 
 const semver = require('semver');
-const pacote = require('pacote');
+const pacote = require('pacote-with-npm-config');
 
 module.exports = async function getTagVersion({
   range,
