@@ -3,7 +3,7 @@
 const { describe, it } = require('../helpers/mocha');
 const { expect } = require('../helpers/chai');
 const getTimes = require('../../src/get-times');
-const pacote = require('pacote');
+const pacote = require('pacote-with-npm-config');
 
 describe(getTimes, function({ sinon }) {
   let pacotePackumentStub;

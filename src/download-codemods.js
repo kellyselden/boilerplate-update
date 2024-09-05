@@ -1,6 +1,6 @@
 'use strict';
 
-const pacote = require('pacote');
+const pacote = require('pacote-with-npm-config');
 const { createTmpDir } = require('./tmp');
 const path = require('path');
 const npa = require('npm-package-arg');
