@@ -39,7 +39,7 @@
     "rimraf": "^5.0.0",
     "semver": "^7.3.2",
     "tmp": "0.2.3",
-    "which": "^4.0.0"
+    "which": "^5.0.0"
   },
   "devDependencies": {
     "@kellyselden/node-template": "5.1.0",
