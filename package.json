@@ -23,7 +23,7 @@
     "node": ">=18.12"
   },
   "dependencies": {
-    "@npmcli/arborist": "^7.0.0",
+    "@npmcli/arborist": "^8.0.0",
     "cpr": "^3.0.1",
     "debug": "^4.2.0",
     "execa": "^9.0.0",
