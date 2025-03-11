@@ -175,8 +175,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
       let commands = await getStartAndEndCommands();
 
       expect(commands).to.deep.equal({
-        startCommand: `node ${cpr} ${startPath} .`,
-        endCommand: `node ${cpr} ${endPath} .`
+        startCommand: `node "${cpr}" "${startPath}" .`,
+        endCommand: `node "${cpr}" "${endPath}" .`
       });
 
       expect(cacheStub1.callCount).to.equal(2);
@@ -223,8 +223,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
       let commands = await getStartAndEndCommands();
 
       expect(commands).to.deep.equal({
-        startCommand: `node ${cpr} ${startPath} .`,
-        endCommand: `node ${cpr} ${endPath} .`
+        startCommand: `node "${cpr}" "${startPath}" .`,
+        endCommand: `node "${cpr}" "${endPath}" .`
       });
 
       expect(cacheStub1.callCount).to.equal(2);
@@ -298,8 +298,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
       let commands = await getStartAndEndCommands();
 
       expect(commands).to.deep.equal({
-        startCommand: `node ${cpr} ${startPath} .`,
-        endCommand: `node ${cpr} ${endPath} .`
+        startCommand: `node "${cpr}" "${startPath}" .`,
+        endCommand: `node "${cpr}" "${endPath}" .`
       });
 
       expect(cacheStub1.callCount).to.equal(2);
@@ -339,8 +339,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
       let commands = await getStartAndEndCommands();
 
       expect(commands).to.deep.equal({
-        startCommand: `node ${cpr} ${startPath} .`,
-        endCommand: `node ${cpr} ${endPath} .`
+        startCommand: `node "${cpr}" "${startPath}" .`,
+        endCommand: `node "${cpr}" "${endPath}" .`
       });
 
       expect(cacheStub1.callCount).to.equal(2);
@@ -383,8 +383,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
       let commands = await getStartAndEndCommands();
 
       expect(commands).to.deep.equal({
-        startCommand: `node ${cpr} ${startPath} .`,
-        endCommand: `node ${cpr} ${endPath} .`
+        startCommand: `node "${cpr}" "${startPath}" .`,
+        endCommand: `node "${cpr}" "${endPath}" .`
       });
 
       expect(cacheStub1.callCount).to.equal(2);
@@ -490,8 +490,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
       let commands = await getStartAndEndCommands();
 
       expect(commands).to.deep.equal({
-        startCommand: `node ${cpr} ${startPath} .`,
-        endCommand: `node ${cpr} ${endPath} .`
+        startCommand: `node "${cpr}" "${startPath}" .`,
+        endCommand: `node "${cpr}" "${endPath}" .`
       });
 
       expect(cacheStub1.callCount).to.equal(0);
@@ -564,7 +564,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
     expect(commands).to.deep.equal({
       startCommand: null,
-      endCommand: `node ${cpr} ${endPath} .`
+      endCommand: `node "${cpr}" "${endPath}" .`
     });
 
     expect(cacheStub1.callCount).to.equal(1);
@@ -584,7 +584,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
     expect(commands).to.deep.equal({
       startCommand: null,
-      endCommand: `node ${cpr} ${endPath} .`
+      endCommand: `node "${cpr}" "${endPath}" .`
     });
 
     expect(cacheStub1.callCount).to.equal(1);

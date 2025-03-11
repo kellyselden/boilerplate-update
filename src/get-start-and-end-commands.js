@@ -63,7 +63,7 @@ async function _prepareCommand({
     path.join(appPath, 'yarn.lock')
   ]);
 
-  return `node ${cpr} ${appPath} .`;
+  return `node "${cpr}" "${appPath}" .`;
 }
 
 async function tryPrepareCommandUsingCache({
