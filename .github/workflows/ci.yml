@@ -30,7 +30,8 @@ jobs:
         - ubuntu-latest
         - macos-latest
         node:
-        - 18
+        - 20
+
         - '*'
         exclude:
         - os: macos-latest
