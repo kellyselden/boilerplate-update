@@ -63,6 +63,6 @@
     "renovate-config-standard": "2.1.2",
     "sinon": "^19.0.0",
     "sinon-chai": "^3.7.0",
-    "standard-node-template": "6.1.0"
+    "standard-node-template": "7.0.0"
   }
 }
