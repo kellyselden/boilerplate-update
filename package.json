@@ -30,7 +30,7 @@
     "git-diff-apply": "^6.0.0",
     "https-proxy-agent": "^7.0.0",
     "inquirer": "^12.0.0",
-    "merge-package.json": "^7.0.0",
+    "merge-package.json": "^8.0.0",
     "npm-package-arg": "^12.0.0",
     "npx": "^10.2.0",
     "open": "^10.0.0",
