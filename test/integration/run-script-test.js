@@ -37,7 +37,7 @@ describe(runScript, function() {
 
     let result = await runScript(script, tmpDir);
 
-    expect(result).to.startWith(require('os').tmpdir());
+    expect(result).to.startWith(await fs.realpath(require('os').tmpdir()));
     expect(result).to.not.equal(process.cwd());
   });
 
