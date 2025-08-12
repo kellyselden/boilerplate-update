@@ -38,7 +38,7 @@
     "pacote": "^21.0.0",
     "rimraf": "^6.0.0",
     "semver": "^7.3.2",
-    "tmp": "0.2.4",
+    "tmp": "0.2.5",
     "which": "^5.0.0"
   },
   "devDependencies": {
