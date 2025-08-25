@@ -24,6 +24,7 @@ describe(downloadCodemods, function({ sinon }) {
   });
 
   describe('detects old', function() {
+
     beforeEach(function() {
       sinon.stub(downloadCodemods, 'requireManifest').returns({ foo: 'bar' });
       this.warn = sinon.stub(console, 'warn');
