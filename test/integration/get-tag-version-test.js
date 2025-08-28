@@ -9,7 +9,7 @@ describe(getTagVersion, function() {
     let version = await getTagVersion({
       range: 'legacy',
       packageName: 'webpack',
-      distTags: ['legacy']
+      distTags: ['legacy'],
     });
 
     expect(version).to.be.semver();

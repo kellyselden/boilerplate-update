@@ -23,12 +23,12 @@ describe(runCodemod, function({ sinon }) {
       await runCodemod({
         name: 'test-codemod',
         commands: [
-          'test command'
-        ]
+          'test command',
+        ],
       }, '/test/cwd');
 
       expect(npx.args).to.deep.equal([
-        ['test command', { cwd: '/test/cwd' }]
+        ['test command', { cwd: '/test/cwd' }],
       ]);
       expect(runScript).to.not.be.called;
 
@@ -50,13 +50,13 @@ describe(runCodemod, function({ sinon }) {
         name: 'test-codemod',
         commands: [
           'test command 1',
-          'test command 2'
-        ]
+          'test command 2',
+        ],
       }, '/test/cwd');
 
       expect(npx.args).to.deep.equal([
         ['test command 1', { cwd: '/test/cwd' }],
-        ['test command 2', { cwd: '/test/cwd' }]
+        ['test command 2', { cwd: '/test/cwd' }],
       ]);
 
       expect(log.withArgs('Running codemod test-codemod')).to.be.called;
@@ -74,8 +74,8 @@ describe(runCodemod, function({ sinon }) {
         name: 'test-codemod',
         commands: [
           'test command 1',
-          'test command 2'
-        ]
+          'test command 2',
+        ],
       });
 
       expect(npx.withArgs('test command 2')).to.not.be.called;
@@ -94,7 +94,7 @@ describe(runCodemod, function({ sinon }) {
     it('runs a script', async function() {
       await runCodemod({
         name: 'test-codemod',
-        script: 'test script'
+        script: 'test script',
       }, '/test/cwd');
 
       expect(runScript.args).to.deep.equal([['test script', '/test/cwd']]);
@@ -109,7 +109,7 @@ describe(runCodemod, function({ sinon }) {
 
       await runCodemod({
         name: 'test-codemod',
-        script: 'test script'
+        script: 'test script',
       }, '/test/cwd');
 
       expect(runScript.args).to.deep.equal([['test script', '/test/cwd']]);

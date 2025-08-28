@@ -21,8 +21,8 @@ describe(getTagVersion, function({ sinon }) {
       range: '~2.12',
       versions: [
         '2.12.0',
-        '2.12.1'
-      ]
+        '2.12.1',
+      ],
     })).to.equal('2.12.1');
   });
 
@@ -32,7 +32,7 @@ describe(getTagVersion, function({ sinon }) {
     expect(await getTagVersion({
       range: 'bar',
       packageName: 'foo',
-      distTags: ['bar']
+      distTags: ['bar'],
     })).to.equal('2.14.0');
 
     expect(pacoteManifestStub).to.be.calledOnce;

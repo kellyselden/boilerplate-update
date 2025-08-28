@@ -7,7 +7,7 @@ module.exports = async function getApplicableCodemods({
   source,
   json,
   projectOptions,
-  packageJson
+  packageJson,
 }) {
   let nodeVersion = utils.getNodeVersion();
 

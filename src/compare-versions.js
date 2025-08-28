@@ -6,7 +6,7 @@ module.exports = function compareVersions({
   open,
   remoteUrl,
   startTag,
-  endTag
+  endTag,
 }) {
   let compareUrl = `${remoteUrl}/compare/${startTag}...${endTag}`;
 
@@ -17,6 +17,6 @@ module.exports = function compareVersions({
     url: true,
 
     // this means it no longer returns a promise
-    wait: false
+    wait: false,
   });
 };

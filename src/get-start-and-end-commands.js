@@ -12,7 +12,7 @@ module.exports = async function getStartAndEndCommands({
   cwd,
   reset,
   init,
-  options
+  options,
 }) {
   function prepareOptions(key) {
     let _options = { ...options, ...options[key] };
@@ -26,27 +26,27 @@ module.exports = async function getStartAndEndCommands({
   function _prepareCommand(options) {
     return module.exports.prepareCommand({
       cwd,
-      options
+      options,
     });
   }
 
   let [
     startCommand,
-    endCommand
+    endCommand,
   ] = await Promise.all([
     reset || init ? null : _prepareCommand(startOptions),
-    _prepareCommand(endOptions)
+    _prepareCommand(endOptions),
   ]);
 
   return {
     startCommand,
-    endCommand
+    endCommand,
   };
 };
 
 async function _prepareCommand({
   createProject,
-  options
+  options,
 }) {
   let cwd = await createTmpDir();
 
@@ -60,7 +60,7 @@ async function _prepareCommand({
     path.join(appPath, '.git'),
     path.join(appPath, 'node_modules'),
     path.join(appPath, 'package-lock.json'),
-    path.join(appPath, 'yarn.lock')
+    path.join(appPath, 'yarn.lock'),
   ]);
 
   return `node ${cpr} ${appPath} .`;
@@ -68,7 +68,7 @@ async function _prepareCommand({
 
 async function tryPrepareCommandUsingCache({
   basedir,
-  options
+  options,
 }) {
   if (!options.packageName) {
     return;
@@ -99,29 +99,29 @@ async function tryPrepareCommandUsingCache({
   return await _prepareCommand({
     createProject: options.createProjectFromCache({
       packageRoot,
-      options
+      options,
     }),
-    options
+    options,
   });
 }
 
 module.exports.prepareCommandUsingRemote = async function prepareCommandUsingRemote(options) {
   return await _prepareCommand({
     createProject: options.createProjectFromRemote({
-      options
+      options,
     }),
-    options
+    options,
   });
 };
 
 async function tryPrepareCommandUsingLocal(options, cwd) {
   for (let basedir of [
     cwd,
-    path.resolve(__dirname, '../../..')
+    path.resolve(__dirname, '../../..'),
   ]) {
     let command = await tryPrepareCommandUsingCache({
       basedir,
-      options
+      options,
     });
     if (command) {
       return command;
@@ -162,11 +162,11 @@ async function tryPrepareCommandUsingGlobal(options) {
       // for example
       // .nvm/versions/node/v8.16.1/bin/ember =>
       // .nvm/versions/node/v8.16.1/lib/node_modules/ember-cli
-      path.resolve(path.dirname(packagePath), '../lib')
+      path.resolve(path.dirname(packagePath), '../lib'),
     ]) {
       let command = await tryPrepareCommandUsingCache({
         basedir,
-        options
+        options,
       });
       if (command) {
         return command;
@@ -177,7 +177,7 @@ async function tryPrepareCommandUsingGlobal(options) {
 
 module.exports.prepareCommand = async function prepareCommand({
   cwd,
-  options
+  options,
 }) {
   let command = await tryPrepareCommandUsingLocal(options, cwd);
   if (command) {

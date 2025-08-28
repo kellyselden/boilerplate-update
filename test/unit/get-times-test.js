@@ -15,8 +15,8 @@ describe(getTimes, function({ sinon }) {
   it('allows semver hints', async function() {
     pacotePackumentStub.withArgs('foo', { fullMetadata: true }).resolves({
       time: {
-        'bar': 'baz'
-      }
+        'bar': 'baz',
+      },
     });
 
     let times = await getTimes('foo');
@@ -30,8 +30,8 @@ describe(getTimes, function({ sinon }) {
     pacotePackumentStub.withArgs('foo', { fullMetadata: true }).resolves({
       time: {
         'modified': '',
-        'created': ''
-      }
+        'created': '',
+      },
     });
 
     let times = await getTimes('foo');

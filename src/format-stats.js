@@ -6,7 +6,7 @@ module.exports = function formatStats({
   endVersion,
   remoteUrl,
   codemodsSource,
-  codemods
+  codemods,
 }) {
   return [
     `project options: ${projectOptions.join(', ')}`,
@@ -14,6 +14,6 @@ module.exports = function formatStats({
     `to version: ${endVersion}`,
     remoteUrl ? `output repo: ${remoteUrl}` : null,
     `codemods source: ${codemodsSource}`,
-    `applicable codemods: ${Object.keys(codemods).join(', ')}`
+    `applicable codemods: ${Object.keys(codemods).join(', ')}`,
   ].filter(Boolean).join('\n');
 };

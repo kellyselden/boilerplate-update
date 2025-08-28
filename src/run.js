@@ -36,5 +36,5 @@ async function exec() {
 
 module.exports = {
   spawn,
-  exec
+  exec,
 };

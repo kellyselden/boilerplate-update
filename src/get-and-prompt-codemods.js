@@ -7,13 +7,13 @@ module.exports = async function getAndPromptCodemods({
   source,
   json,
   projectOptions,
-  packageJson
+  packageJson,
 }) {
   let codemods = await getApplicableCodemods({
     source,
     json,
     projectOptions,
-    packageJson
+    packageJson,
   });
 
   // Attach the name to the object for easy logging later.

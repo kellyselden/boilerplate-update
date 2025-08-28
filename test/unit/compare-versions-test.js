@@ -16,7 +16,7 @@ describe(compareVersions, function({ sinon }) {
       open,
       remoteUrl: 'test-url',
       startTag: 'v2.18.2',
-      endTag: 'v3.0.2'
+      endTag: 'v3.0.2',
     });
 
     expect(open).to.be.calledOnce;

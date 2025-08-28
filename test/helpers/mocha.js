@@ -27,5 +27,5 @@ describe.only = function only() {
 };
 
 Object.assign(module.exports, {
-  describe
+  describe,
 });
