@@ -10,13 +10,13 @@ module.exports = async function getProjectType(cwd) {
 
   try {
     packageJson = await readFile(path.join(cwd, 'package.json'), 'utf8');
-  } catch (err) {
+  } catch {
     throw 'No package.json was found in this directory';
   }
 
   try {
     packageJson = JSON.parse(packageJson);
-  } catch (err) {
+  } catch {
     throw 'The package.json is malformed';
   }
 

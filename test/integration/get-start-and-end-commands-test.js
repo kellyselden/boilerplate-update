@@ -35,7 +35,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
   async function createProject({
     tmpPath,
     projectName = 'test-project',
-    addDependency = true
+    addDependency = true,
   } = {}) {
     if (!tmpPath) {
       tmpPath = await createTmpDir();
@@ -55,10 +55,10 @@ describe(_getStartAndEndCommands, function({ sinon }) {
   }
 
   async function setUpLocalScenario({
-    addDependency = true
+    addDependency = true,
   } = {}) {
     let localPath = await createProject({
-      addDependency
+      addDependency,
     });
 
     cwd = localPath;
@@ -68,14 +68,14 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
   async function setUpGlobalScenario({
     projectName,
-    whichPath = 'fake/fake/fake'
+    whichPath = 'fake/fake/fake',
   } = {}) {
     let globalPath = await createProject({
-      projectName
+      projectName,
     });
 
     whichStub = sinon.stub(utils, 'which').resolves([
-      path.resolve(globalPath, whichPath)
+      path.resolve(globalPath, whichPath),
     ]);
 
     return globalPath;
@@ -83,14 +83,14 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
   async function setUpRemoteScenario() {
     return await createProject({
-      addDependency: false
+      addDependency: false,
     });
   }
 
   function getStartAndEndCommands({
     reset,
     init,
-    options
+    options,
   } = {}) {
     // ensure order for assertions
     let resolve;
@@ -100,7 +100,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
     async function callback2(cwd) {
       let tmpPath = await createProject({
-        tmpPath: cwd
+        tmpPath: cwd,
       });
 
       resolve();
@@ -111,8 +111,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
     function callback1(stub2) {
       return function({
         options: {
-          key
-        }
+          key,
+        },
       }) {
         return async function() {
           let tmpPath = await stub2(...arguments);
@@ -135,8 +135,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
     sinon.stub(_getStartAndEndCommands, 'prepareCommand').callsFake(async function({
       options: {
-        key
-      }
+        key,
+      },
     }) {
       if (key === 'end' && !(reset || init)) {
         await promise;
@@ -156,13 +156,13 @@ describe(_getStartAndEndCommands, function({ sinon }) {
         createProjectFromRemote: remoteStub1,
         mutatePackageJson: mutateStub1,
         startOptions: {
-          key: 'start'
+          key: 'start',
         },
         endOptions: {
-          key: 'end'
+          key: 'end',
         },
-        ...options
-      }
+        ...options,
+      },
     });
   }
 
@@ -176,7 +176,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
       expect(commands).to.deep.equal({
         startCommand: `node ${cpr} ${startPath} .`,
-        endCommand: `node ${cpr} ${endPath} .`
+        endCommand: `node ${cpr} ${endPath} .`,
       });
 
       expect(cacheStub1.callCount).to.equal(2);
@@ -194,18 +194,18 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
       expect(statSpy.args).to.deep.equal([
         [path.join(cwd, 'node_modules/test-package')],
-        [path.join(cwd, 'node_modules/test-package')]
+        [path.join(cwd, 'node_modules/test-package')],
       ]);
     });
 
     it('finds local package in package dir', async function() {
       await setUpLocalScenario({
-        addDependency: false
+        addDependency: false,
       });
 
       let {
         stat,
-        require
+        require,
       } = utils;
 
       let statStub = sinon.stub(utils, 'stat')
@@ -224,7 +224,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
       expect(commands).to.deep.equal({
         startCommand: `node ${cpr} ${startPath} .`,
-        endCommand: `node ${cpr} ${endPath} .`
+        endCommand: `node ${cpr} ${endPath} .`,
       });
 
       expect(cacheStub1.callCount).to.equal(2);
@@ -244,7 +244,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
         [path.join(cwd, 'node_modules/test-package')],
         [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.join(cwd, 'node_modules/test-package')],
-        [path.resolve(__dirname, '../../../../node_modules/test-package')]
+        [path.resolve(__dirname, '../../../../node_modules/test-package')],
       ]);
     });
 
@@ -253,8 +253,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
       await getStartAndEndCommands({
         options: {
-          packageVersion: '4.5.7'
-        }
+          packageVersion: '4.5.7',
+        },
       });
 
       expect(cacheStub1.callCount).to.equal(0);
@@ -268,8 +268,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
       await getStartAndEndCommands({
         options: {
-          packageRange: '^4.0.0'
-        }
+          packageRange: '^4.0.0',
+        },
       });
 
       expect(cacheStub1.callCount).to.equal(2);
@@ -290,7 +290,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
   describe('global', function() {
     it('finds global package in system global', async function() {
       let globalPath = await setUpGlobalScenario({
-        whichPath: 'fake'
+        whichPath: 'fake',
       });
 
       let statSpy = sinon.spy(utils, 'stat');
@@ -299,7 +299,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
       expect(commands).to.deep.equal({
         startCommand: `node ${cpr} ${startPath} .`,
-        endCommand: `node ${cpr} ${endPath} .`
+        endCommand: `node ${cpr} ${endPath} .`,
       });
 
       expect(cacheStub1.callCount).to.equal(2);
@@ -321,17 +321,17 @@ describe(_getStartAndEndCommands, function({ sinon }) {
         [path.join(globalPath, 'node_modules/test-package')],
         [path.join(cwd, 'node_modules/test-package')],
         [path.resolve(__dirname, '../../../../node_modules/test-package')],
-        [path.join(globalPath, 'node_modules/test-package')]
+        [path.join(globalPath, 'node_modules/test-package')],
       ]);
       expect(whichStub.args).to.deep.equal([
         ['test-package', { all: true }],
-        ['test-package', { all: true }]
+        ['test-package', { all: true }],
       ]);
     });
 
     it('finds global package in project node_modules', async function() {
       let globalPath = await setUpGlobalScenario({
-        whichPath: 'fake/fake/fake'
+        whichPath: 'fake/fake/fake',
       });
 
       let statSpy = sinon.spy(utils, 'stat');
@@ -340,7 +340,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
       expect(commands).to.deep.equal({
         startCommand: `node ${cpr} ${startPath} .`,
-        endCommand: `node ${cpr} ${endPath} .`
+        endCommand: `node ${cpr} ${endPath} .`,
       });
 
       expect(cacheStub1.callCount).to.equal(2);
@@ -364,18 +364,18 @@ describe(_getStartAndEndCommands, function({ sinon }) {
         [path.join(cwd, 'node_modules/test-package')],
         [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.join(globalPath, 'fake/fake/node_modules/test-package')],
-        [path.join(globalPath, 'node_modules/test-package')]
+        [path.join(globalPath, 'node_modules/test-package')],
       ]);
       expect(whichStub.args).to.deep.equal([
         ['test-package', { all: true }],
-        ['test-package', { all: true }]
+        ['test-package', { all: true }],
       ]);
     });
 
     it('finds global package in nvm lib', async function() {
       let globalPath = await setUpGlobalScenario({
         projectName: 'lib',
-        whichPath: '../fake/fake'
+        whichPath: '../fake/fake',
       });
 
       let statSpy = sinon.spy(utils, 'stat');
@@ -384,7 +384,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
       expect(commands).to.deep.equal({
         startCommand: `node ${cpr} ${startPath} .`,
-        endCommand: `node ${cpr} ${endPath} .`
+        endCommand: `node ${cpr} ${endPath} .`,
       });
 
       expect(cacheStub1.callCount).to.equal(2);
@@ -410,11 +410,11 @@ describe(_getStartAndEndCommands, function({ sinon }) {
         [path.resolve(__dirname, '../../../../node_modules/test-package')],
         [path.resolve(globalPath, '../fake/node_modules/test-package')],
         [path.resolve(globalPath, '../../node_modules/test-package')],
-        [path.join(globalPath, 'node_modules/test-package')]
+        [path.join(globalPath, 'node_modules/test-package')],
       ]);
       expect(whichStub.args).to.deep.equal([
         ['test-package', { all: true }],
-        ['test-package', { all: true }]
+        ['test-package', { all: true }],
       ]);
     });
 
@@ -423,8 +423,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
       await getStartAndEndCommands({
         options: {
-          packageVersion: '4.5.7'
-        }
+          packageVersion: '4.5.7',
+        },
       });
 
       expect(cacheStub1.callCount).to.equal(0);
@@ -438,8 +438,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
       await getStartAndEndCommands({
         options: {
-          packageRange: '^4.0.0'
-        }
+          packageRange: '^4.0.0',
+        },
       });
 
       expect(cacheStub1.callCount).to.equal(2);
@@ -465,7 +465,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
       whichStub = sinon.stub(utils, 'which').rejects(new Error('test which error'));
 
       await expect(getStartAndEndCommands({
-        packageVersion: '4.5.7'
+        packageVersion: '4.5.7',
       })).to.be.rejectedWith('test which error');
     });
 
@@ -475,8 +475,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
       await getStartAndEndCommands({
         options: {
-          commandName
-        }
+          commandName,
+        },
       });
 
       expect(whichSpy.callCount).to.equal(2);
@@ -491,7 +491,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
       expect(commands).to.deep.equal({
         startCommand: `node ${cpr} ${startPath} .`,
-        endCommand: `node ${cpr} ${endPath} .`
+        endCommand: `node ${cpr} ${endPath} .`,
       });
 
       expect(cacheStub1.callCount).to.equal(0);
@@ -513,8 +513,8 @@ describe(_getStartAndEndCommands, function({ sinon }) {
 
     await getStartAndEndCommands({
       options: {
-        packageName: null
-      }
+        packageName: null,
+      },
     });
 
     expect(statSpy.callCount).to.equal(0);
@@ -540,7 +540,7 @@ describe(_getStartAndEndCommands, function({ sinon }) {
     await Promise.all([
       fs.mkdir(path.join(localPath, '.git')),
       fs.ensureFile(path.join(localPath, 'package-lock.json')),
-      fs.ensureFile(path.join(localPath, 'yarn.lock'))
+      fs.ensureFile(path.join(localPath, 'yarn.lock')),
     ]);
 
     await getStartAndEndCommands();
@@ -559,12 +559,12 @@ describe(_getStartAndEndCommands, function({ sinon }) {
     await setUpLocalScenario();
 
     let commands = await getStartAndEndCommands({
-      reset: true
+      reset: true,
     });
 
     expect(commands).to.deep.equal({
       startCommand: null,
-      endCommand: `node ${cpr} ${endPath} .`
+      endCommand: `node ${cpr} ${endPath} .`,
     });
 
     expect(cacheStub1.callCount).to.equal(1);
@@ -579,12 +579,12 @@ describe(_getStartAndEndCommands, function({ sinon }) {
     await setUpLocalScenario();
 
     let commands = await getStartAndEndCommands({
-      init: true
+      init: true,
     });
 
     expect(commands).to.deep.equal({
       startCommand: null,
-      endCommand: `node ${cpr} ${endPath} .`
+      endCommand: `node ${cpr} ${endPath} .`,
     });
 
     expect(cacheStub1.callCount).to.equal(1);

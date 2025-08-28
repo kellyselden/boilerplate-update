@@ -8,6 +8,6 @@ module.exports = async function runCodemods(codemods, cwd) {
   }
 
   await utils.run('git add -A', {
-    cwd
+    cwd,
   });
 };

@@ -12,7 +12,7 @@ describe(formatStats, function() {
       endVersion: '4.5.6',
       remoteUrl: 'http://foo.bar',
       codemodsSource: 'http://codemods.source',
-      codemods: { 'codemod1': null, 'codemod2': null }
+      codemods: { 'codemod1': null, 'codemod2': null },
     });
 
     expect(stats).to.equal(`project options: option1, option2
@@ -29,7 +29,7 @@ applicable codemods: codemod1, codemod2`);
       startVersion: '1.2.3',
       endVersion: '4.5.6',
       codemodsSource: 'http://codemods.source',
-      codemods: { 'codemod1': null, 'codemod2': null }
+      codemods: { 'codemod1': null, 'codemod2': null },
     });
 
     expect(stats).to.equal(`project options: option1, option2

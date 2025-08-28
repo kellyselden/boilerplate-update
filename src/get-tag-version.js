@@ -7,7 +7,7 @@ module.exports = async function getTagVersion({
   range,
   versions,
   distTags = [],
-  packageName
+  packageName,
 }) {
   if (distTags.indexOf(range) > -1) {
     let distTag = range;

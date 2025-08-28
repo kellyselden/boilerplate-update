@@ -6,7 +6,7 @@ function npx(command, options) {
   return exec(`npx ${command}`, {
     preferLocal: true,
     stdio: ['ignore', 'inherit', 'inherit'],
-    ...options
+    ...options,
   });
 }
 

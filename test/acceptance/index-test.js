@@ -7,7 +7,7 @@ const fs = require('fs-extra');
 const {
   buildTmp,
   processExit,
-  fixtureCompare: _fixtureCompare
+  fixtureCompare: _fixtureCompare,
 } = require('git-fixtures');
 const { isGitClean } = require('git-diff-apply');
 const boilerplateUpdate = require('../../src');
@@ -17,7 +17,7 @@ const {
   assertNoUnstaged,
   assertNoStaged,
   assertAllStaged,
-  assertCodemodRan
+  assertCodemodRan,
 } = require('../helpers/assertions');
 
 describe(function({ sinon }) {
@@ -39,7 +39,7 @@ describe(function({ sinon }) {
     codemodsJson,
     listCodemods,
     createCustomDiff,
-    ignoredFiles
+    ignoredFiles,
   }) {
     let commitMessage = 'test-project';
 
@@ -47,11 +47,11 @@ describe(function({ sinon }) {
       fixturesPath,
       commitMessage,
       dirty,
-      subDir
+      subDir,
     });
 
     function createProject({
-      options
+      options,
     }) {
       return async function createProject() {
         return path.resolve(__dirname, '../..', options.fixturesPath, options.projectName);
@@ -60,7 +60,7 @@ describe(function({ sinon }) {
 
     try {
       let {
-        promise: boilerplateUpdatePromise
+        promise: boilerplateUpdatePromise,
       } = await boilerplateUpdate({
         cwd: tmpPath,
         remoteUrl: () => 'https://github.com/kellyselden/boilerplate-update-output-repo-test',
@@ -82,33 +82,33 @@ describe(function({ sinon }) {
           createProjectFromCache: createProject,
           createProjectFromRemote: createProject,
           startOptions: {
-            fixturesPath: 'test/fixtures/start'
+            fixturesPath: 'test/fixtures/start',
           },
           endOptions: {
-            fixturesPath: 'test/fixtures/end'
-          }
+            fixturesPath: 'test/fixtures/end',
+          },
         },
-        ignoredFiles
+        ignoredFiles,
       });
 
       return await processExit({
         promise: boilerplateUpdatePromise,
         cwd: tmpPath,
         commitMessage,
-        expect
+        expect,
       });
     } catch (err) {
       return await processExit({
         promise: Promise.reject(err),
         cwd: tmpPath,
         commitMessage,
-        expect
+        expect,
       });
     }
   }
 
   function fixtureCompare({
-    mergeFixtures
+    mergeFixtures,
   }) {
     let actual = tmpPath;
     let expected = mergeFixtures;
@@ -116,19 +116,19 @@ describe(function({ sinon }) {
     _fixtureCompare({
       expect,
       actual,
-      expected
+      expected,
     });
   }
 
   it('updates app', async function() {
     let {
-      status
+      status,
     } = await merge({
-      fixturesPath: 'test/fixtures/local'
+      fixturesPath: 'test/fixtures/local',
     });
 
     fixtureCompare({
-      mergeFixtures: 'test/fixtures/merge/test-project'
+      mergeFixtures: 'test/fixtures/merge/test-project',
     });
 
     assertNormalUpdate(status);
@@ -138,10 +138,10 @@ describe(function({ sinon }) {
   it('handles dirty', async function() {
     let {
       status,
-      stderr
+      stderr,
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      dirty: true
+      dirty: true,
     });
 
     expect(status).to.equal(`?? a-random-new-file
@@ -153,12 +153,12 @@ describe(function({ sinon }) {
 
   it('handles can\'t determine project', async function() {
     let {
-      stderr
+      stderr,
     } = await merge({
       fixturesPath: 'test/fixtures/local',
       projectOptions() {
         throw 'can\'t determine project';
-      }
+      },
     });
 
     expect(await isGitClean({ cwd: tmpPath })).to.be.ok;
@@ -168,9 +168,9 @@ describe(function({ sinon }) {
 
   it('handles non-npm dir', async function() {
     let {
-      stderr
+      stderr,
     } = await merge({
-      fixturesPath: 'test/fixtures/package-json/missing'
+      fixturesPath: 'test/fixtures/package-json/missing',
     });
 
     expect(await isGitClean({ cwd: tmpPath })).to.be.ok;
@@ -180,9 +180,9 @@ describe(function({ sinon }) {
 
   it('handles malformed package.json', async function() {
     let {
-      stderr
+      stderr,
     } = await merge({
-      fixturesPath: 'test/fixtures/package-json/malformed'
+      fixturesPath: 'test/fixtures/package-json/malformed',
     });
 
     expect(await isGitClean({ cwd: tmpPath })).to.be.ok;
@@ -192,14 +192,14 @@ describe(function({ sinon }) {
 
   it('resets app', async function() {
     let {
-      status
+      status,
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      reset: true
+      reset: true,
     });
 
     fixtureCompare({
-      mergeFixtures: 'test/fixtures/end/test-project'
+      mergeFixtures: 'test/fixtures/end/test-project',
     });
 
     expect(status).to.match(/^ M present-added-changed\.txt$/m);
@@ -216,14 +216,14 @@ describe(function({ sinon }) {
 
   it('inits app', async function() {
     let {
-      status
+      status,
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      init: true
+      init: true,
     });
 
     fixtureCompare({
-      mergeFixtures: 'test/fixtures/init/test-project'
+      mergeFixtures: 'test/fixtures/init/test-project',
     });
 
     expect(status).to.match(/^ M present-added-changed\.txt$/m);
@@ -241,10 +241,10 @@ describe(function({ sinon }) {
 
     let {
       result,
-      status
+      status,
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      compareOnly: true
+      compareOnly: true,
     });
 
     assertNoUnstaged(status);
@@ -259,10 +259,10 @@ describe(function({ sinon }) {
   it('shows stats only', async function() {
     let {
       result,
-      status
+      status,
     } = await merge({
       fixturesPath: 'test/fixtures/merge',
-      statsOnly: true
+      statsOnly: true,
     });
 
     assertNoStaged(status);
@@ -278,10 +278,10 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
   it('lists codemods', async function() {
     let {
       result,
-      status
+      status,
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      listCodemods: true
+      listCodemods: true,
     });
 
     assertNoStaged(status);
@@ -292,20 +292,20 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
   it('accepts codemods via json string', async function() {
     let {
       result,
-      status
+      status,
     } = await merge({
       fixturesPath: 'test/fixtures/local',
       listCodemods: true,
       codemodsJson: JSON.stringify({
         'test-codemod-json': {
           versions: {
-            lodash: '3.0.0'
+            lodash: '3.0.0',
           },
           projectOptions: ['test-project', 'unused'],
           nodeVersion: '6.0.0',
-          commands: []
-        }
-      })
+          commands: [],
+        },
+      }),
     });
 
     assertNoStaged(status);
@@ -323,10 +323,10 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
     let log = sinon.stub(console, 'log');
 
     let {
-      status
+      status,
     } = await merge({
       fixturesPath: 'test/fixtures/merge',
-      runCodemods: true
+      runCodemods: true,
     });
 
     let mergeFixtures = 'test/fixtures/codemod/latest-node/test-project';
@@ -335,7 +335,7 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
     }
 
     fixtureCompare({
-      mergeFixtures
+      mergeFixtures,
     });
 
     assertNoUnstaged(status);
@@ -358,14 +358,14 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
 
   it('scopes to sub dir if run from there', async function() {
     let {
-      status
+      status,
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      subDir: 'foo/bar'
+      subDir: 'foo/bar',
     });
 
     fixtureCompare({
-      mergeFixtures: 'test/fixtures/merge/test-project'
+      mergeFixtures: 'test/fixtures/merge/test-project',
     });
 
     assertNormalUpdate(status);
@@ -375,14 +375,14 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
   describe('custom diff', function() {
     it('can create a personal diff instead of using an output repo', async function() {
       let {
-        status
+        status,
       } = await merge({
         fixturesPath: 'test/fixtures/local',
-        createCustomDiff: true
+        createCustomDiff: true,
       });
 
       fixtureCompare({
-        mergeFixtures: 'test/fixtures/merge/test-project'
+        mergeFixtures: 'test/fixtures/merge/test-project',
       });
 
       assertAllStaged(status);
@@ -390,15 +390,15 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
 
     it('can ignore one of the versions', async function() {
       let {
-        status
+        status,
       } = await merge({
         fixturesPath: 'test/fixtures/local',
         createCustomDiff: true,
-        startVersion: null
+        startVersion: null,
       });
 
       fixtureCompare({
-        mergeFixtures: 'test/fixtures/merge/no-start-version/test-project'
+        mergeFixtures: 'test/fixtures/merge/no-start-version/test-project',
       });
 
       assertAllStaged(status);
@@ -411,10 +411,10 @@ applicable codemods: commands-test-codemod, script-test-codemod${process.env.NOD
 
   it('can ignore extra files', async function() {
     let {
-      status
+      status,
     } = await merge({
       fixturesPath: 'test/fixtures/local',
-      ignoredFiles: ['present-changed.txt']
+      ignoredFiles: ['present-changed.txt'],
     });
 
     expect(status).to.not.contain('present-changed.txt');

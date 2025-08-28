@@ -11,15 +11,15 @@ describe(getProjectVersion, function() {
       [
         '2.11.0',
         '2.11.1',
-        '2.11.2'
-      ]
+        '2.11.2',
+      ],
     )).to.equal('2.11.1');
     expect(getProjectVersion(
       '2.12',
       [
         '2.12.0',
-        '2.12.1'
-      ]
+        '2.12.1',
+      ],
     )).to.equal('2.12.0');
   });
 });

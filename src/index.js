@@ -28,7 +28,7 @@ async function boilerplateUpdate(options) {
     listCodemods,
     codemodsSource,
     codemodsJson,
-    mergeOptions = {}
+    mergeOptions = {},
   } = options;
 
   let packageJson = await getPackageJson(cwd);
@@ -57,7 +57,7 @@ async function boilerplateUpdate(options) {
     endVersion,
     createCustomDiff,
     customDiffOptions,
-    ignoredFiles = []
+    ignoredFiles = [],
   } = { ...options, ...await resolveProperty(mergeOptions) };
 
   startVersion = await resolveProperty(startVersion);
@@ -84,7 +84,7 @@ async function boilerplateUpdate(options) {
       open,
       remoteUrl,
       startTag,
-      endTag
+      endTag,
     });
 
     return { promise: Promise.resolve() };
@@ -99,8 +99,8 @@ async function boilerplateUpdate(options) {
         remoteUrl,
         codemodsSource,
         codemodsJson,
-        packageJson
-      })
+        packageJson,
+      }),
     };
   }
 
@@ -111,8 +111,8 @@ async function boilerplateUpdate(options) {
         json: codemodsJson,
         projectOptions,
         packageJson,
-        cwd
-      })
+        cwd,
+      }),
     };
   }
 
@@ -124,7 +124,7 @@ async function boilerplateUpdate(options) {
       cwd,
       reset,
       init,
-      options: await resolveProperty(customDiffOptions)
+      options: await resolveProperty(customDiffOptions),
     });
 
     startCommand = commands.startCommand;
@@ -137,7 +137,7 @@ async function boilerplateUpdate(options) {
 
   let {
     from,
-    to
+    to,
   } = await gitDiffApply({
     cwd,
     remoteUrl,
@@ -148,7 +148,7 @@ async function boilerplateUpdate(options) {
     init,
     createCustomDiff,
     startCommand,
-    endCommand
+    endCommand,
   });
 
   if (reset || init) {
@@ -168,12 +168,12 @@ async function boilerplateUpdate(options) {
     });
 
     await spawn('git', ['add', 'package.json'], {
-      cwd
+      cwd,
     });
   })();
 
   return {
-    promise
+    promise,
   };
 }
 
