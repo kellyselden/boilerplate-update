@@ -12,7 +12,9 @@ module.exports = defineConfig([
   saneNode,
   {
     ...mocha.configs.flat.recommended,
-    files: ['test/**/*-test.js'],
+    files: [
+      'test/**/*-test.js',
+    ],
     rules: {
       ...mocha.configs.flat.recommended.rules,
       'mocha/no-exclusive-tests': 'error',
