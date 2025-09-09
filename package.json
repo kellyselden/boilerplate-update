@@ -39,7 +39,7 @@
     "which": "^5.0.0"
   },
   "devDependencies": {
-    "@kellyselden/node-template": "6.9.0",
+    "@kellyselden/node-template": "6.10.0",
     "chai": "^4.5.0",
     "chai-as-promised": "^7.1.1",
     "chai-fs": "^2.0.0",
