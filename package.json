@@ -28,7 +28,7 @@
     "https-proxy-agent": "^7.0.0",
     "inquirer": "^12.0.0",
     "merge-package.json": "^8.0.0",
-    "npm-package-arg": "^12.0.0",
+    "npm-package-arg": "^13.0.0",
     "npx": "^10.2.0",
     "open": "^10.0.0",
     "p-reduce": "^3.0.0",
