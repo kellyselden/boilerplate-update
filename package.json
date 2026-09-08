@@ -55,9 +55,9 @@
     "renovate-config-standard": "2.4.2",
     "sinon": "^21.0.0",
     "sinon-chai": "^3.7.0",
-    "standard-node-template": "7.2.0"
+    "standard-node-template": "7.3.0"
   },
   "engines": {
-    "node": ">=20.9"
+    "node": ">=22.11"
   }
 }
