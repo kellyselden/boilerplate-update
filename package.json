@@ -39,7 +39,7 @@
     "which": "^5.0.0"
   },
   "devDependencies": {
-    "@kellyselden/eslint-config": "^1.0.0",
+    "@kellyselden/eslint-config": "^2.0.0",
     "@kellyselden/node-template": "7.1.0",
     "chai": "^4.5.0",
     "chai-as-promised": "^7.1.1",
