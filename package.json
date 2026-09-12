@@ -36,7 +36,7 @@
     "rimraf": "^6.0.0",
     "semver": "^7.3.2",
     "tmp": "0.2.7",
-    "which": "^6.0.0"
+    "which": "^7.0.0"
   },
   "devDependencies": {
     "@kellyselden/eslint-config": "^2.0.0",
