@@ -26,7 +26,7 @@
     "execa": "^9.0.0",
     "git-diff-apply": "^8.0.0",
     "https-proxy-agent": "^7.0.0",
-    "inquirer": "^13.0.0",
+    "inquirer": "^14.0.0",
     "merge-package.json": "^9.0.0",
     "npm-package-arg": "^13.0.0",
     "npx": "^10.2.0",
